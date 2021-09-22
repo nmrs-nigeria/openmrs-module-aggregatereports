@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
+                  http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+    <changeSet id="org.openmrs.module.dataquality-v1.0-1" author="lordmaul">
+        <createTable tableName="dqr_clients">
+            <column name="dqr_clients_id" autoIncrement="true" type="int">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+
+            <column name="patient_id" type="int" defaultValue="0" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="encounter_id" type="int" defaultValue="0"/>
+            <column name="dob" type="DATETIME">
+                <constraints nullable="true"/>
+            </column>
+            <column name="lastresult" type="varchar(45)" defaultValue="" >
+                <constraints nullable="true"/>
+            </column>
+            <column name="offered_index" type="varchar(45)" defaultValue="" >
+                <constraints nullable="true"/>
+            </column>
+            
+        </createTable>
+        
+        <createTable tableName="dqr_clinicals">
+            <column name="dqr_clinical_id" autoIncrement="true" type="int">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+
+            <column name="patient_id" type="int" defaultValue="0" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="encounter_id" type="int" defaultValue="0"/>
+            <column name="weight" type="float">
+                <constraints nullable="true"/>
+            </column>
+            <column name="muac" type="varchar(45)" defaultValue="" >
+                <constraints nullable="true"/>
+            </column>
+            <column name="tb_status" type="varchar(45)" defaultValue="" >
+                <constraints nullable="true"/>
+            </column>
+             <column name="functional_status" type="varchar(145)" defaultValue="" >
+                <constraints nullable="true"/>
+            </column>
+             <column name="nextapp_date" type="DATETIME">
+                <constraints nullable="true"/>
+            </column>
+            <column name="who_stage" type="varchar(244)" defaultValue="-" >
+                <constraints nullable="true"/>
+            </column>
+           
+
+        </createTable>
+        
+        
+        <createTable tableName="dqr_lab">
+            <column name="dqr_lab_id" autoIncrement="true" type="int">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+
+            <column name="patient_id" type="int" defaultValue="0" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="encounter_id" type="int" defaultValue="0"/>
+            <column name="vl_result" type="double">
+                <constraints nullable="true"/>
+            </column>
+             <column name="date_sample_sent" type="DATETIME">
+                <constraints nullable="true"/>
+            </column>
+             <column name="sample_collection_date" type="DATETIME">
+                <constraints nullable="true"/>
+            </column>
+            <column name="vl_order" type="varchar(50)" defaultValue="" >
+                <constraints nullable="true"/>
+            </column>
+            <column name="date_received_at_lab" type="DATETIME">
+                <constraints nullable="true"/>
+            </column>
+            
+        </createTable>
+        <createTable tableName="dqr_ipt">
+            <column name="dqr_ipt_id" autoIncrement="true" type="int">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+
+            <column name="patient_id" type="int" defaultValue="0" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="encounter_id" type="int" defaultValue="0"/>
+            <column name="genexpert" type="varchar(145)">
+                <constraints nullable="true"/>
+            </column>
+             <column name="chestxray" type="varchar(145)">
+                <constraints nullable="true"/>
+            </column>
+             <column name="culture" type="varchar(145)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="eligible_for_ipt" type="varchar(45)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="ipt_start_date" type="DATETIME">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+        
+        <createTable tableName="dqr_meta">
+            <column name="dqr_meta_id" autoIncrement="true" type="int">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+
+            <column name="patient_id" type="int" defaultValue="0" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="art_start_date" type="DATETIME">
+                <constraints nullable="true"/>
+            </column>
+            <column name="dob" type="DATETIME">
+                <constraints nullable="true"/>
+            </column>
+           <column name="age" type="int"  >
+                <constraints nullable="true"/>
+            </column>
+            <column name="education_status" type="varchar(200)" defaultValue="0" >
+                <constraints nullable="true"/>
+            </column>
+            <column name="marital_status" type="varchar(200)" defaultValue="" >
+                <constraints nullable="true"/>
+            </column>
+            <column name="occupation" type="varchar(200)" defaultValue="" >
+                <constraints nullable="true"/>
+            </column>
+            <column name="gender" type="varchar(20)" defaultValue="" >
+                <constraints nullable="true"/>
+            </column>
+            <column name="address" type="varchar(255)" defaultValue="" >
+                <constraints nullable="true"/>
+            </column>
+             <column name="hiv_diagnosis_date" type="DATETIME">
+                <constraints nullable="true"/>
+            </column>
+             <column name="hiv_enrollment_date" type="DATETIME">
+                <constraints nullable="true"/>
+            </column>
+            <column name="termination_status" type="varchar(45)" defaultValue="" >
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+
+         <createTable tableName="dqr_pharmacy">
+            <column name="dqr_pharmacy_id" autoIncrement="true" type="int">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+
+            <column name="patient_id" type="int" defaultValue="0" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="encounter_id" type="int" defaultValue="0" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="pickupdate" type="DATETIME">
+                <constraints nullable="true"/>
+            </column>
+            <column name="days_refill" type="int"  >
+                <constraints nullable="true"/>
+            </column>
+            <column name="next_encounter_id" type="int"  >
+                <constraints nullable="true"/>
+            </column>
+            
+            <column name="regimen_line" type="varchar(255)" defaultValue="" >
+                <constraints nullable="true"/>
+            </column>
+            <column name="regimen" type="varchar(255)" defaultValue="" >
+                <constraints nullable="true"/>
+            </column>
+            <column name="quantity" type="int" >
+                <constraints nullable="true"/>
+            </column>
+           
+        </createTable>
+        
+        <createIndex indexName="encounter_patient_id" tableName="dqr_clients" unique="true">
+            <column name="patient_id"/>
+            <column name="encounter_id" />
+        </createIndex>
+        <createIndex indexName="last_result_offered_index" tableName="dqr_clients" unique="false">
+            <column name="lastresult" />
+            <column name="offered_index"/>
+        </createIndex>
+        
+        
+        <createIndex indexName="encounter_patient_id" tableName="dqr_clinicals" unique="true">
+            <column name="patient_id"/>
+            <column name="encounter_id" />
+        </createIndex>
+        <createIndex indexName="weight_muac_tb_status_functional_status_nextapp_date" tableName="dqr_clinicals" unique="false">
+            <column name="weight" />
+            <column name="muac"/>
+            <column name="tb_status" />
+            <column name="functional_status" />
+            <column name="nextapp_date" />
+            <column name="who_stage" />
+        </createIndex>
+        <createIndex indexName="encounter_patient" tableName="dqr_ipt" unique="true">
+            <column name="patient_id" />
+            <column name="encounter_id"/>
+        </createIndex>
+        <createIndex indexName="genexpert_chestxray_culture" tableName="dqr_ipt" unique="false">
+            <column name="genexpert"/>
+            <column name="chestxray" />
+            <column name="culture" />
+            <column name="ipt_start_date" />
+            <column name="eligible_for_ipt" />
+        </createIndex>
+        <createIndex indexName="encounter_patient" tableName="dqr_lab" unique="true">
+            <column name="patient_id"/>
+            <column name="encounter_id" />
+        </createIndex>
+        <createIndex indexName="vl_order" tableName="dqr_lab" unique="false">
+            <column name="vl_result"/>
+            <column name="date_sample_sent"/>
+            <column name="sample_collection_date"/>
+            <column name="vl_order"/>
+            <column name="date_received_at_lab" />
+        </createIndex>
+        <createIndex indexName="patient_id" tableName="dqr_meta" unique="true">
+            <column name="patient_id"/>
+        </createIndex>
+        <createIndex indexName="art_start_date" tableName="dqr_meta" unique="false">
+            <column name="art_start_date" />
+            <column name="address" />
+            <column name="dob" />
+            <column name="marital_status" />
+            <column name="termination_status" />
+        </createIndex>
+        <createIndex indexName="encounter_patient" tableName="dqr_pharmacy" unique="true">
+            <column name="patient_id"/>
+            <column name="encounter_id" />
+        </createIndex>
+        <createIndex indexName="pickupdate_days_refill" tableName="dqr_pharmacy" unique="false">
+            <column name="pickupdate"/>
+            <column name="days_refill" />
+            <column name="next_encounter_id" />
+            <column name="regimen_line" />
+            <column name="regimen" />
+            <column name="quantity" />
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>

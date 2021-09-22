@@ -1,0 +1,2 @@
+${ ui.includeFragment("dataquality", "cqi") }
+

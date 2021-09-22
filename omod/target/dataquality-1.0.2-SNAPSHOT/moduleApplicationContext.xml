@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Beans to add to the current Application context definition -->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+  		    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+    <bean id="dataquality.DataqualityConfig" class="org.openmrs.module.dataquality.DataqualityConfig"/>
+
+    <bean id="dataquality.DataqualityDao" class="org.openmrs.module.dataquality.api.dao.DataqualityDao">
+        <property name="sessionFactory">
+            <ref bean="dbSessionFactory" />
+        </property>
+    </bean>
+    <bean id="dataquality.DataqualityErrorDao" class="org.openmrs.module.dataquality.api.dao.DataqualityErrorDao">
+        <property name="sessionFactory">
+            <ref bean="dbSessionFactory" />
+        </property>
+    </bean>
+    
+    <bean id="dataquality.HTSDao" class="org.openmrs.module.dataquality.api.dao.HTSDao">
+        <property name="sessionFactory">
+            <ref bean="dbSessionFactory" />
+        </property>
+    </bean>
+    
+   
+
+    <!-- Wraps DataqualityService methods in DB transactions and OpenMRS interceptors,
+    which set audit info like dateCreated, changedBy, etc.-->
+    <bean id="dataquality.DataqualityService"
+            class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager">
+            <ref bean="transactionManager" />
+        </property>
+        <property name="target">
+            <bean class="org.openmrs.module.dataquality.api.impl.DataqualityServiceImpl">
+                <property name="dao" ref="dataquality.DataqualityDao" />
+                <property name="errorDao" ref="dataquality.DataqualityErrorDao" />
+                
+            </bean>
+            
+        </property>
+        <property name="preInterceptors">
+            <ref bean="serviceInterceptors" />
+        </property>
+        <property name="transactionAttributeSource">
+            <ref bean="transactionAttributeSource" />
+        </property>
+    </bean>
+    
+    <!--<bean id="dataquality.HTSService"
+            class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+        <property name="transactionManager">
+            <ref bean="transactionManager" />
+        </property>
+        <property name="target">
+            <bean class="org.openmrs.module.dataquality.api.impl.HTSServiceImpl">
+                <property name="dao" ref="dataquality.HTSDao" />
+            </bean>
+            
+        </property>
+        <property name="preInterceptors">
+            <ref bean="serviceInterceptors" />
+        </property>
+        <property name="transactionAttributeSource">
+            <ref bean="transactionAttributeSource" />
+        </property>
+    </bean>-->
+
+    <!-- Adds DataqualityService to OpenMRS context so it can be accessed
+    calling Context.getService(DataqualityService.class) -->
+    <bean parent="serviceContext">
+        <property name="moduleService">
+            <list>
+                <value>org.openmrs.module.dataquality.api.DataqualityService</value>
+                <ref bean="dataquality.DataqualityService" />
+            </list>
+        </property>
+    </bean>
+    <!--<bean parent="serviceContext">
+        <property name="moduleService">
+            <list>
+                <value>org.openmrs.module.dataquality.api.HTSService</value>
+                <ref bean="dataquality.HTSService" />
+            </list>
+        </property>
+    </bean>-->
+</beans>
