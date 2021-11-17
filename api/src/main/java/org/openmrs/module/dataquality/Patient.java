@@ -26,9 +26,17 @@ public class Patient {
 	
 	private float viralLoad;
 	
+	private String lastPickupDate;
+	
+	private String nextAppointmentDate;
+	
 	private String sampleCollectionDate;
 	
 	private int age;
+	
+	private String fullDisclosure = "";
+	
+	private String fullDisclosureDate = "";
 	
 	public int getPatientId() {
 		return patientId;
@@ -108,6 +116,38 @@ public class Patient {
 	
 	public void setArtStartDate(String artStartDate) {
 		this.artStartDate = artStartDate;
+	}
+	
+	public String getLastPickupDate() {
+		return lastPickupDate;
+	}
+	
+	public void setLastPickupDate(String lastPickupDate) {
+		this.lastPickupDate = lastPickupDate;
+	}
+	
+	public String getNextAppointmentDate() {
+		return nextAppointmentDate;
+	}
+	
+	public void setNextAppointmentDate(String nextAppointmentDate) {
+		this.nextAppointmentDate = nextAppointmentDate;
+	}
+	
+	public String getFullDisclosure() {
+		return fullDisclosure;
+	}
+	
+	public void setFullDisclosure(String fullDisclosure) {
+		this.fullDisclosure = fullDisclosure;
+	}
+	
+	public String getFullDisclosureDate() {
+		return fullDisclosureDate;
+	}
+	
+	public void setFullDisclosureDate(String fullDisclosureDate) {
+		this.fullDisclosureDate = fullDisclosureDate;
 	}
 	
 }

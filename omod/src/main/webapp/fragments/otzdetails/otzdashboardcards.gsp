@@ -2,7 +2,7 @@
 <br/>
     <div class="row" >
         <div class="col-sm-4 col-md-4">
-            <a class="bootcards-summary-item label-green1 showDetails" href="javascript:void(0);" data-isOptimum="true" data-weight="less_20" data-regimen=""  data-title="Total AYPLHIV enrolled in OTZ"  >
+            <a class="bootcards-summary-item label-green1 showDetails" href="javascript:void(0);" data-isOptimum="tx_curr" data-catetory="tx_curr" data-regimen=""  data-title="TxCurr of AYPLHIV"  >
                <div class="row">
                    <div class="col-sm-5"><i class="icon-info  fa fa-users"></i></div>
                    <div class="col-sm-7"><h4><strong><span class="large icon-info" id="txCurrAyP">-</span><br/></strong> </h4></div>
@@ -13,7 +13,7 @@
         </div>
         
        <div class="col-sm-4 col-md-8">
-            <a class="bootcards-summary-item label-white showDetails" href="javascript:void(0);" data-isOptimum="true" data-weight="less_20" data-regimen=""  data-title="Total AYPLHIV enrolled in OTZ"  >
+            <a class="bootcards-summary-item label-white showDetails" href="javascript:void(0);" data-isOptimum="enrolled" data-category="enrolled" data-regimen=""  data-title="Total AYPLHIV enrolled in OTZ"  >
                <div class="row">
                    <div class="col-sm-5"><i class="icon-success icon-user"></i></div>
                    <div class="col-sm-7"><h4><strong><span class="large icon-success" id="totalEnrolledInOTZ">-</span><br/></strong> </h4></div>
@@ -29,7 +29,7 @@
     <div class="row" >
        
          <div class="col-sm-4 col-md-4">
-            <a class="bootcards-summary-item label-info showDetails" href="javascript:void(0);" data-isOptimum="true" data-weight="bet_20_30" data-regimen="" data-title="Total Male AYPLHIV enrolled in OTZ" >
+            <a class="bootcards-summary-item label-info" href="javascript:void(0);" data-isOptimum="true" data-weight="bet_20_30" data-regimen="" data-title="Total Male AYPLHIV enrolled in OTZ" >
                <div class="row">
                    <div class="col-sm-5"><i class=" icon-info fa icon-bar-chart"></i></div>
                    <div class="col-sm-7"><h4><strong><span class="large icon-info" id="aypEnrolled">-</span><br/></strong> </h4></div>
@@ -39,7 +39,7 @@
             </a>
         </div>
         <div class="col-sm-4 col-md-4">
-            <a class="bootcards-summary-item label-green2 showDetails" href="javascript:void(0);" data-isOptimum="true" data-weight="bet_20_30" data-regimen="" data-title="Total Male AYPLHIV enrolled in OTZ" >
+            <a class="bootcards-summary-item label-green2 showDetails" href="javascript:void(0);" data-isOptimum="maleEnrolled" data-category="maleEnrolled" data-regimen="" data-title="Total Male AYPLHIV enrolled in OTZ" >
                <div class="row">
                    <div class="col-sm-5"><i class=" icon-info fa fa-male"></i></div>
                    <div class="col-sm-7"><h4><strong><span class="large icon-info" id="totalEnrolledInOTZMale">-</span><br/></strong> </h4></div>
@@ -49,7 +49,7 @@
             </a>
         </div>
         <div class="col-sm-4 col-md-4">
-            <a class="bootcards-summary-item label-success showDetails" href="javascript:void(0);" data-isOptimum="true" data-weight="above_30" data-regimen="" data-title="Total Female AYPLHIV enrolled in OTZ">
+            <a class="bootcards-summary-item label-success showDetails" href="javascript:void(0);" data-isOptimum="femaleEnrolled" data-category="femaleEnrolled" data-regimen="" data-title="Total Female AYPLHIV enrolled in OTZ">
                <div class="row">
                    <div class="col-sm-5"><i class=" icon-info fa fa-female"></i></div>
                    <div class="col-sm-7"><h4><strong><span class="large icon-info" id="totalEnrolledInOTZFemale">-</span><br/></strong> </h4></div>
@@ -97,7 +97,25 @@ var totalFemale = 0;
 var total1014 = 0;
 var total1519 = 0;
 var total2024 = 0;
+var txCurr = [];
+var enrolledPatients = [];
+var maleEnrolled = [];
+var femaleEnrolled = [];
  
+jq(document).ready(function(){
+
+
+    
+    jq(".showDetails").click(function(){
+        var isOptimum = jq(this).attr("data-isOptimum");
+        var category = jq(this).attr("data-category");
+        var title = jq(this).attr("data-title");
+       
+        dataquality_renderOTZData(isOptimum, category,  title);
+        
+    });
+})
+
  function setCardValues(data)
  {
     var male1014 = data["male10To14"];
@@ -120,12 +138,18 @@ var total2024 = 0;
  }
  
 
-
+var patients10_14 = [];
+var patients15_19 = [];
+var patients20_24 = [];
+var patientsFullDisclosure = [];
+var patientsExited = [];
+var allPatientsTransferred = [];
  function getDashboardValues(){
     
     myAjax({startDate:startDate, endDate:endDate}, "otz/getTxCurr.action").then(function(response){
         var data = JSON.parse(response);
         totalTxCurr = data.length;
+        txCurr = data;
         jq("#txCurrAyP").html(totalTxCurr);
         
         var proportionEnrolled = (totalEnrolled/totalTxCurr) * 100;
@@ -147,30 +171,45 @@ var total2024 = 0;
          var quarters = data["quarters"]["myHashMap"];
          
          var patients = data["patients"];
+         enrolledPatients = patients;
+         
+         var patientsFull = data["allPatientsFullDisclosure"];
+         patientsFullDisclosure = patientsFull;
+         patientsExited = data["allPatientsExited"];
+         allPatientsTransferred = data["allPatientsTransferred"];
+         
+         console.log("transferred", allPatientsTransferred);
          
          for(var i=0; i<patients.length; i++)
          {
              var quarter = dqr_getFiscalQuarter(patients[i]["enrollmentDate"]);
              quarters[quarter]++;
              if(patients[i]["age"] >= 10 && patients[i]["age"] <=24){
+                
                 if(patients[i]["gender"] == "Male" || patients[i]["gender"] == "M" )
                 {
                    totalMale++;
+                   maleEnrolled.push(patients[i]);
+                   
                 }
                 else if(patients[i]["gender"] == "Female" || patients[i]["gender"] == "F" ){
                    totalFemale++;
+                   femaleEnrolled.push(patients[i])
                 }
                 
                 if(patients[i]["age"] >= 10 && patients[i]["age"] <=14){
                     total1014++;
+                    patients10_14.push(patients[i]);
                     
                 }
                 if(patients[i]["age"] >= 15 && patients[i]["age"] <=19){
                     total1519++;
+                    patients15_19.push(patients[i]);
                     
                 }
                 if(patients[i]["age"] >= 20 && patients[i]["age"] <=24){
                     total2024++;
+                    patients20_24.push(patients[i]);
                     
                 }
              }
@@ -202,7 +241,7 @@ var total2024 = 0;
 
 
                      var graphArray = [
-                        {field: "totalCount", description:"quarter", title:"Total AYPLHIV in OTZ", isOptimum:"totalInOtz", chartType:"otz"},
+                        {field: "totalCount", description:"quarter", title:"Total AYPLHIV in OTZ", isOptimum:"enrolled", chartType:"vlotz"},
                        ]
                    //create chart
         buildBarCharts("# of members", otzData, graphArray, "quarter", "chartTotalEnrolled", "", "none", legendData, true, false);
@@ -211,8 +250,8 @@ var total2024 = 0;
         
         
         var totalByGender = new Array();
-        totalByGender.push({title: "Male", value: totalMale, weightBand:"above_30", regimen:"male", isOptimum:"false" })
-        totalByGender.push({title: "Female", value: totalFemale, weightBand:"above_30", regimen:"female", isOptimum:"false" });
+        totalByGender.push({title: "Male", value: totalMale, weightBand:"above_30", isOptimum:"maleEnrolled", regimen:"male", chartType:"vlotz" })
+        totalByGender.push({title: "Female", value: totalFemale, weightBand:"above_30", isOptimum:"femaleEnrolled", regimen:"female",  chartType:"vlotz" });
         var colors = ["#A0CEF0", "#a903fc"]
 
          buildPieCharts(totalByGender, "value", "title", "chartTotalEnrolledGender", false, true, colors);
@@ -234,12 +273,17 @@ var total2024 = 0;
 
 
               var graphArray2 = [
-                 {field: "txCurr", description:"quarter", title:"# of AYPLHIV currently on ART", isOptimum:"totalInOtz", chartType:"otz", color:"#63A6E2"},
-                 {field: "txCurrEnrolled", description:"quarter", title:"# of  AYPLHIV enrolled in OTZ", isOptimum:"totalInOtz", chartType:"otz", color:"#FB8537"},
+                 {field: "txCurr", description:"quarter", type:"column", title:"# of AYPLHIV currently on ART", isOptimum:"tx_curr", chartType:"vlotz", color:"#63A6E2"},
+                 {field: "txCurrEnrolled", description:"quarter", type:"column", title:"# of  AYPLHIV enrolled in OTZ", isOptimum:"enrolled", chartType:"vlotz", color:"#FB8537"},
                 ]
             //create chart
-       buildBarCharts("# of members", otzTxData, graphArray2, "quarter", "proportionOfTxCurrInOtz", "", "none", legendData, true, false);
-
+            var max = totalTxCurr;
+            var min = totalEnrolled
+            max = max+2;
+            min = dataQuality_calculateMin(max, min);
+            console.log("min max", max, min);
+            buildBarCharts("# of members", otzTxData, graphArray2, "quarter", "proportionOfTxCurrInOtz", "", "none", legendData, true, false, max, min);
+        
        
        //Total enrolled in OTZ by Sex distribution
                
@@ -249,9 +293,9 @@ var total2024 = 0;
                         {color:"#e0dd96", title:"20-24"},      
                  ]
               var totalByAge = new Array();
-              totalByAge.push({title: "10-14", value: total1014, weightBand:"above_30", regimen:"10_14", isOptimum:"false" })
-              totalByAge.push({title: "15-19", value: total1519, weightBand:"above_30", regimen:"15_19", isOptimum:"false" });
-              totalByAge.push({title: "20-24", value: total2024, weightBand:"above_30", regimen:"20_24", isOptimum:"false" });
+              totalByAge.push({title: "10-14", value: total1014, chartType:"vlotz", regimen:"total10_14", isOptimum:"total10_14" })
+              totalByAge.push({title: "15-19", value: total1519, chartType:"vlotz", regimen:"total15_19", isOptimum:"total15_19" });
+              totalByAge.push({title: "20-24", value: total2024,chartType:"vlotz", regimen:"total20_24", isOptimum:"total20_24" });
               var colors = ["#A0CEF0", "#d6d6c9", "#e0dd96"]
 
               buildPieCharts(totalByAge, "value", "title", "chartTotalEnrolledAge", false, false, colors, legendData);

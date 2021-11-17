@@ -109,9 +109,10 @@ public class ClinicalDaoHelper {
                 //stmt = Database.conn.createStatement(java.sql.ResultSet.TYPE_FORWARD_ONLY, java.sql.ResultSet.CONCUR_READ_ONLY);
 
                 StringBuilder queryString = new StringBuilder(
-                        "  select IFNULL(hivE.encounter_id, 0) AS encounter_id, dqr_meta.patient_id, dqr_meta.dob, person_name.given_name, person_name.family_name, patient_identifier.identifier FROM dqr_meta \n" +
+                        "  select IFNULL(hivE.encounter_id, 0) AS encounter_id, dqr_meta.gender, patient_program.date_enrolled AS otz_enrollment_date, dqr_meta.art_start_date, YEAR(?) - YEAR(dqr_meta.dob) AS age, dqr_meta.patient_id, dqr_meta.dob, person_name.given_name, person_name.family_name, patient_identifier.identifier FROM dqr_meta \n" +
                             "                         LEFT JOIN encounter hivE ON hivE.patient_id=dqr_meta.patient_id AND hivE.form_id=23 \n" +
                             "                          JOIN person_name ON person_name.person_id=dqr_meta.patient_id \n" +
+                            "       LEFT  JOIN patient_program ON patient_program.patient_id = dqr_meta.patient_id AND patient_program.program_id = 5 " +
                             "                         LEFT JOIN patient_identifier ON patient_identifier.patient_id=dqr_meta.patient_id AND patient_identifier.identifier_type=4 \n" +
                             "                         JOIN dqr_pharmacy lastpickup ON lastpickup.patient_id=dqr_meta.patient_id \n" +
                             "                         AND lastpickup.pickupdate=(\n" +
@@ -124,12 +125,13 @@ public class ClinicalDaoHelper {
                             "                            \n" +
                             "                         AND (dqr_meta.termination_status IS NULL OR dqr_meta.termination_status!=1066 )  \n" +
                             "\n" +
-                            "      AND (TIMESTAMPDIFF(YEAR,dqr_meta.dob,CURDATE()) > 0 AND TIMESTAMPDIFF(YEAR,dqr_meta.dob,CURDATE()) <=24)\n" +
+                            "      AND (TIMESTAMPDIFF(YEAR,dqr_meta.dob,CURDATE()) > 10 AND TIMESTAMPDIFF(YEAR,dqr_meta.dob,CURDATE()) <=24)\n" +
                             "     GROUP BY dqr_meta.patient_id  ");
 
                 int i = 1;
                 stmt = con.prepareStatement(queryString.toString());
                 //stmt.setString(i++, startDate);
+                stmt.setString(i++, endDate);
                 stmt.setString(i++, endDate);
                 stmt.setString(i++, endDate);
                 rs = stmt.executeQuery();
@@ -140,13 +142,24 @@ public class ClinicalDaoHelper {
                     int encounterId = rs.getInt("encounter_id");
                     String patientIdentifier = rs.getString("identifier");
                     String firstName = rs.getString("given_name");
+                    String gender = rs.getString("gender");
+                    int age = rs.getInt("age");
                     String lastName = rs.getString("family_name");
+                    String artStartDate = rs.getString("art_start_date");
+                    String dob = rs.getString("dob");
+                    String otzEnrollmentDate = rs.getString("otz_enrollment_date");
                     Map<String, String> tempData = new HashMap<>();
                     tempData.put("patientId", patientId);
                     tempData.put("encounterId", encounterId+"");
+                    tempData.put("pepfarId", patientIdentifier);
                     tempData.put("patientIdentifier", patientIdentifier);
                     tempData.put("firstName", firstName);
+                    tempData.put("artStartDate", artStartDate);
                     tempData.put("lastName", lastName);
+                    tempData.put("gender", gender);
+                    tempData.put("enrollmentDate", otzEnrollmentDate);
+                    tempData.put("dob", dob);
+                    tempData.put("age", age+"");
                     allPatients.add(tempData);
                 }
                 return allPatients;

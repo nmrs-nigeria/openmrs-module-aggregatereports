@@ -6,6 +6,9 @@
 package org.openmrs.module.dataquality.fragment.controller;
 
 import com.google.gson.Gson;
+import java.io.File;
+import java.io.InputStream;
+import java.net.URL;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -13,6 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
+import org.apache.commons.io.FileUtils;
 import org.codehaus.jettison.json.JSONObject;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
@@ -34,12 +38,87 @@ public class OtzFragmentController {
 	OTZDao otzDao = new OTZDao();
 	
 	public void controller(FragmentModel model, @SpringBean("userService") UserService service) {
-		model.addAttribute("testing", "test");
-		model.addAttribute("title", "OTZ");
-		Database.initConnection();
+		
+		try {
+			
+			/*URL url = this.getClass().getResource("otz_info.json");
+			System.out.println(url.getPath());
+			File f = new File(url.getPath());
+			JSONObject obj = new JSONObject(FileUtils.readFileToString(f));
+			
+			model.addAttribute("otz_info", obj);*/
+			model.addAttribute("testing", "test");
+			model.addAttribute("title", "OTZ");
+			Database.initConnection();
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public String getAllEnrolledInOTZ(HttpServletRequest request) {
+            DateTime startDateTime = new DateTime(request.getParameter("startDate"));
+            DateTime endDateTime = new DateTime(request.getParameter("endDate"));
+            //Database.initConnection();
+
+            String startDate = startDateTime.toString("yyyy'-'MM'-'dd");
+            String endDate = endDateTime.toString("yyyy'-'MM'-'dd");
+            
+            int male10To14=0;
+            int male15To19=0;
+            int male20To24=0;
+            int female10To14=0;
+            int female15To19=0;
+            int female20To24=0;
+            
+            List<OTZPatient> allPatients = otzDao.getTotalAYPLHIVEnrolledInOTZ(startDate, endDate);
+            for(int i=0; i<allPatients.size(); i++)
+            {
+                if(allPatients.get(i).getGender().equalsIgnoreCase("M") || allPatients.get(i).getGender().equalsIgnoreCase("Male"))
+                {
+                    if(allPatients.get(i).getAge() >=10 && allPatients.get(i).getAge() <=14)
+                    {
+                        male10To14++;
+                    }else if(allPatients.get(i).getAge() >=15 && allPatients.get(i).getAge() <=19)
+                    {
+                        male15To19++;
+                    }
+                    else if(allPatients.get(i).getAge() >=20 && allPatients.get(i).getAge() <=24)
+                    {
+                        male20To24++;
+                    }
+                }
+                else if(allPatients.get(i).getGender().equalsIgnoreCase("F") || allPatients.get(i).getGender().equalsIgnoreCase("Female"))
+                {
+                    if(allPatients.get(i).getAge() >=10 && allPatients.get(i).getAge() <=14)
+                    {
+                        female10To14++;
+                    }else if(allPatients.get(i).getAge() >=15 && allPatients.get(i).getAge() <=19)
+                    {
+                        female15To19++;
+                    }
+                    else if(allPatients.get(i).getAge() >=20 && allPatients.get(i).getAge() <=24)
+                    {
+                        female20To24++;
+                    }
+                }
+            }
+            
+            
+            Map<String, String> dataMap = new HashMap<>();
+           
+            dataMap.put("male10To14",  male10To14+"");
+            dataMap.put("male15To19",  male15To19+"");
+            dataMap.put("male20To24",  male20To24+"");
+            dataMap.put("female10To14",  female10To14+"");
+            dataMap.put("female15To19",  female15To19+"");
+            dataMap.put("female20To24",  female20To24+"");
+            //dataMap.put("totalAdultsTestedPositive",  adultsTestedPositive+"");
+            return new JSONObject(dataMap).toString();
+
+    }
+	
+	public String getAllFullDisc(HttpServletRequest request) {
             DateTime startDateTime = new DateTime(request.getParameter("startDate"));
             DateTime endDateTime = new DateTime(request.getParameter("endDate"));
             //Database.initConnection();
@@ -55,7 +134,7 @@ public class OtzFragmentController {
             int female15To19=0;
             int female20To24=0;
             
-            List<OTZPatient> allPatients = otzDao.getTotalAYPLHIVEnrolledInOTZ(startDate, endDate);
+            List<OTZPatient> allPatients = otzDao.getTotalAYPLHIVEnrolledInOTZFullDisclosure(startDate, endDate);
             for(int i=0; i<allPatients.size(); i++)
             {
                 if(allPatients.get(i).getGender().equalsIgnoreCase("M") || allPatients.get(i).getGender().equalsIgnoreCase("Male"))
@@ -120,7 +199,7 @@ public class OtzFragmentController {
             int female15To19=0;
             int female20To24=0;
 
-            List<OTZPatient> allPatients = otzDao.getTotalEnrolledWithScheduledPickup6MonthsBefore(startDate, endDate, sixMonths);
+            List<OTZPatient> allPatients = otzDao.getTotalEnrolledWithScheduledPickupMonthN(startDate, endDate, sixMonths, startDate);
             for(int i=0; i<allPatients.size(); i++)
             {
                 if(allPatients.get(i).getGender().equalsIgnoreCase("M") || allPatients.get(i).getGender().equalsIgnoreCase("Male"))
@@ -243,6 +322,7 @@ public class OtzFragmentController {
             String endDate = endDateTime.toString("yyyy'-'MM'-'dd");
             String sixMonths = sixMonthsAgo.toString("yyyy'-'MM'-'dd");
 
+            
             int male10To14=0;
             int male15To19=0;
             int male20To24=0;
@@ -250,7 +330,7 @@ public class OtzFragmentController {
             int female15To19=0;
             int female20To24=0;
 
-            List<OTZPatient> allPatients = otzDao.getTotalEnrolledWithGoodAdhScore6MonthsBefore(startDate, endDate, sixMonths);
+            List<OTZPatient> allPatients = otzDao.getTotalEnrolledWithGoodAdhScoreMonthN(startDate, endDate, sixMonths, startDate);
             for(int i=0; i<allPatients.size(); i++)
             {
                 if(allPatients.get(i).getGender().equalsIgnoreCase("M") || allPatients.get(i).getGender().equalsIgnoreCase("Male"))
@@ -2787,6 +2867,7 @@ public class OtzFragmentController {
 	        int female20To24=0;
 
 	        List<OTZPatient> allPatients = otzDao.getTotalEnrolledAndTransitionedAfter(startDate, endDate);
+               
 	        for(int i=0; i<allPatients.size(); i++)
 	        {
 	            //System.out.println(allPatients.get(i).getGender());
@@ -2933,13 +3014,24 @@ public class OtzFragmentController {
 		OTZDao otzDao = new OTZDao();
                 
 		List<OTZPatient> allPatients = otzDao.getTotalAYPLHIVEnrolledInOTZ(startDate, endDate);
-		
+		List<OTZPatient> allPatientsFullDisclosure = otzDao.getTotalAYPLHIVEnrolledInOTZFullDisclosure(startDate, endDate);
+                
+                //lets get those who exited 
+                List<OTZPatient> allPatientsExited = otzDao.getTotalEnrolledAndExitedAfter(startDate, endDate);
+                
+                List<OTZPatient> allPatientsTransferred = otzDao.getTotalEnrolledAndTransferredOutAfter(startDate, endDate);
+                
                 JSONObject quarters = Misc.getQuartersBetweenDates(startDate, endDate);
+                
+                System.out.println("transferred "+allPatientsTransferred.size());
                 
                 
                 Map<String, Object> data = new HashMap<>();
                 data.put("quarters", quarters);
                 data.put("patients", allPatients);
+                data.put("allPatientsFullDisclosure", allPatientsFullDisclosure);
+                data.put("allPatientsTransferred", allPatientsTransferred);
+                data.put("allPatientsExited", allPatientsExited);
 		String json = new Gson().toJson(data);
 		
 		//return "hello";
@@ -2978,11 +3070,11 @@ public class OtzFragmentController {
 	public String getPatientsVLAccess(HttpServletRequest request) {
 		DateTime startDateTime = new DateTime(request.getParameter("startDate"));
 		DateTime endDateTime = new DateTime(request.getParameter("endDate"));
-		DateTime sixMonthsAgo = endDateTime.minusMonths(6);
+		//DateTime sixMonthsAgo = endDateTime.minusMonths(6);
                 
                 String startDate = startDateTime.toString("yyyy'-'MM'-'dd");
 		String endDate = endDateTime.toString("yyyy'-'MM'-'dd");
-		String sixMonths = sixMonthsAgo.toString("yyyy'-'MM'-'dd");
+		//String sixMonths = sixMonthsAgo.toString("yyyy'-'MM'-'dd");
                 
                 Map<String, Object> data = new HashMap<>();
                 DateTime today = new DateTime();
@@ -2991,7 +3083,23 @@ public class OtzFragmentController {
                 int monthsBetweenDates = Months.monthsBetween(startDateTime, today).getMonths();
                 for(int j=0; j<monthsBetweenDates; j +=6)
                 {
-                    List<OTZPatient> allPatients = otzDao.getTotalPtsEnrolledAndEligibleForVL(startDate, endDate,  j);
+                    DateTime futureStartDateTime = startDateTime.plusMonths(j);
+                    DateTime futureEndDateTime = endDateTime.plusMonths(j);
+                    
+                    DateTime sixMonthsAgoDateTime = futureStartDateTime.minusMonths(6);
+                    
+                    String sixMonthsAgo = sixMonthsAgoDateTime.toString("yyyy'-'MM'-'dd");
+                    
+                    
+                    String futureStartDate = futureStartDateTime.toString("yyyy'-'MM'-'dd");
+                    String futureEndDate = futureEndDateTime.toString("yyyy'-'MM'-'dd");
+                    
+                    int month = j;
+                    if(j == 0)
+                    {
+                       // month = j-6;
+                    }
+                    List<OTZPatient> allPatients = otzDao.getTotalPtsEnrolledAndEligibleForVL2(startDate, endDate,  month);
                      
                     
                     List<OTZPatient> patientsEligible = new ArrayList<>();
@@ -2999,10 +3107,15 @@ public class OtzFragmentController {
                     List<OTZPatient> patientsWithResult = new ArrayList<>();
                     List<OTZPatient> patientsWithResultPast6Months = new ArrayList<>();
                     List<OTZPatient> patientsSuppressedPast6Months = new ArrayList<>();
+                    List<OTZPatient> patientsUndetectablePast6Months = new ArrayList<>();
+                    List<OTZPatient> patientsLLVPast6Months = new ArrayList<>();
+                    
 
                     
                     List<OTZPatient> patientsWithResultPast12Months = new ArrayList<>();
                     List<OTZPatient> patientsSuppressedPast12Months = new ArrayList<>();
+                    List<OTZPatient> patientsUndetectablePast12Months = new ArrayList<>();
+                    List<OTZPatient> patientsLLVPast12Months = new ArrayList<>();
                     
                     List<OTZPatient> patientsWithResultPast12MonthsAbove1000 = new ArrayList<>();
                      
@@ -3034,7 +3147,7 @@ public class OtzFragmentController {
                         {
                              patientsWithSample.add(allPatients.get(i));
                              //for there to be result, sample has to be taken
-                            if(allPatients.get(i).getViralLoad() != 0)
+                            if(allPatients.get(i).getViralLoad() != -1)
                             {
                                 patientsWithResult.add(allPatients.get(i));
                                
@@ -3064,12 +3177,19 @@ public class OtzFragmentController {
                         if(monthsBetween >= 0 && monthsBetween <=6)
                         {
                             
-                            if(allPatients.get(i).getViralLoad() != 0)
+                            if(allPatients.get(i).getViralLoad() != -1)
                             {
                                 patientsWithResultPast6Months.add(allPatients.get(i));//there is result within the past 6 months
                                 if(allPatients.get(i).getViralLoad() < 1000)//the result is suppressed
                                 {
                                     patientsSuppressedPast6Months.add(allPatients.get(i));
+                                    if(allPatients.get(i).getViralLoad() <=50)
+                                    {
+                                        patientsUndetectablePast6Months.add(allPatients.get(i));
+                                    }
+                                    else{
+                                        patientsLLVPast6Months.add(allPatients.get(i));
+                                    }
                                 }
                             }
                             
@@ -3078,12 +3198,20 @@ public class OtzFragmentController {
                         if(monthsBetween >= 0 && monthsBetween <=12)
                         {
                             
-                            if(allPatients.get(i).getViralLoad() != 0)
+                            if(allPatients.get(i).getViralLoad() != -1)
                             {
                                 patientsWithResultPast12Months.add(allPatients.get(i));//there is result within the past 6 months
                                 if(allPatients.get(i).getViralLoad() < 1000)//the result is suppressed
                                 {
                                     patientsSuppressedPast12Months.add(allPatients.get(i));
+                                     if(allPatients.get(i).getViralLoad() <=50)
+                                    {
+                                        patientsUndetectablePast12Months.add(allPatients.get(i));
+                                    }
+                                    else{
+                                        patientsLLVPast12Months.add(allPatients.get(i));
+                                    }
+                                    
                                 }else{
                                     patientsWithResultPast12MonthsAbove1000.add(allPatients.get(i));//this is unsuppressed
                                 }
@@ -3109,13 +3237,19 @@ public class OtzFragmentController {
                         }*/
 
                     }
+                    
+                    
                     data.put("patientsEligible"+j, patientsEligible);
                     data.put("patientsWithSample"+j, patientsWithSample); 
                     data.put("patientsWithResult"+j, patientsWithResult);
                     data.put("patientsWithResultPast6Months"+j, patientsWithResultPast6Months);
                     data.put("patientsSuppressedPast6Months"+j, patientsSuppressedPast6Months);
+                    data.put("patientsUndetectablePast6Months"+j, patientsUndetectablePast6Months);
+                    data.put("patientsLLVPast6Months"+j, patientsLLVPast6Months);
                     data.put("patientsWithResultPast12Months"+j, patientsWithResultPast12Months);
                     data.put("patientsSuppressedPast12Months"+j, patientsSuppressedPast12Months);
+                    data.put("patientsUndetectablePast12Months"+j, patientsUndetectablePast12Months);
+                    data.put("patientsLLVPast12Months"+j, patientsLLVPast12Months);
                     data.put("patientsWithResultPast12MonthsAbove1000"+j, patientsWithResultPast12MonthsAbove1000);
                    
                     
@@ -3129,9 +3263,7 @@ public class OtzFragmentController {
                     for(int i=0; i<allPatients2.size(); i++)
                     {
                         
-                        System.out.println("got here at all");
-                        System.out.println(allPatients2.get(i).getSampleCollectionDate());
-                        System.out.println(allPatients2.get(i).getViralLoad());
+                      
                         
                         
                         if(allPatients2.get(i).getViralLoad() != 0 && allPatients2.get(i).getViralLoad() >=1000)
@@ -3161,17 +3293,22 @@ public class OtzFragmentController {
                     data.put("patientsWithRepeatVl12Months"+j, patientsWithRepeatVl12Months);
                     
                     
+                    
+                    
                      //we could get adherence data here too
                     
-                    List<OTZPatient> allPatientsScheduled = otzDao.getTotalEnrolledWithScheduledPickupMonthN(startDate, endDate,  j);
+                    List<OTZPatient> allPatientsScheduled = otzDao.getTotalEnrolledWithScheduledPickupMonthN(startDate, endDate,  sixMonthsAgo, futureEndDate);
                     
-                    List<OTZPatient> allPatientsKept = otzDao.getTotalEnrolledWhoKeptScheduledPickupMonthN(startDate, endDate,  j);
+                    List<OTZPatient> allPatientsKept = otzDao.getTotalEnrolledWhoKeptScheduledPickupMonthN(startDate, endDate,  sixMonthsAgo, futureEndDate);
                     
-                    List<OTZPatient> allPatientsGoodScore = otzDao.getTotalEnrolledWithGoodAdhScoreMonthN(startDate, endDate,  j);
+                    List<OTZPatient> allPatientsGoodScore = otzDao.getTotalEnrolledWithGoodAdhScoreMonthN(startDate, endDate,  sixMonthsAgo, futureEndDate);
                     
                     data.put("allPatientsScheduled"+j, allPatientsScheduled);
                     data.put("allPatientsKept"+j, allPatientsKept);
                     data.put("allPatientsGoodScore"+j, allPatientsGoodScore);
+                    
+                    
+                    
                    
                 }
                 
@@ -3180,12 +3317,15 @@ public class OtzFragmentController {
                 
               
                 
+                //lets get those who completed 7 modules
                 
+                 List<OTZPatient> allPatientsWhoCompleted = otzDao.getTotalAYPLHIVEnrolledInOTZWhoComplete7(startDate, endDate);
                 
                 //lets loop through and perform operations to get eligibility at month 6, 12 and 18
 		
                 JSONObject quarters = Misc.getQuartersBetweenDates(startDate, endDate);
                 
+                data.put("complete7Modules", allPatientsWhoCompleted);
                
                 data.put("quarters", quarters);
                 
@@ -3229,7 +3369,7 @@ public class OtzFragmentController {
                     /*long monthsBetween = ChronoUnit.MONTHS.between(
                             LocalDate.parse(allPatients.get(i).getEnrollmentDate()).withDayOfMonth(1),
                             LocalDate.parse(allPatients.get(i).getSampleCollectionDate()).withDayOfMonth(1));*/
-                    System.out.println(monthsBetween); //3
+                 
                     
                     if(allPatients.get(i).getSampleCollectionDate() == null)
                     {
@@ -3257,7 +3397,7 @@ public class OtzFragmentController {
                     DateTime sampleCollectionDate = (allPatients12.get(i).getSampleCollectionDate() != null) ? new DateTime(allPatients12.get(i).getSampleCollectionDate().substring(0, 10)) : new DateTime();
                     
                     int monthsBetween = Months.monthsBetween(enrollmentDate, sampleCollectionDate).getMonths();
-                    System.out.println(monthsBetween); //3
+                  
                     
                     if(allPatients12.get(i).getSampleCollectionDate() == null)
                     {
@@ -3284,7 +3424,7 @@ public class OtzFragmentController {
                     DateTime sampleCollectionDate = (allPatients18.get(i).getSampleCollectionDate() != null) ? new DateTime(allPatients18.get(i).getSampleCollectionDate().substring(0, 10)) : new DateTime();
                     
                     int monthsBetween = Months.monthsBetween(enrollmentDate, sampleCollectionDate).getMonths();
-                    System.out.println(monthsBetween); //3
+                   
                     
                     if(allPatients18.get(i).getSampleCollectionDate() == null)
                     {

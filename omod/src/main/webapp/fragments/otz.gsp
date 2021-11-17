@@ -159,6 +159,12 @@ int year = Calendar.getInstance().get(Calendar.YEAR);
 
       </div>
       
+      
+      <ul class='custom-menu'>
+  <li data-action="first">First thing</li>
+  <li data-action="second">Second thing</li>
+  <li data-action="third">Third thing</li>
+</ul>
   <div class="modal fade" id="detailsModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document" >
     <div class="modal-content">
@@ -170,9 +176,9 @@ int year = Calendar.getInstance().get(Calendar.YEAR);
       </div>
       <div class="modal-body">
           <div class="row">
-              <div class="col-sm-12 " id="tableContainer">
-                <div class="table-responsive  box-body">
-                    <table class="dataTable ">
+              <div class="col-sm-12 table-responsive " id="tableContainer">
+                <div class=" ">
+                    <table class="dataTable table ">
                         <thead>
                             <tr>
                                 <th>S/N</th><th>Patient Name</th> <th>Age</th> <th>Weight</th> <th>Weight band</th>
@@ -195,13 +201,17 @@ int year = Calendar.getInstance().get(Calendar.YEAR);
     </div>
   </div>
 </div>
+
         
     <script src="/<%= ui.contextPath();%>/ms/uiframework/resource/dataquality/amcharts/amcharts/amcharts.js"></script>
-<script src="/<%= ui.contextPath();%>/ms/uiframework/resource/dataquality/amcharts/amcharts/serial.js"></script>
-<script src="/<%= ui.contextPath();%>/ms/uiframework/resource/dataquality/amcharts/amcharts/pie.js" type="text/javascript"></script>
-<script src="/<%= ui.contextPath();%>/ms/uiframework/resource/dataquality/amcharts/amcharts/amstock.js" type="text/javascript"></script>
+    <script src="/<%= ui.contextPath();%>/ms/uiframework/resource/dataquality/amcharts/amcharts/serial.js"></script>
+    <script src="/<%= ui.contextPath();%>/ms/uiframework/resource/dataquality/amcharts/amcharts/pie.js" type="text/javascript"></script>
+    <script src="/<%= ui.contextPath();%>/ms/uiframework/resource/dataquality/amcharts/amcharts/amstock.js" type="text/javascript"></script>
+
     <script type="text/javascript">
+    
     jq = jQuery;
+    
     var lastDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
    
     
@@ -221,9 +231,27 @@ int year = Calendar.getInstance().get(Calendar.YEAR);
       var totalDead = 0;
       var startDate = "";
       var endDate = "";
+      var indicatorDescription = {};
       jq(document).ready(function(e){
       
+      jq.get("/<%= ui.contextPath();%>/ms/uiframework/resource/dataquality/otz_info.json", function(data){
+            indicatorDescription = data;
+        })
       
+        jq(".otzInfo").click(function(e){
+        
+            var key = jq(this).attr("data-key");
+            var data = indicatorDescription[key];
+
+            var title = data["title"];
+            var description = data["description"];
+            var source = data["source"];
+            var calculation = data["calculation"];
+            jq("#otzIndicatorTitle").html(title)
+            jq("#otzIndicatorDescription").html(description)
+            jq("#otzIndicatorSource").html(source)
+            jq("#otzIndicatorCalculation").html(calculation)
+        })
         jq(".cohortSelector").change(function(){
             var selVal = jq(this).val();
             jq(".cohortArea").addClass("hidden");
@@ -410,7 +438,7 @@ int year = Calendar.getInstance().get(Calendar.YEAR);
                 jq("#totalEnrolledF15To19").html(female1519);
                 jq("#totalEnrolledF20To24").html(female2024)
                 
-                
+               
                 var total = new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(female1014) + new Number(female1519) + new Number(female2024);
                 jq("#totalEnrolledTotal").html(total)
                 
@@ -419,7 +447,35 @@ int year = Calendar.getInstance().get(Calendar.YEAR);
                 setCardValues(data);;
                 
                 
-                return  myAjax({startDate:startDate, endDate:endDate}, '${ ui.actionLink("getTotalEnrolledWhoKeptScheduledPickup6MonthsBefore") }');
+                return  myAjax({startDate:startDate, endDate:endDate}, '${ ui.actionLink("getAllFullDisc") }');
+            })
+            .then(function(response){
+                
+                var data = JSON.parse(response);
+                var male1014 = data["male10To14"];
+                var male1519 = data["male15To19"];
+                var male2024 = data["male20To24"];
+                var female1014 = data["female10To14"];
+                var female1519 = data["female15To19"];
+                var female2024 = data["female20To24"];
+                
+                jq("#totalFullDiscM10To14").html(male1014)
+                jq("#totalFullDiscM15To19").html(male1519)
+                jq("#totalFullDiscM20To24").html(male2024)
+                 jq("#totalFullDiscF10To14").html(female1014)
+                jq("#totalFullDiscF15To19").html(female1519);
+                jq("#totalFullDiscF20To24").html(female2024)
+                
+                
+                var total = new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(female1014) + new Number(female1519) + new Number(female2024);
+                jq("#totalFullDiscTotal").html(total)
+                console.log("total disclosed", total);
+                renderFullDisclosure(totalEnrolled, total);
+                //lets set some cards
+                setCardValues(data);;
+                
+                
+                return  myAjax({startDate:startDate, endDate:endDate}, '${ ui.actionLink("getTotalEnrolledWithScheduledPickup6MonthsBefore") }');
             })
             .then(function(response){
                 
@@ -1393,6 +1449,8 @@ int year = Calendar.getInstance().get(Calendar.YEAR);
                 totalDead = new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(female1014) + new Number(female1519) + new Number(female2024) ;
                 
                 renderLossesChart(totalDead, totalTransferred, totalLTFU);
+                
+                renderEnrolledVsTransferred(totalEnrolled, totalTransferred);
                 return  myAjax({startDate:startDate, endDate:endDate}, '${ ui.actionLink("getTotalEnrolledAndOptedOutAfter") }');
             })
             
@@ -1466,7 +1524,10 @@ int year = Calendar.getInstance().get(Calendar.YEAR);
                 jq("#exitedTotal").html(total)
                 
                 totalExited = new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(female1014) + new Number(female1519) + new Number(female2024) ;
-                renderExitChart(totalExited, totalTransitioned, totalOptedOut)
+                renderExitChart(totalExited, totalTransitioned, totalOptedOut);
+                
+                renderEnrolledVsExits(totalEnrolled, totalExited);
+                
                 console.log("completed", datatableObj);
                 //datatableObj.destroy();
                 //datatableObj.draw();

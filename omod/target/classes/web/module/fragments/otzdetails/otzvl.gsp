@@ -61,11 +61,14 @@ var jq = jQuery;
     var patientsSuppressedMonth18 = new Array();*/
     
     
+    
     var patientsEligibleObj = {};
     var patientsWithSampleObj = {};
     var patientsWithResultObj= {};
     var patientsWithResultPast6MonthsObj = {};
     var patientsSuppressedPast6MonthsObj = {};
+    var patientsUndetectablePast6MonthsObj = {};
+    var patientsLLVPast6MonthsObj = {};
     
     var patientsWithResultPast12MonthsObj = {};
     var patientsWithResultPast12MonthsAbove1000Obj = {};
@@ -76,11 +79,13 @@ var jq = jQuery;
     var suppressedPatientsPostEACObj = {}
     var suppressedPatientsPostEACObj = {}
     var patientsWithResultPast12MonthObj = {};
+    var patientsUndetectablePast12MonthsObj = {};
+    var patientsLLVPast12MonthsObj = {};
     var patientsWithRepeatVl12MonthsObj = {};
     var allPatientsScheduledObj = {};
     var allPatientsKeptObj = {};
     var allPatientsGoodScoreObj = {};
-    
+    var completed7Modules = new Array();
 
 function getVlData()
 {
@@ -94,6 +99,15 @@ function getVlData()
     var vlAccessMax = 0;
     var vlAccessMin = 0;
     
+    var vlCoverageMax = 0;
+    var vlCoverageMin = 0;
+    
+    var appointmentMax = 0;
+    var appointmentMin = 0;
+    
+    var adhMin = 0;
+    var adhMax = 0;
+    
     var vlSuppressionData6Months = new Array();
     var vlSuppressionData12Months = new Array();
      var vlSuppressionPostEACData = new Array();
@@ -104,8 +118,10 @@ function getVlData()
     myAjax({startDate:startDate, endDate:endDate}, "otz/getPatientsVLAccess.action").then(function(response){
         var data = JSON.parse(response);
          
-        console.log(data);
+        console.log("data",data);
         
+        completed7Modules = data["complete7Modules"];
+        console.log(completed7Modules);
         
          for(var i=0; i<monthDifference; i += 6){
             var title = (i == 0 ) ? "Baseline": "Month-"+i;
@@ -114,12 +130,16 @@ function getVlData()
             var patientsWithResult = data["patientsWithResult"+i];
             var patientsWithResultPast6Months = data["patientsWithResultPast6Months"+i];
             var patientsSuppressedPast6Months = data["patientsSuppressedPast6Months"+i];
+            var patientsUndetectablePast6Months = data["patientsUndetectablePast6Months"+i];
+            var patientsLLVPast6Months = data["patientsLLVPast6Months"+i];
             
             var patientsWithResultPast12Months = data["patientsWithResultPast12Months"+i];
             var patientsWithResultPast12MonthsAbove1000 = data["patientsWithResultPast12MonthsAbove1000"+i];
 
             var patientsWhoCompletedEACPast12Months = data["patientsWhoCompletedEACPast12Months"+i];
             var patientsSuppressedPast12Months = data["patientsSuppressedPast12Months"+i];
+            var patientsUndetectablePast12Months = data["patientsUndetectablePast12Months"+i];
+            var patientsLLVPast12Months = data["patientsLLVPast12Months"+i];
             var patientsWithRepeatVl12Months = data["patientsWithRepeatVl12Months"+i];
             var suppressedPatientsPostEAC = data["suppressedPatientsPostEAC"+i];
             
@@ -132,8 +152,12 @@ function getVlData()
             patientsWithResultObj[title] = patientsWithResult;
             patientsWithResultPast6MonthsObj[title] = patientsWithResultPast6Months;
             patientsSuppressedPast6MonthsObj[title] = patientsSuppressedPast6Months;
-            patientsWithResultPast12MonthObj[title] = patientsWithResultPast12Months
+            patientsUndetectablePast6MonthsObj[title] = patientsUndetectablePast6Months;
+            patientsLLVPast6MonthsObj[title] = patientsLLVPast6Months;
+            patientsWithResultPast12MonthObj[title] = patientsWithResultPast12Months;
             patientsSuppressedPast12MonthsObj[title] = patientsSuppressedPast12Months;
+            patientsUndetectablePast12MonthsObj[title] = patientsUndetectablePast12Months;
+            patientsLLVPast12MonthsObj[title] = patientsLLVPast12Months;
             patientsWithResultPast12MonthsAbove1000Obj[title] = patientsWithResultPast12MonthsAbove1000;
             patientsWhoCompletedEACPast12MonthsObj[title] = patientsWhoCompletedEACPast12Months;
             suppressedPatientsPostEACObj[title] = suppressedPatientsPostEAC;
@@ -147,21 +171,28 @@ function getVlData()
                     title:title,
                     withAppointment:allPatientsScheduled.length,
                     keptAppointment:allPatientsKept.length,
-                   // percentage: ((allPatientsKept.length / allPatientsScheduled.length ) 100).toFixed(1)
+                    percentage: ((allPatientsKept.length / allPatientsScheduled.length ) * 100).toFixed(1)
                     
                  });
+             
+            appointmentMax = Math.max(Math.max(allPatientsScheduled.length, allPatientsKept.length), appointmentMax);
+            appointmentMin = Math.min(Math.min(allPatientsScheduled.length, allPatientsKept.length), appointmentMin);
             
            adherenceData.push(
                 {
                     title:title,
                     noPickedupDrug:allPatientsKept.length,
-                    noWithGoodScore:allPatientsGoodScore.length,
-                    //percentage:((allPatientsKept.length / allPatientsGoodScore.length ) 100).toFixed(1)
+                    noWithGoodScore:Math.min(allPatientsGoodScore.length, allPatientsKept.length),//we want to see only a subset of patients who picked drugs. Not all those who have a good score
+                    percentage:((Math.min(allPatientsGoodScore.length, allPatientsKept.length) / allPatientsKept.length ) * 100).toFixed(1)
                     
                  }
 
              );
-                vlAccessData.push(
+             
+                adhMax = Math.max(Math.max(allPatientsKept.length, allPatientsGoodScore.length), adhMax);
+                adhMin = Math.min(Math.min(allPatientsKept.length, allPatientsGoodScore.length), adhMin)
+               
+                 vlAccessData.push(
                  {
                     title:title,
                     noEligible:patientsEligible.length,
@@ -183,13 +214,17 @@ function getVlData()
                     
                  });
                  
+                 vlCoverageMax = Math.max(Math.max(patientsEligible.length, patientsWithResult.length), vlCoverageMax);
+                 vlCoverageMin = Math.min(Math.min(patientsEligible.length, patientsWithResult.length), vlCoverageMin)
+                 
                  
                  
                 vlSuppressionData6Months.push(
                 {
                     title:title,
                     noEligible:patientsWithResultPast6Months.length,
-                    noWithResult:patientsSuppressedPast6Months.length,
+                    noWithResult:patientsUndetectablePast6Months.length,
+                    noLLV: patientsLLVPast6Months.length,
                     percentage: ((patientsSuppressedPast6Months.length / patientsWithResultPast6Months.length)  * 100).toFixed(1)
 
                  } );
@@ -198,7 +233,8 @@ function getVlData()
                 {
                     title:title,
                     noEligible:patientsWithResultPast12Months.length,
-                    noWithResult:patientsSuppressedPast12Months.length,
+                    noWithResult:patientsUndetectablePast12Months.length,
+                    noLLV: patientsLLVPast12Months.length,
                     percentage: ((patientsSuppressedPast12Months.length / patientsWithResultPast12Months.length)  * 100).toFixed(1)
 
                  } );
@@ -233,13 +269,13 @@ function getVlData()
             var graphArray = [
                {field: "noEligible", type:"column", valueAxis:1, color:"#589BD4", description:"title", title:"# of AYPLHIV enrolled in OTZ who were eligible for 6 monthly VL test", isOptimum:"eligible6mts", chartType:"vlotz"},
                {field: "noTestDone", type:"column", valueAxis:1,  color:"#12abb0", description:"title", title:"# of AYPLHIV enrolled in OTZ whose samples were taken for 6-monthly vl test", isOptimum:"sampleTaken6t", chartType:"vlotz"},
-               {field: "percentage", type:"line", valueAxis:2,  color:"#bf6c19", description:"title", title:"% of Eligible AYPLHIV  whose samples were taken for 6-monthly vl test", isOptimum:"percentage", chartType:"vlotz"},
+               {field: "percentage", type:"line", valueAxis:2,  color:"#bf6c19", description:"title", title:"6-monthly access", isOptimum:"percentage", chartType:"vlotz"},
               ]
               
               vlAccessMin = dataQuality_calculateMin(vlAccessMax, vlAccessMin);
               vlAccessMax = dataQuality_calculateMax(vlAccessMax, vlAccessMin)
                //create chart
-          dataQuality_buildBarCharts("VL Access", vlAccessData, graphArray, "title", "chartVLAccess", "", "none", legendData, true, false, vlAccessMin, vlAccessMax);
+          dataQuality_buildBarCharts("Total Patients", vlAccessData, graphArray, "title", "chartVLAccess", "", "none", legendData, true, false, vlAccessMin, vlAccessMax);
           
           
           
@@ -253,42 +289,49 @@ function getVlData()
             var graphArray2 = [
                {field: "noEligible", type:"column",  color:"#589BD4", valueAxis:1, description:"title", title:"# of AYPLHIV enrolled in OTZ who were eligible for 6 monthly VL test", isOptimum:"eligible6mts", chartType:"vlotz"},
                {field: "noWithResult", type:"column",  color:"#A1a1a1", valueAxis:1, description:"title", title:"# of AYPLHIV enrolled in OTZ with VL result in the past 6 months", isOptimum:"withResult", chartType:"vlotz"},
-               {field: "percentage", type:"line", valueAxis:2,  color:"#bf6c19", description:"title", title:"% of Eligible AYPLHIV with result", isOptimum:"totalInOtz", chartType:"otz"},
+               {field: "percentage", type:"line", valueAxis:2,  color:"#bf6c19", description:"title", title:"Viral Load Coverage", isOptimum:"totalInOtz", chartType:"otz"},
               ]
                //create chart
-          dataQuality_buildBarCharts("VL Coverage", vlCoverageData, graphArray2, "title", "chartVlCoverage", "", "none", legendData, true, false);
+              vlCoverageMin = dataQuality_calculateMin(vlCoverageMax, vlCoverageMin);
+              vlCoverageMax = dataQuality_calculateMax(vlCoverageMax, vlCoverageMin);
+          dataQuality_buildBarCharts("Total Patients", vlCoverageData, graphArray2, "title", "chartVlCoverage", "", "none", legendData, true, false, vlCoverageMin, vlCoverageMax);
           
           
           
           
      
             legendData = [{color:"#589BD4", title:"# of AYPLHIV enrolled in OTZ with result in the past 6 months"},
-                    {color:"#A1a1a1", title:"# of AYPLHIV enrolled in OTZ with VL suppressed VL in the past 6 months"}, 
-                    {color:"#bf6c19", title:"Viral Load Coverage"}     
+                    {color:"#08A58E", title:"# of AYPLHIV enrolled in OTZ with Undetectable VL in the past 6 months"},
+                    {color:"#148240", title:"# of AYPLHIV enrolled in OTZ with LLV in the past 6 months"},
+                    {color:"#bf6c19", title:"% virally suppressed(6 month VL)"}     
              ]
             graphArray2 = [
                {field: "noEligible", type:"column", valueAxis:1, color:"#589BD4", description:"title", title:"# of AYPLHIV enrolled in OTZ with result in the past 6 months", isOptimum:"withResult", chartType:"vlotz"},
-               {field: "noWithResult", type:"column", valueAxis:1, color:"#A1a1a1", description:"title", title:"# of AYPLHIV enrolled in OTZ with VL suppressed VL in the past 6 months", isOptimum:"suppressed6Months", chartType:"vlotz"},
-               {field: "percentage", type:"line", valueAxis:2,  color:"#bf6c19", description:"title", title:"% of AYPLHIV with suppressed result", isOptimum:"totalInOtz", chartType:"otz"},
+               {field: "noWithResult", type:"column", valueAxis:1, newStack:true,  color:"#08A58E", description:"title", title:"# of AYPLHIV enrolled in OTZ with VL suppressed VL in the past 6 months", isOptimum:"undetectable6Months", chartType:"vlotz"},
+               {field: "noLLV", type:"column", valueAxis:1,  color:"#148240", description:"title", title:"# of AYPLHIV enrolled in OTZ with low level viraemia in the past 6 months", isOptimum:"llv6Months", chartType:"vlotz"},
+               {field: "percentage", type:"line", valueAxis:2,  color:"#bf6c19", description:"title", title:"% virally suppressed(6 month VL)", isOptimum:"totalInOtz", chartType:"otz"},
+               
               ]
                //create chart
-          dataQuality_buildBarCharts("VL Suppression", vlSuppressionData6Months, graphArray2, "title", "chartVLSuppressionLast6Months", "", "none", legendData, true, false);
+          dataQuality_buildBarCharts("Total Patients", vlSuppressionData6Months, graphArray2, "title", "chartVLSuppressionLast6Months", "", "regular", legendData, true, false);
           
           
           legendData = [{color:"#589BD4", title:"# of AYPLHIV enrolled in OTZ with result in the past 12 months"},
-                    {color:"#A1a1a1", title:"# of AYPLHIV enrolled in OTZ with VL suppressed VL in the past 12 months"}, 
-                    {color:"#bf6c19", title:"Viral Load Coverage"}     
+                    {color:"#08A58E", title:"# of AYPLHIV enrolled in OTZ with Undetectable VL  in the past 12 months"}, 
+                     {color:"#148240", title:"# of AYPLHIV enrolled in OTZ with LLV in the past 12 months"},
+                    {color:"#bf6c19", title:"% virally suppressed(12 month VL)"}     
              ]
             graphArray2 = [
                {field: "noEligible", type:"column", valueAxis:1, color:"#589BD4", description:"title", title:"# of AYPLHIV enrolled in OTZ with result in the past 6 months", isOptimum:"withResult12Months", chartType:"vlotz"},
-               {field: "noWithResult", type:"column", valueAxis:1, color:"#A1a1a1", description:"title", title:"# of AYPLHIV enrolled in OTZ with VL suppressed VL in the past 6 months", isOptimum:"suppressed12Months", chartType:"vlotz"},
-               {field: "percentage", type:"line", valueAxis:2,  color:"#bf6c19", description:"title", title:"% of AYPLHIV with suppressed result", isOptimum:"totalInOtz", chartType:"otz"},
+               {field: "noWithResult", type:"column", valueAxis:1, color:"#08A58E", newStack:true, description:"title", title:"# of AYPLHIV enrolled in OTZ with VL suppressed VL in the past 6 months", isOptimum:"undetectable12Months", chartType:"vlotz"},
+               {field: "noLLV", type:"column", valueAxis:1,  color:"#148240", description:"title", title:"# of AYPLHIV enrolled in OTZ with low level viraemia in the past 12 months", isOptimum:"llv12Months", chartType:"vlotz"},
+               {field: "percentage", type:"line", valueAxis:2,  color:"#bf6c19", description:"title", title:"% virally suppressed(12 month VL)", isOptimum:"totalInOtz", chartType:"otz"},
               ]
                //create chart
                
           
          
-          dataQuality_buildBarCharts("VL Suppression", vlSuppressionData12Months, graphArray2, "title", "chartVLSuppressionLast12Months", "", "none", legendData, true, false);
+          dataQuality_buildBarCharts("Total Patients", vlSuppressionData12Months, graphArray2, "title", "chartVLSuppressionLast12Months", "", "regular", legendData, true, false);
           
           
           
@@ -302,7 +345,7 @@ function getVlData()
                {field: "noWithResultAbove1000WithRepeat", color:"#406dd6", description:"title", title:"# of AYPLHIV in OTZ with VL within the last 12 months result greater than or equal to 1000 c/m with repeat VL", isOptimum:"totalInOtz", chartType:"otz"}
               ]
                //create chart
-          buildBarCharts("VL Coverage", vlCascaceData, graphArray2, "title", "chartUnsuppresses", "", "none", legendData, true, false);
+          buildBarCharts("Total Patients", vlCascaceData, graphArray2, "title", "chartUnsuppresses", "", "none", legendData, true, false);
           
           
           
@@ -315,11 +358,12 @@ function getVlData()
                {field: "noSuppressedPostEAC", color:"#A1a1a1", description:"title", title:"# of AYPLHIV with suppressed post EAC VL result ", isOptimum:"totalInOtz", chartType:"otz"},
               ]
                //create chart
-          buildBarCharts("VL Coverage", vlSuppressionPostEACData, graphArray3, "title", "chartVLSuppressionPostEAC", "", "none", legendData, true, false);
+          buildBarCharts("Total Patients", vlSuppressionPostEACData, graphArray3, "title", "chartVLSuppressionPostEAC", "", "none", legendData, true, false);
           
           
+        
           
-          buildAdhCharts(drugPickupData, adherenceData);
+          buildAdhCharts(drugPickupData, adherenceData, appointmentMin, appointmentMax, adhMin, adhMax+2 );
           
           
          return myAjax({startDate:startDate, endDate:endDate}, "otz/getPatientsVLCoverage.action") 
