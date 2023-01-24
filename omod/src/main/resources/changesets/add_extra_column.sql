@@ -1,0 +1,1 @@
+ALTER TABLE dqr_clients ADD test_column INT NOT NULL AFTER offered_index

@@ -24,6 +24,24 @@ public class Patient {
 	
 	private String gender;
 	
+	private float previousViralLoad;
+	
+	public float getPreviousViralLoad() {
+		return previousViralLoad;
+	}
+	
+	public void setPreviousViralLoad(float previousViralLoad) {
+		this.previousViralLoad = previousViralLoad;
+	}
+	
+	public String getPreviousSampleCollectionDate() {
+		return previousSampleCollectionDate;
+	}
+	
+	public void setPreviousSampleCollectionDate(String previousSampleCollectionDate) {
+		this.previousSampleCollectionDate = previousSampleCollectionDate;
+	}
+	
 	private float viralLoad;
 	
 	private String lastPickupDate;
@@ -32,7 +50,11 @@ public class Patient {
 	
 	private String sampleCollectionDate;
 	
+	private String previousSampleCollectionDate;
+	
 	private int age;
+	
+	private int cage;
 	
 	private String fullDisclosure = "";
 	
@@ -148,6 +170,14 @@ public class Patient {
 	
 	public void setFullDisclosureDate(String fullDisclosureDate) {
 		this.fullDisclosureDate = fullDisclosureDate;
+	}
+	
+	public int getCage() {
+		return cage;
+	}
+	
+	public void setCage(int cage) {
+		this.cage = cage;
 	}
 	
 }

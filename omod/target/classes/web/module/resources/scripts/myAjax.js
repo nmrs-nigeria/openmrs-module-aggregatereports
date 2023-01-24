@@ -398,6 +398,7 @@ function buildPieCharts(chartData, valueField, titleField, divId, is3d=false, is
     chart.valueField = valueField;
     chart.outlineColor = "#FFFFFF";
     chart.outlineAlpha = 18;
+    chart.labelText = "[[title]]: [[value]] ([[percents]]%)";
     //chart
     chart.outlineThickness = 2;
     if(isDonut){
@@ -405,6 +406,7 @@ function buildPieCharts(chartData, valueField, titleField, divId, is3d=false, is
     }
     chart.radius = 100;
     chart.balloonText = "[[title]]<br><span style='font-size:14px'><b>[[value]]</b> ([[percents]]%)</span>";
+    
     // this makes the chart 3D
     if(is3d == true){
         chart.depth3D = 15;
@@ -445,7 +447,7 @@ function graphClickHandler(event)
     var category = event.item.category;
    
     
-    
+    console.log(chartType, isOptimum, category);
     
     if(chartType == "vlotz"){
         dataquality_renderOTZData(isOptimum, category, "Line list");
@@ -468,6 +470,16 @@ function graphClickHandler(event)
     {
         dataquality_renderCompletedModulesOTZData(isOptimum, category, "Line list");
     }
+    else if(isOptimum == "iit")
+    {
+		jq(".modal-title").html('<u>Title</u>List of AYPLHIV enrolled in OTZ who are IIT ');
+        dataquality_renderAllPatientsIIT(isOptimum, category, "Line list");
+    }
+    else if(isOptimum == "allPatTO")
+    {
+		jq(".modal-title").html('<u>Title</u>List of AYPLHIV enrolled in OTZ who have been transitioned to adult care');
+        dataquality_renderAllPatientsTO(isOptimum, category, "Line list");
+    }
     else if(isOptimum == "disclosure")
     {
         dataquality_renderFullDisclosureOTZData(isOptimum, category, "Line list");
@@ -478,12 +490,15 @@ function graphClickHandler(event)
     }
     else if(chartType == "exitedotz")
     {
+		jq(".modal-title").html('<u>Title</u>List of AYPLHIV enrolled in OTZ who exited the program ');
         dataquality_renderExitedOTZData(isOptimum, category, "Line list");
     }
     else if(chartType == "transferred")
     {
+	jq(".modal-title").html('<u>Title</u>List of AYPLHIV enrolled in OTZ who have been transferred out ');
         dataquality_renderTransferredOTZData(isOptimum, category, "Line list");
     }
+    
     
  }
 
@@ -507,6 +522,15 @@ function pieClickHandler(event)
    {
        dataquality_renderExitedOTZData(isOptimum, category, "Line list");
    }
+   else if(chartType == "dead")
+   {
+       dataquality_renderDeadOTZData(isOptimum, category, "Line list");
+   }
+   else if(chartType == "optedout")
+   {
+	jq(".modal-title").html('<u>Title</u>List of AYPLHIV enrolled in OTZ who opted out ');
+       dataquality_renderOptedOutOTZData(isOptimum, category, "Line list");
+   }
    
 }
 
@@ -520,7 +544,8 @@ jq(document).ready(function(){
 
 function dataquality_renderOTZData(isOptimum, category,  title)
 {
-    jq("#tableContainer").html('<table class="dataTable2"><thead><tr><th nowrap>S/N</th><th nowrap>Pepfar ID</th><th nowrap>Gender</th><th nowrap>ART Start date</th><th nowrap>Date of Birth</th><th nowrap>Age</th><th nowrap>Date Enrolled in OTZ</th> <th nowrap>Sample Collection Date</th> <th nowrap>VL Result</th><th>Action</th> </tr></thead><tbody id="detailsArea"></tbody></table>');
+    //jq("#tableContainer").html('<table class="dataTable2"><thead><tr><th nowrap>S/N</th><th nowrap>Pepfar ID</th><th nowrap>Gender</th><th nowrap>ART Start date</th><th nowrap>Date of Birth</th><th nowrap>Current Age</th><th nowrap>Age at Enrollment in OTZ</th><th nowrap>Date Enrolled in OTZ</th> <th nowrap>Sample Collection Date</th> <th nowrap>VL Result</th><th>Action</th> </tr></thead><tbody id="detailsArea"></tbody></table>');
+    jq("#tableContainer").html('<table class="dataTable2"><thead><tr><th nowrap>S/N</th><th nowrap>Pepfar ID</th><th nowrap>Gender</th><th nowrap>ART Start date</th><th nowrap>Date of Birth</th><th nowrap>Current Age</th><th nowrap>Age at Enrollment in OTZ</th><th nowrap>Date Enrolled in OTZ</th><th>Action</th> </tr></thead><tbody id="detailsArea"></tbody></table>');
     
     jq("#detailsModal").modal("show");
     var html = "";
@@ -532,54 +557,104 @@ function dataquality_renderOTZData(isOptimum, category,  title)
     if(isOptimum == "eligible6mts")
     {
         fullData = patientsEligibleObj[category];
+        jq(".modal-title").html('<h1 style="background-color:powderblue;">Title: List of AYPLHIV enrolled in OTZ who were eligible for (' + category + ') VL test</h1><b><u>Description:</u></b> Number of AYPLHIV who were enrolled into OTZ in the cohort month and 1. Eligible for baseline VL but do not have baseline VL results 2. have a suppressed baseline VL result greater than 6 months');
     }
     else if(isOptimum == "sampleTaken6t")
     {
         fullData = patientsWithSampleObj[category];
+        jq(".modal-title").html('<h1 style="background-color:powderblue;">Title: List of AYPLHIV enrolled in OTZ who were eligible for (' + category + ') VL test whose sample was taken</h1><b><u>Description:</u></b> Number of AYPLHIV who were enrolled into OTZ in the cohort month and 1. Eligible for baseline VL but do not have baseline VL results 2. have baseline VL result (VL within the last 12 months) whose sample was taken');
     }else if(isOptimum == "withResult")
     {
+		
+        //fullData = patientsWithResultPast6MonthsObj[category];
         fullData = patientsWithResultObj[category];
-    }else if(isOptimum == "undetectable6Months")
+        jq(".modal-title").html('<h1 style="background-color:powderblue;">Title: List of AYPLHIV enrolled in OTZ who were eligible for (' + category + ') VL test whose sample was taken and have documented VL results</h1><b><u>Description:</u></b> Number of AYPLHIV who were enrolled into OTZ in the cohort month and 1. Eligible for baseline VL but do not have baseline VL results 2. have baseline VL result (VL within the last 12 months) whose sample was taken and have documented VL results');
+    }
+    else if(isOptimum == "withResultPast6Months")
+    {
+		fullData = patientsWithResultPast6MonthsObj[category];
+        jq(".modal-title").html('<h1 style="background-color:powderblue;">Title: List of AYPLHIV enrolled in OTZ who were eligible for (' + category + ') VL test whose sample was taken and have documented VL results</h1><b><u>Description:</u></b> Number of AYPLHIV who were enrolled into OTZ in the cohort month and 1. Eligible for baseline VL but do not have baseline VL results 2. have baseline VL result (VL within the last 12 months) whose sample was taken and have documented VL results')
+	}else if(isOptimum == "undetectable6Months")
     {
         fullData = patientsUndetectablePast6MonthsObj[category];
+        jq(".modal-title").html('<h1 style="background-color:powderblue;">Title: List of AYPLHIV enrolled in OTZ with VL suppression (' + category + ') </h1><b><u>Description:</u></b> Number of AYPLHIV who were enrolled into OTZ in the cohort month and have Viral Load suppression ');
     }
     else if(isOptimum == "undetectable12Months")
     {
         fullData = patientsUndetectablePast12MonthsObj[category];
+        jq(".modal-title").html('List of AYPLHIV enrolled in OTZ with VL suppressed VL in the past 12 months (' + category + ')');
     }
     else if(isOptimum == "llv6Months")
     {
         fullData = patientsLLVPast6MonthsObj[category];
+        jq(".modal-title").html('<h1 style="background-color:powderblue;">Title: List of AYPLHIV enrolled in OTZ with low level viraemia (' + category + ') </h1><b><u>Description:</u></b> Number of AYPLHIV enrolled in OTZ with low level viraemia ');
+    }else if(isOptimum == "cTxCurrProp")
+    {
+        fullData = txCurrPropObj[category];
+    }else if(isOptimum == "cEnrolledProp")
+    {
+		//console.log("catcat", TxOTZEnrolPropObj);
+        fullData = TxOTZEnrolPropObj[category];
+    }else if(isOptimum == "cNotEnrolledProp")
+    {
+        fullData = TxOTZNEnrolPropObj[category];
     }
     else if(isOptimum == "llv12Months")
     {
         fullData = patientsLLVPast12MonthsObj[category];
+        jq(".modal-title").html('List of AYPLHIV enrolled in OTZ with low level viraemia in the past 12 months (' + category + ')');
     }
     else if(isOptimum == "withResult12Months")
     {
         fullData = patientsWithResultPast12MonthObj[category];
+        jq(".modal-title").html('List of AYPLHIV enrolled in OTZ with result in the past 12 months (' + category + ')');
+    }
+    else if(isOptimum == "noWithResultAbove1000")
+    {
+        fullData = patientsWithResultPast12MonthsAbove1000Obj[category];
+        jq(".modal-title").html('List of AYPLHIV in OTZ with VL within the last 12months result greater than or equal to 1000 c/m (' + category + ')');
+    }
+    else if(isOptimum == "above1000CompletedEAC")
+    {
+		fullData = patientsWhoCompletedEACPast12MonthsObj[category];
+        jq(".modal-title").html('of AYPLHIV in OTZ with VL within the last 12 months result greater than or equal to 1000 c/m and completed EAC (' + category + ')');
+	}
+	else if(isOptimum == "withRepeatVl")
+	{
+		fullData = patientsWithRepeatVl12MonthsObj[category];
+		jq(".modal-title").html('of AYPLHIV in OTZ with VL within the last 12 months result greater than or equal to 1000 c/m with repeat VL (' + category + ')');
+	}
+    else if(isOptimum == "totalInOtz2")
+    {
+        fullData = patientsWhoCompletedEACPast12MonthsObj[category];
+        jq(".modal-title").html('List of AYPLHIV in OTZ with VL within the last 12 months result greater than or equal to 1000 c/m and completed EAC (' + category + ')');
     }
     else if(isOptimum == "suppressed12Months")
     {
         fullData = patientsSuppressedPast12MonthsObj[category];
     }else if(isOptimum == "tx_curr")
     {
+		jq(".modal-title").html('<u>Title</u>TX Curr <br/><b><u>Description:</u></b> Number of active patients');
         fullData = txCurr;
     }
     else if(isOptimum == "enrolled")
     {
+	   jq(".modal-title").html('<u>Title</u> Number of AYPLHIV enrolled into OTZ');
         fullData = enrolledPatients;
     }
     else if(isOptimum == "maleEnrolled")
     {
+	 jq(".modal-title").html('<u>Title</u> Number of Male AYPLHIV enrolled into OTZ');
          fullData = maleEnrolled;
     }
     else if(isOptimum == "femaleEnrolled")
     {
+	 jq(".modal-title").html('<u>Title</u> Number of Female AYPLHIV enrolled into OTZ');
         fullData = femaleEnrolled;
     }
     else if(isOptimum == "total10_14")
     {
+	  jq(".modal-title").html('<u>Title</u> Number of AYPLHIV enrolled into OTZ');
         fullData = patients10_14;
     }
      else if(isOptimum == "total15_19")
@@ -590,27 +665,153 @@ function dataquality_renderOTZData(isOptimum, category,  title)
     {
         fullData = patients20_24;
     }
+   
+    
+    console.log("with result", fullData);
     
     
     
+    
+    
+    
+    
+    if(isOptimum == "tx_curr")
+    {
+        
+                    var html = "";
+
+                for(var i=0; i<fullData.length; i++)
+                {  
+                    var patientData = fullData[i];
+                    //if(patientData["age"]>24){continue;}
+                    var patientId = patientData["patientId"];
+                    var enrAgee = patientData["age"];
+                    var selendDate = Date.parse(endDate);
+                    var enrAge = new Date(patientData["enrollmentDate"]);
+                    html += "<tr>"; 
+                    html += "<td >"+(i+1)+"</td>";
+                    html += "<td>"+patientData["pepfarId"]+"</td>";
+                     html += "<td>"+patientData["gender"]+endDate+"</td>";
+                    //html += "<td>"+patientData["firstName"]+" "+patientData["lastName"]+"</td>";
+                    //html += "<td>"+patientData["artStartDate"].substring(0, 10)+"</td>";
+                    html += "<td>"+( (patientData["artStartDate"] == null) ?"-": patientData["artStartDate"].substring(0, 10) )+"</td>";
+                    html += "<td>"+patientData["dob"].substring(0, 10)+"</td>";
+                    html += "<td "+( (patientData["cage"] < 10 || patientData["cage"] > 24) ?"bgcolor=\"yellow\"": "")+">"+patientData["cage"]+"</td>";
+                    //html += "<td "+( (patientData["age"] < 10 || patientData["age"] > 24) ?"bgcolor=\"yellow\"": "")+">"+patientData["age"]+"</td>";
+                    html += "<td "+((enrAge>selendDate) ? "bgcolor=\"orange\">Enrolled Later</td>" : ((patientData["age"] >= 10 && patientData["age"] <= 24) ? ">"+patientData["age"]+"</td>" : ((patientData["age"]==0) ? "bgcolor=\"yellow\">Not Enrolled</td>" : "bgcolor=\"yellow\">"+patientData["age"]+"</td>")));
+                    html += "<td>"+( (patientData["enrollmentDate"] == null) ?"-": patientData["enrollmentDate"].substring(0, 10) )+"</td>";
+                    //html += "<td>"+((patientData["sampleCollectionDate"] == null) ? "N/A" : patientData["sampleCollectionDate"].substring(0, 10))+"</td>";
+                    //html += "<td>"+((patientData["viralLoad"] == null) ? "N/A": patientData["viralLoad"])+"</td>";
+                    html += "<td><a class='button' target='_blank' href='/"+contextPath+"/coreapps/clinicianfacing/patient.page?patientId="+patientId+"'>Patient Dashboard<a></td>"
+
+                    html += "</tr>";
+
+                }
+                //reInitializeDatatable(title);
+                jq("#detailsArea").html(html);
+
+                //initialize datatable
+               reInitializeDatatable2(title);
+
+    }else if(isOptimum == "cTxCurrProp")
+    {
+        
+                    var html = "";
+
+                for(var i=0; i<fullData.length; i++)
+                {  
+                    var patientData = fullData[i];
+                    //if(patientData["age"]>24){continue;}
+                    var patientId = patientData["patientId"];
+                    var enrAgee = patientData["age"];
+                    var selendDate = Date.parse(endDate);
+                    var enrAge = new Date(patientData["enrollmentDate"]);
+                    html += "<tr>"; 
+                    html += "<td >"+(i+1)+"</td>";
+                    html += "<td>"+patientData["pepfarId"]+"</td>";
+                     html += "<td>"+patientData["gender"]+endDate+"</td>";
+                    //html += "<td>"+patientData["firstName"]+" "+patientData["lastName"]+"</td>";
+                    //html += "<td>"+patientData["artStartDate"].substring(0, 10)+"</td>";
+                    html += "<td>"+( (patientData["artStartDate"] == null) ?"-": patientData["artStartDate"].substring(0, 10) )+"</td>";
+                    html += "<td>"+patientData["dob"].substring(0, 10)+"</td>";
+                    html += "<td "+( (patientData["cage"] < 10 || patientData["cage"] > 24) ?"bgcolor=\"yellow\"": "")+">"+patientData["cage"]+"</td>";
+                    //html += "<td "+( (patientData["age"] < 10 || patientData["age"] > 24) ?"bgcolor=\"yellow\"": "")+">"+patientData["age"]+"</td>";
+                    html += "<td "+((enrAge>selendDate) ? "bgcolor=\"orange\">Enrolled Later</td>" : ((patientData["age"] >= 10 && patientData["age"] <= 24) ? ">"+patientData["age"]+"</td>" : ((patientData["age"]==0) ? "bgcolor=\"yellow\">Not Enrolled</td>" : "bgcolor=\"yellow\">"+patientData["age"]+"</td>")));
+                    html += "<td>"+( (patientData["enrollmentDate"] == null) ?"-": patientData["enrollmentDate"].substring(0, 10) )+"</td>";
+                    //html += "<td>"+((patientData["sampleCollectionDate"] == null) ? "N/A" : patientData["sampleCollectionDate"].substring(0, 10))+"</td>";
+                    //html += "<td>"+((patientData["viralLoad"] == null) ? "N/A": patientData["viralLoad"])+"</td>";
+                    html += "<td><a class='button' target='_blank' href='/"+contextPath+"/coreapps/clinicianfacing/patient.page?patientId="+patientId+"'>Patient Dashboard<a></td>"
+
+                    html += "</tr>";
+
+                }
+                //reInitializeDatatable(title);
+                jq("#detailsArea").html(html);
+
+                //initialize datatable
+               reInitializeDatatable2(title);
+
+    }else if(isOptimum == "cNotEnrolledProp")
+    {
+        
+                    var html = "";
+
+                for(var i=0; i<fullData.length; i++)
+                {  
+                    var patientData = fullData[i];
+                    //if(patientData["age"]>24){continue;}
+                    var patientId = patientData["patientId"];
+                    var enrAgee = patientData["age"];
+                    var selendDate = Date.parse(endDate);
+                    var enrAge = new Date(patientData["enrollmentDate"]);
+                    html += "<tr>"; 
+                    html += "<td >"+(i+1)+"</td>";
+                    html += "<td>"+patientData["pepfarId"]+"</td>";
+                     html += "<td>"+patientData["gender"]+endDate+"</td>";
+                    //html += "<td>"+patientData["firstName"]+" "+patientData["lastName"]+"</td>";
+                    //html += "<td>"+patientData["artStartDate"].substring(0, 10)+"</td>";
+                    html += "<td>"+( (patientData["artStartDate"] == null) ?"-": patientData["artStartDate"].substring(0, 10) )+"</td>";
+                    html += "<td>"+patientData["dob"].substring(0, 10)+"</td>";
+                    html += "<td "+( (patientData["cage"] < 10 || patientData["cage"] > 24) ?"bgcolor=\"yellow\"": "")+">"+patientData["cage"]+"</td>";
+                    //html += "<td "+( (patientData["age"] < 10 || patientData["age"] > 24) ?"bgcolor=\"yellow\"": "")+">"+patientData["age"]+"</td>";
+                    html += "<td "+((enrAge>selendDate) ? "bgcolor=\"orange\">Enrolled Later</td>" : ((patientData["age"] >= 10 && patientData["age"] <= 24) ? ">"+patientData["age"]+"</td>" : ((patientData["age"]==0) ? "bgcolor=\"yellow\">Not Enrolled</td>" : "bgcolor=\"yellow\">"+patientData["age"]+"</td>")));
+                    html += "<td>"+( (patientData["enrollmentDate"] == null) ?"-": patientData["enrollmentDate"].substring(0, 10) )+"</td>";
+                    //html += "<td>"+((patientData["sampleCollectionDate"] == null) ? "N/A" : patientData["sampleCollectionDate"].substring(0, 10))+"</td>";
+                    //html += "<td>"+((patientData["viralLoad"] == null) ? "N/A": patientData["viralLoad"])+"</td>";
+                    html += "<td><a class='button' target='_blank' href='/"+contextPath+"/coreapps/clinicianfacing/patient.page?patientId="+patientId+"'>Patient Dashboard<a></td>"
+
+                    html += "</tr>";
+
+                }
+                //reInitializeDatatable(title);
+                jq("#detailsArea").html(html);
+
+                //initialize datatable
+               reInitializeDatatable2(title);
+
+    }else{
     var html = "";
    
     for(var i=0; i<fullData.length; i++)
     {  
         var patientData = fullData[i];
+        //if(patientData["age"]>24){continue;}
         var patientId = patientData["patientId"];
         html += "<tr>"; 
         html += "<td >"+(i+1)+"</td>";
         html += "<td>"+patientData["pepfarId"]+"</td>";
          html += "<td>"+patientData["gender"]+"</td>";
         //html += "<td>"+patientData["firstName"]+" "+patientData["lastName"]+"</td>";
-        html += "<td>"+patientData["artStartDate"].substring(0, 10)+"</td>";
+        //html += "<td>"+patientData["artStartDate"].substring(0, 10)+"</td>";
+        html += "<td>"+( (patientData["artStartDate"] == null) ?"-": patientData["artStartDate"].substring(0, 10) )+"</td>";
         html += "<td>"+patientData["dob"].substring(0, 10)+"</td>";
-        html += "<td>"+patientData["age"]+"</td>";
+        html += "<td "+( (patientData["cage"] < 10 || patientData["cage"] > 24) ?"bgcolor=\"yellow\"": "")+">"+patientData["cage"]+"</td>";
+        //html += "<td "+( (patientData["age"] < 10 || patientData["age"] > 24) ?"bgcolor=\"yellow\"": "")+">"+patientData["age"]+"</td>";
+        html += "<td "+((patientData["age"] >= 10 && patientData["age"] <= 24) ? ">"+patientData["age"]+"</td>" : ((patientData["age"]==0) ? "bgcolor=\"yellow\">Not Enrolled</td>" : "bgcolor=\"yellow\">"+patientData["age"]+"</td>"));
         html += "<td>"+( (patientData["enrollmentDate"] == null) ?"-": patientData["enrollmentDate"].substring(0, 10) )+"</td>";
-        html += "<td>"+((patientData["sampleCollectionDate"] == null) ? "N/A" : patientData["sampleCollectionDate"].substring(0, 10))+"</td>";
-        html += "<td>"+((patientData["viralLoad"] == null) ? "N/A": patientData["viralLoad"])+"</td>";
-        html += "<td><a class='button' target='_blank' href='/coreapps/clinicianfacing/patient.page?patientId="+patientId+"'>Patient Dashboard<a></td>"
+        //html += "<td>"+((patientData["sampleCollectionDate"] == null) ? "N/A" : patientData["sampleCollectionDate"].substring(0, 10))+"</td>";
+        //html += "<td>"+((patientData["viralLoad"] == null) ? "N/A": patientData["viralLoad"])+"</td>";
+        html += "<td><a class='button' target='_blank' href='/"+contextPath+"/coreapps/clinicianfacing/patient.page?patientId="+patientId+"'>Patient Dashboard<a></td>"
         
         html += "</tr>";
    
@@ -620,12 +821,13 @@ function dataquality_renderOTZData(isOptimum, category,  title)
     
     //initialize datatable
    reInitializeDatatable2(title);
+    }
 }
 
 
 function dataquality_renderBasicOTZData(isOptimum, category,  title)
 {
-    jq("#tableContainer").html('<table class="dataTable2"><thead><tr><th nowrap>S/N</th><th nowrap>Pepfar ID</th><th nowrap>Gender</th><th nowrap>ART Start date</th><th nowrap>Date of Birth</th><th nowrap>Age</th><th nowrap>Date Enrolled in OTZ</th> <th>Action</th> </tr></thead><tbody id="detailsArea"></tbody></table>');
+    jq("#tableContainer").html('<table class="dataTable2"><thead><tr><th nowrap>S/N</th><th nowrap>Pepfar ID</th><th nowrap>Gender</th><th nowrap>ART Start date</th><th nowrap>Date of Birth</th><th nowrap>Age at Enrollment in OTZ</th><th nowrap>Current Age</th><th nowrap>Date Enrolled in OTZ</th> <th>Action</th> </tr></thead><tbody id="detailsArea"></tbody></table>');
     
     jq("#detailsModal").modal("show");
     var html = "";
@@ -636,10 +838,12 @@ function dataquality_renderBasicOTZData(isOptimum, category,  title)
     var fullData = new Array();
    if(isOptimum == "enrolled")
     {
+	 jq(".modal-title").html('<u>Title</u>List of AYPLHIV enrolled into OTZ');
         fullData = enrolledPatients;
     }
     else if(isOptimum == "completedmodules")
     {
+		jq(".modal-title").html('<u>Title</u>List of AYPLHIV who have completed the 7 modules of OTZ');
          fullData = completed7Modules;
     }
     else if(isOptimum == "femaleEnrolled")
@@ -666,17 +870,20 @@ function dataquality_renderBasicOTZData(isOptimum, category,  title)
     for(var i=0; i<fullData.length; i++)
     {  
         var patientData = fullData[i];
+        //if(patientData["age"]>24){continue;}
         var patientId = patientData["patientId"];
         html += "<tr>"; 
         html += "<td >"+(i+1)+"</td>";
         html += "<td>"+patientData["pepfarId"]+"</td>";
          html += "<td>"+patientData["gender"]+"</td>";
         //html += "<td>"+patientData["firstName"]+" "+patientData["lastName"]+"</td>";
-        html += "<td>"+patientData["artStartDate"].substring(0, 10)+"</td>";
+        //html += "<td>"+patientData["artStartDate"].substring(0, 10)+"</td>";
+        html += "<td>"+( (patientData["artStartDate"] == null) ?"-": patientData["artStartDate"].substring(0, 10) )+"</td>";
         html += "<td>"+patientData["dob"].substring(0, 10)+"</td>";
-        html += "<td>"+patientData["age"]+"</td>";
+        html += "<td "+( (patientData["age"] < 10 || patientData["age"] > 24) ?"bgcolor=\"yellow\"": "")+">"+patientData["age"]+"</td>";
+        html += "<td>"+patientData["cage"]+"</td>";
         html += "<td>"+( (patientData["enrollmentDate"] == null) ?"-": patientData["enrollmentDate"].substring(0, 10) )+"</td>";
-        html += "<td><a class='button' target='_blank' href='/coreapps/clinicianfacing/patient.page?patientId="+patientId+"'>Patient Dashboard<a></td>"
+        html += "<td><a class='button' target='_blank' href='/"+contextPath+"/coreapps/clinicianfacing/patient.page?patientId="+patientId+"'>Patient Dashboard<a></td>"
         
         html += "</tr>";
    
@@ -691,8 +898,9 @@ function dataquality_renderBasicOTZData(isOptimum, category,  title)
 
 function dataquality_renderCompletedModulesOTZData(isOptimum, category,  title)
 {
-    jq("#tableContainer").html('<table class="dataTable2"><thead><tr><th nowrap>S/N</th><th nowrap>Pepfar ID</th><th nowrap>Gender</th><th nowrap>ART Start date</th><th nowrap>Date of Birth</th><th nowrap>Age</th><th nowrap>Date Enrolled in OTZ</th><th>Positive Living Date</th><th>Treatment Literacy Date</th><th>Adolescents Participation Date</th><th>Leadership Training Date</th><th>Peer-to-Peer Mentorship Date</th><th>Role of OTZ in 95-95-95 Date</th><th>OTZ Champion Orientation Date</th> <th>Action</th> </tr></thead><tbody id="detailsArea"></tbody></table>');
+    jq("#tableContainer").html('<table class="dataTable2"><thead><tr><th nowrap>S/N</th><th nowrap>Pepfar ID</th><th nowrap>Gender</th><th nowrap>ART Start date</th><th nowrap>Date of Birth</th><th nowrap>Age at Enrollment in OTZ</th><th nowrap>Current Age</th><th nowrap>Date Enrolled in OTZ</th><th>Positive Living Date</th><th>Treatment Literacy Date</th><th>Adolescents Participation Date</th><th>Leadership Training Date</th><th>Peer-to-Peer Mentorship Date</th><th>Role of OTZ in 95-95-95 Date</th><th>OTZ Champion Orientation Date</th> <th>Action</th> </tr></thead><tbody id="detailsArea"></tbody></table>');
     
+    jq(".modal-title").html('<u>Title</u>List of AYPLHIV who have completed the 7 modules of OTZ');
     jq("#detailsModal").modal("show");
     var html = "";
     var sn = 1;
@@ -719,7 +927,8 @@ function dataquality_renderCompletedModulesOTZData(isOptimum, category,  title)
         //html += "<td>"+patientData["firstName"]+" "+patientData["lastName"]+"</td>";
         html += "<td>"+patientData["artStartDate"].substring(0, 10)+"</td>";
         html += "<td>"+patientData["dob"].substring(0, 10)+"</td>";
-        html += "<td>"+patientData["age"]+"</td>";
+        html += "<td "+( (patientData["age"] < 10 || patientData["age"] > 24) ?"bgcolor=\"yellow\"": "")+">"+patientData["age"]+"</td>";
+        html += "<td>"+patientData["cage"]+"</td>";
         html += "<td>"+( (patientData["enrollmentDate"] == null) ?"-": patientData["enrollmentDate"].substring(0, 10) )+"</td>";
         html += "<td>"+( (patientData["positiveLivingDate"] == null) ?"-": patientData["positiveLivingDate"].substring(0, 10) )+"</td>";
         html += "<td>"+( (patientData["treatmentLiteracyDate"] == null) ?"-": patientData["treatmentLiteracyDate"].substring(0, 10) )+"</td>";
@@ -728,7 +937,7 @@ function dataquality_renderCompletedModulesOTZData(isOptimum, category,  title)
         html += "<td>"+( (patientData["peerMentorshipDate"] == null) ?"-": patientData["peerMentorshipDate"].substring(0, 10) )+"</td>";
         html += "<td>"+( (patientData["roleOf95Date"] == null) ?"-": patientData["roleOf95Date"].substring(0, 10) )+"</td>";
         html += "<td>"+( (patientData["otzChampionOrientationDate"] == null) ?"-": patientData["otzChampionOrientationDate"].substring(0, 10) )+"</td>";
-        html += "<td><a class='button' target='_blank' href='/coreapps/clinicianfacing/patient.page?patientId="+patientId+"'>Patient Dashboard<a></td>"
+        html += "<td><a class='button' target='_blank' href='/"+contextPath+"/coreapps/clinicianfacing/patient.page?patientId="+patientId+"'>Patient Dashboard<a></td>"
         
         html += "</tr>";
    
@@ -740,9 +949,10 @@ function dataquality_renderCompletedModulesOTZData(isOptimum, category,  title)
    reInitializeDatatable2(title);
 }
 
-function dataquality_renderFullDisclosureOTZData(isOptimum, category,  title)
+
+function dataquality_renderAllPatientsIIT(isOptimum, category,  title)
 {
-    jq("#tableContainer").html('<table class="dataTable2"><thead><tr><th nowrap>S/N</th><th nowrap>Pepfar ID</th><th nowrap>Gender</th><th nowrap>ART Start date</th><th nowrap>Date of Birth</th><th nowrap>Age</th><th nowrap>Date Enrolled in OTZ</th><th nowrap>Full disclosure date</th> <th>Action</th> </tr></thead><tbody id="detailsArea"></tbody></table>');
+    jq("#tableContainer").html('<table class="dataTable2"><thead><tr><th nowrap>S/N</th><th nowrap>Pepfar ID</th><th nowrap>Gender</th><th nowrap>ART Start date</th><th nowrap>Date of Birth</th><th nowrap>Age at Enrollment in OTZ</th><th nowrap>Current Age</th><th nowrap>Date Enrolled in OTZ</th><th nowrap>Last ARV Pickup</th><th>Action</th> </tr></thead><tbody id="detailsArea"></tbody></table>');
     
     jq("#detailsModal").modal("show");
     var html = "";
@@ -751,9 +961,9 @@ function dataquality_renderFullDisclosureOTZData(isOptimum, category,  title)
     
     console.log(category, isOptimum);
     var fullData = new Array();
-   if(isOptimum == "disclosure")
+   if(isOptimum == "iit")
     {
-         fullData = patientsFullDisclosure;
+         fullData = alPatientsIIT;
     }
     
     
@@ -770,10 +980,106 @@ function dataquality_renderFullDisclosureOTZData(isOptimum, category,  title)
         //html += "<td>"+patientData["firstName"]+" "+patientData["lastName"]+"</td>";
         html += "<td>"+patientData["artStartDate"].substring(0, 10)+"</td>";
         html += "<td>"+patientData["dob"].substring(0, 10)+"</td>";
-        html += "<td>"+patientData["age"]+"</td>";
+        html += "<td "+( (patientData["age"] < 10 || patientData["age"] > 24) ?"bgcolor=\"yellow\"": "")+">"+patientData["age"]+"</td>";
+        html += "<td>"+patientData["cage"]+"</td>";
+        html += "<td>"+( (patientData["enrollmentDate"] == null) ?"-": patientData["enrollmentDate"].substring(0, 10) )+"</td>";
+        html += "<td>"+( (patientData["outcomeDate"] == null) ?"-": patientData["outcomeDate"].substring(0, 10) )+"</td>";
+        html += "<td><a class='button' target='_blank' href='/"+contextPath+"/coreapps/clinicianfacing/patient.page?patientId="+patientId+"'>Patient Dashboard<a></td>"
+        
+        html += "</tr>";
+   
+    }
+    //reInitializeDatatable(title);
+    jq("#detailsArea").html(html);
+    
+    //initialize datatable
+   reInitializeDatatable2(title);
+}
+
+function dataquality_renderAllPatientsTO(isOptimum, category,  title)
+{
+    jq("#tableContainer").html('<table class="dataTable2"><thead><tr><th nowrap>S/N</th><th nowrap>Pepfar ID</th><th nowrap>Gender</th><th nowrap>ART Start date</th><th nowrap>Date of Birth</th><th nowrap>Age at Enrollment in OTZ</th><th nowrap>Current Age</th><th nowrap>Date Enrolled in OTZ</th><th nowrap>Date of Transition to Adult Care</th><th>Action</th> </tr></thead><tbody id="detailsArea"></tbody></table>');
+    
+    jq("#detailsModal").modal("show");
+    var html = "";
+    var sn = 1;
+    
+    
+    console.log(category, isOptimum);
+    var fullData = new Array();
+   if(isOptimum == "allPatTO")
+    {
+         fullData = alPatientsTO;
+    }
+    
+    
+    var html = "";
+   
+    for(var i=0; i<fullData.length; i++)
+    {  
+        var patientData = fullData[i];
+        var patientId = patientData["patientId"];
+        html += "<tr>"; 
+        html += "<td >"+(i+1)+"</td>";
+        html += "<td>"+patientData["pepfarId"]+"</td>";
+         html += "<td>"+patientData["gender"]+"</td>";
+        //html += "<td>"+patientData["firstName"]+" "+patientData["lastName"]+"</td>";
+        html += "<td>"+patientData["artStartDate"].substring(0, 10)+"</td>";
+        html += "<td>"+patientData["dob"].substring(0, 10)+"</td>";
+        html += "<td "+( (patientData["age"] < 10 || patientData["age"] > 24) ?"bgcolor=\"yellow\"": "")+">"+patientData["age"]+"</td>";
+        html += "<td>"+patientData["cage"]+"</td>";
+        html += "<td>"+( (patientData["enrollmentDate"] == null) ?"-": patientData["enrollmentDate"].substring(0, 10) )+"</td>";
+        html += "<td>"+( (patientData["outcomeDate"] == null) ?"-": patientData["outcomeDate"].substring(0, 10) )+"</td>";
+        html += "<td><a class='button' target='_blank' href='/"+contextPath+"/coreapps/clinicianfacing/patient.page?patientId="+patientId+"'>Patient Dashboard<a></td>"
+        
+        html += "</tr>";
+   
+    }
+    //reInitializeDatatable(title);
+    jq("#detailsArea").html(html);
+    
+    //initialize datatable
+   reInitializeDatatable2(title);
+}
+
+function dataquality_renderFullDisclosureOTZData(isOptimum, category,  title)
+{
+    jq("#tableContainer").html('<table class="dataTable2"><thead><tr><th nowrap>S/N</th><th nowrap>Pepfar ID</th><th nowrap>Gender</th><th nowrap>ART Start date</th><th nowrap>Date of Birth</th><th nowrap>Age at Enrollment in OTZ</th><th nowrap>Current Age</th><th nowrap>Date Enrolled in OTZ</th><th nowrap>Full disclosure date</th> <th>Action</th> </tr></thead><tbody id="detailsArea"></tbody></table>');
+    
+    jq("#detailsModal").modal("show");
+    var html = "";
+    var sn = 1;
+    
+    
+    console.log(category, isOptimum);
+    var fullData = new Array();
+   if(isOptimum == "disclosure")
+    {
+	jq(".modal-title").html('<u>Title</u>List of AYPLHIV who have given full disclosure ');
+    
+         fullData = patientsFullDisclosure;
+    }
+    
+    
+    var html = "";
+   
+    for(var i=0; i<fullData.length; i++)
+    {  
+        var patientData = fullData[i];
+        var patientId = patientData["patientId"];
+        html += "<tr>"; 
+        html += "<td >"+(i+1)+"</td>";
+        html += "<td>"+patientData["pepfarId"]+"</td>";
+         html += "<td>"+patientData["gender"]+"</td>";
+        //html += "<td>"+patientData["firstName"]+" "+patientData["lastName"]+"</td>";
+        //html += "<td>"+patientData["artStartDate"].substring(0, 10)+"</td>";
+        html += "<td>"+( (patientData["artStartDate"] == null) ?"-": patientData["artStartDate"].substring(0, 10) )+"</td>";
+        html += "<td>"+patientData["dob"].substring(0, 10)+"</td>";
+        html += "<td "+( (patientData["age"] < 10 || patientData["age"] > 24) ?"bgcolor=\"yellow\"": "")+">"+patientData["age"]+"</td>";
+        html += "<td>"+patientData["cage"]+"</td>";
         html += "<td>"+( (patientData["enrollmentDate"] == null) ?"-": patientData["enrollmentDate"].substring(0, 10) )+"</td>";
         html += "<td>"+( (patientData["fullDisclosureDate"] == null) ?"-": patientData["fullDisclosureDate"].substring(0, 10) )+"</td>";
-        html += "<td><a class='button' target='_blank' href='/coreapps/clinicianfacing/patient.page?patientId="+patientId+"'>Patient Dashboard<a></td>"
+        html += "<td><a class='button' target='_blank' href='/"+contextPath+"/coreapps/clinicianfacing/patient.page?patientId="+patientId+"'>Patient Dashboard<a></td>"
         
         html += "</tr>";
    
@@ -792,8 +1098,7 @@ function dataquality_renderExitedOTZData(isOptimum, category,  title)
     jq("#detailsModal").modal("show");
     var html = "";
     var sn = 1;
-    
-    
+
     console.log(category, isOptimum);
     var fullData = new Array();
    if(isOptimum == "exitedotz")
@@ -818,7 +1123,7 @@ function dataquality_renderExitedOTZData(isOptimum, category,  title)
         html += "<td>"+patientData["age"]+"</td>";
         html += "<td>"+( (patientData["enrollmentDate"] == null) ?"-": patientData["enrollmentDate"].substring(0, 10) )+"</td>";
         html += "<td>"+( (patientData["outcomeDate"] == null) ?"-": patientData["outcomeDate"].substring(0, 10) )+"</td>";
-        html += "<td><a class='button' target='_blank' href='/coreapps/clinicianfacing/patient.page?patientId="+patientId+"'>Patient Dashboard<a></td>"
+        html += "<td><a class='button' target='_blank' href='/"+contextPath+"/coreapps/clinicianfacing/patient.page?patientId="+patientId+"'>Patient Dashboard<a></td>"
         
         html += "</tr>";
    
@@ -843,6 +1148,7 @@ function dataquality_renderTransferredOTZData(isOptimum, category,  title)
     var fullData = new Array();
    if(isOptimum == "transferred")
     {
+		jq(".modal-title").html('<u>Title</u>List of AYPLHIV enrolled in OTZ who were transferred ');
          fullData = allPatientsTransferred;
     }
     
@@ -863,7 +1169,7 @@ function dataquality_renderTransferredOTZData(isOptimum, category,  title)
         html += "<td>"+patientData["age"]+"</td>";
         html += "<td>"+( (patientData["enrollmentDate"] == null) ?"-": patientData["enrollmentDate"].substring(0, 10) )+"</td>";
         html += "<td>"+( (patientData["outcomeDate"] == null) ?"-": patientData["outcomeDate"].substring(0, 10) )+"</td>";
-        html += "<td><a class='button' target='_blank' href='/coreapps/clinicianfacing/patient.page?patientId="+patientId+"'>Patient Dashboard<a></td>"
+        html += "<td><a class='button' target='_blank' href='/"+contextPath+"/coreapps/clinicianfacing/patient.page?patientId="+patientId+"'>Patient Dashboard<a></td>"
         
         html += "</tr>";
    
@@ -875,9 +1181,9 @@ function dataquality_renderTransferredOTZData(isOptimum, category,  title)
    reInitializeDatatable2(title);
 }
 
-function dataquality_renderAdhOTZData(isOptimum, category,  title)
+function dataquality_renderDeadOTZData(isOptimum, category,  title)
 {
-    jq("#tableContainer").html('<table class="dataTable2"><thead><tr><th nowrap>S/N</th><th nowrap>Pepfar ID</th><th nowrap>Gender</th><th nowrap>ART Start date</th><th nowrap>Date of Birth</th><th nowrap>Age</th><th nowrap>Date Enrolled in OTZ</th> <th nowrap>Next Appointment Date</th> <th nowrap>Pickup Date</th><th>Action</th> </tr></thead><tbody id="detailsArea"></tbody></table>');
+    jq("#tableContainer").html('<table class="dataTable2"><thead><tr><th nowrap>S/N</th><th nowrap>Pepfar ID</th><th nowrap>Gender</th><th nowrap>ART Start date</th><th nowrap>Date of Birth</th><th nowrap>Age</th><th nowrap>Date Enrolled in OTZ</th><th nowrap>Date of Death</th> <th>Action</th> </tr></thead><tbody id="detailsArea"></tbody></table>');
     
     jq("#detailsModal").modal("show");
     var html = "";
@@ -886,18 +1192,10 @@ function dataquality_renderAdhOTZData(isOptimum, category,  title)
     
     console.log(category, isOptimum);
     var fullData = new Array();
-    if(isOptimum == "pickupapp")
+   if(isOptimum == "dead")
     {
-        fullData = allPatientsScheduledObj[category];
-    }
-    else if(isOptimum == "keptapp")
-    {
-        fullData = allPatientsKeptObj[category];
-    }
-    else if(isOptimum == "goodscore")
-    {
-        fullData = allPatientsGoodScoreObj[category];
-        
+	jq(".modal-title").html('<u>Title</u>List of AYPLHIV enrolled in OTZ have died ');
+         fullData = alPatientsDied;
     }
     
     
@@ -916,10 +1214,116 @@ function dataquality_renderAdhOTZData(isOptimum, category,  title)
         html += "<td>"+patientData["dob"].substring(0, 10)+"</td>";
         html += "<td>"+patientData["age"]+"</td>";
         html += "<td>"+( (patientData["enrollmentDate"] == null) ?"-": patientData["enrollmentDate"].substring(0, 10) )+"</td>";
+        html += "<td>"+( (patientData["outcomeDate"] == null) ?"-": patientData["outcomeDate"].substring(0, 10) )+"</td>";
+        html += "<td><a class='button' target='_blank' href='/"+contextPath+"/coreapps/clinicianfacing/patient.page?patientId="+patientId+"'>Patient Dashboard<a></td>"
+        
+        html += "</tr>";
+   
+    }
+    //reInitializeDatatable(title);
+    jq("#detailsArea").html(html);
+    
+    //initialize datatable
+   reInitializeDatatable2(title);
+}
+
+function dataquality_renderOptedOutOTZData(isOptimum, category,  title)
+{
+    jq("#tableContainer").html('<table class="dataTable2"><thead><tr><th nowrap>S/N</th><th nowrap>Pepfar ID</th><th nowrap>Gender</th><th nowrap>ART Start date</th><th nowrap>Date of Birth</th><th nowrap>Age</th><th nowrap>Date Enrolled in OTZ</th><th nowrap>Date Opted Out</th> <th>Action</th> </tr></thead><tbody id="detailsArea"></tbody></table>');
+    
+    jq("#detailsModal").modal("show");
+    var html = "";
+    var sn = 1;
+    
+    
+    console.log(category, isOptimum);
+    var fullData = new Array();
+   if(isOptimum == "optedout")
+    {
+         fullData = alPatientsOptedOut;
+    }
+    
+    
+    var html = "";
+   
+    for(var i=0; i<fullData.length; i++)
+    {  
+        var patientData = fullData[i];
+        if(patientData["age"]>24){continue;}
+        var patientId = patientData["patientId"];
+        html += "<tr>"; 
+        html += "<td >"+(i+1)+"</td>";
+        html += "<td>"+patientData["pepfarId"]+"</td>";
+         html += "<td>"+patientData["gender"]+"</td>";
+        //html += "<td>"+patientData["firstName"]+" "+patientData["lastName"]+"</td>";
+        html += "<td>"+patientData["artStartDate"].substring(0, 10)+"</td>";
+        html += "<td>"+patientData["dob"].substring(0, 10)+"</td>";
+        html += "<td>"+patientData["age"]+"</td>";
+        html += "<td>"+( (patientData["enrollmentDate"] == null) ?"-": patientData["enrollmentDate"].substring(0, 10) )+"</td>";
+        html += "<td>"+( (patientData["outcomeDate"] == null) ?"-": patientData["outcomeDate"].substring(0, 10) )+"</td>";
+        html += "<td><a class='button' target='_blank' href='/"+contextPath+"/coreapps/clinicianfacing/patient.page?patientId="+patientId+"'>Patient Dashboard<a></td>"
+        
+        html += "</tr>";
+   
+    }
+    //reInitializeDatatable(title);
+    jq("#detailsArea").html(html);
+    
+    //initialize datatable
+   reInitializeDatatable2(title);
+}
+
+function dataquality_renderAdhOTZData(isOptimum, category,  title)
+{
+        
+    jq("#tableContainer").html('<table class="dataTable2"><thead><tr><th nowrap>S/N</th><th nowrap>Pepfar ID</th><th nowrap>Gender</th><th nowrap>ART Start date</th><th nowrap>Date of Birth</th><th nowrap>Age at enrollment</th><th nowrap>Date Enrolled in OTZ</th> <th nowrap>Next Appointment Date</th> <th nowrap>Pickup Date</th><th>Action</th> </tr></thead><tbody id="detailsArea"></tbody></table>');
+    
+    jq("#detailsModal").modal("show");
+    var html = "";
+    var sn = 1;
+
+    
+    console.log(category, isOptimum);
+    var fullData = new Array();
+    if(isOptimum == "pickupapp")
+    {
+        fullData = allPatientsScheduledObj[category];
+        jq(".modal-title").html('<h1 style="background-color:powderblue;">Title: List of OTZ members with scheduled drug pick-up appointment in the past 6 months prior to  ' + category + '</h1><b><u>Description:</u></b> Number of AYPLHIV enrolled in OTZ in the cohort month who had any schedule drug pick-up appointment (' + category + ')');
+    }
+    else if(isOptimum == "keptapp")
+    {
+        fullData = allPatientsKeptObj[category];
+        jq(".modal-title").html('<h1 style="background-color:powderblue;">Title: List of OTZ members who kept their drug pick-up appointment in the last six months prior to ' + category + ' (With an allowance of ± 14 days)</h1><b><u>Description:</u></b> Number of AYPLHIV enrolled in OTZ in the cohort month who had any schedule drug pick-up appointment in the last six months prior to enrolment in OTZ and kept their clinic appointment visit (including 14 days before and 14 days after the actual scheduled date) (' + category + ')');
+    }
+    else if(isOptimum == "goodscore")
+    {
+        fullData = allPatientsGoodScoreObj[category];
+        jq(".modal-title").html('<h1 style="background-color:powderblue;">Title: List of OTZ members with good drug adherence score in the last six months prior to ' + category + '</h1><b><u>Description:</u></b> Number of AYPLHIV enrolled in OTZ in the cohort month who had drug adherence score of ? 95% (G) in the care card for ALL adherence assessments done during the six month prior to enrolment on OTZ (' + category + ')');
+        
+    }
+    
+    
+    var html = "";
+   
+    for(var i=0; i<fullData.length; i++)
+    {  
+        var patientData = fullData[i];
+        var patientId = patientData["patientId"];
+        html += "<tr>"; 
+        html += "<td >"+(i+1)+"</td>";
+        html += "<td>"+patientData["pepfarId"]+"</td>";
+         html += "<td>"+patientData["gender"]+"</td>";
+        //html += "<td>"+patientData["firstName"]+" "+patientData["lastName"]+"</td>";
+        html += "<td>"+patientData["artStartDate"].substring(0, 10)+"</td>";
+        html += "<td>"+patientData["dob"].substring(0, 10)+"</td>";
+        //html += "<td>"+patientData["age"]+"</td>";
+        html += "<td "+( (patientData["age"] < 10 || patientData["age"] > 24) ?"bgcolor=\"yellow\"": "")+">"+patientData["age"]+"</td>";
+                   
+        html += "<td>"+( (patientData["enrollmentDate"] == null) ?"-": patientData["enrollmentDate"].substring(0, 10) )+"</td>";
         html += "<td>"+((patientData["nextAppointmentDate"] == null) ? "N/A": patientData["nextAppointmentDate"]).substring(0, 10)+"</td>";
         html += "<td>"+((patientData["lastPickupDate"] == null) ? "N/A" : patientData["lastPickupDate"].substring(0, 10))+"</td>";
         
-        html += "<td><a class='button' target='_blank' href='/coreapps/clinicianfacing/patient.page?patientId="+patientId+"'>Patient Dashboard<a></td>"
+        html += "<td><a class='button' target='_blank' href='/"+contextPath+"/coreapps/clinicianfacing/patient.page?patientId="+patientId+"'>Patient Dashboard<a></td>"
         
         html += "</tr>";
    
@@ -1143,7 +1547,7 @@ function reInitializeDatatable2(title)
                         extend: 'csv',
                         title:title,
                         exportOptions: {
-                            columns: [0,1,2,3,4]
+                           // columns: [0,1,2,3,4]
                         }
                         //messageTop: '<%= title; %>'
                     },
@@ -1151,7 +1555,7 @@ function reInitializeDatatable2(title)
                         extend: 'excel',
                         title:title,
                         exportOptions: {
-                            columns: [0,1,2,3,4]
+                            //columns: [0,1,2,3,4]
                         }
                         //messageTop: '<%= title; %>'
                     },
@@ -1159,7 +1563,7 @@ function reInitializeDatatable2(title)
                         extend: 'pdf',
                         title:title,
                         exportOptions: {
-                            columns: [0,1,2,3,4]
+                            //columns: [0,1,2,3,4]
                         }
                         //messageTop: '<%= title; %>'
                     },
@@ -1167,7 +1571,7 @@ function reInitializeDatatable2(title)
                         extend: 'print',
                         title:title,
                         exportOptions: {
-                            columns: [0,1,2,3,4]
+                            //columns: [0,1,2,3,4]
                         }
                         //messageTop: '<%= title; %>'
                     },
@@ -1296,6 +1700,36 @@ function getOptimalType(conceptId)
     else {
         return -1;
     }
+}
+
+function getDateRangeForQuartercy(quarter, year)
+{
+    var startDate = "";
+    var endDate = "";
+    if(quarter == 1)
+    {
+         startDate = year+"-01-01";
+        endDate = year+"-03-31";
+    }
+    else if(quarter == 2)
+    {
+        
+         startDate = year+"-04-01";
+        endDate = year+"-06-30";
+    }
+    else if(quarter == 3)
+    {
+         startDate = year+"-07-01";
+        endDate = year+"-09-30";
+    }
+    else if(quarter == 4)
+    {
+         startDate = year+"-10-01";
+        endDate = year+"-12-31";
+    }
+    
+    console.log(year);
+    return [startDate, endDate];
 }
 
 function getDateRangeForQuarter(quarter, year)

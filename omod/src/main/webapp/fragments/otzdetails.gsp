@@ -24,9 +24,8 @@ def id = config.id
 <div class="container">
     
     <h3><%= title; %></h3>
-   
     ${ui.includeFragment("dataquality", "otzdetails/default", [patients:patients, startDate:startDate, endDate:endDate, Misc:Misc, title:title])  } 
-     
+   
     
 </div>
 
@@ -81,9 +80,10 @@ def id = config.id
         
         jq("#filterCQI").click(function(e){
             var subSet = <%= subset %>
+            var type = <%= type %>
             var startDate = jq("#startDate").val();
             var endDate = jq("#endDate").val();
-            window.location = "otzdetails.page?subset="+subSet+"&startDate="+startDate+"&endDate="+endDate;
+            window.location = "otzdetails.page?subset="+subSet+"&type="+type+"&startDate="+startDate+"&endDate="+endDate;
         })
     });
 </script>

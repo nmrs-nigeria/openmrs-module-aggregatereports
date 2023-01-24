@@ -1,6 +1,6 @@
 
 <%
-/*ui.includeJavascript("dataquality", "jquery-3.3.1.js")
+ui.includeJavascript("dataquality", "jquery-3.3.1.js")
 ui.includeJavascript("dataquality", "jquery.dataTables.min.js")
 ui.includeJavascript("dataquality", "datatables.min.js")
 ui.includeJavascript("dataquality", "buttons.flash.min.js")
@@ -8,15 +8,16 @@ ui.includeJavascript("dataquality", "jquery-ui.js")
 ui.includeJavascript("dataquality", "jszip.min.js")
 ui.includeJavascript("dataquality", "pdfmake.min.js")
 ui.includeJavascript("dataquality", "vfs_fonts.js")
+ui.includeJavascript("dataquality", "bootstrap.min.js")
 ui.includeCss("dataquality", "bootstrap.min.css")
 ui.includeJavascript("dataquality", "buttons.html5.min.js")
 ui.includeJavascript("dataquality", "buttons.print.min.js")
 ui.includeJavascript("dataquality", "datatable.button.min.js")
 ui.includeCss("dataquality", "buttons.dataTables.min.css")
 ui.includeCss("dataquality", "jquery.dataTables.min.css")
-ui.includeCss("dataquality", "myStyle.css")*/
+ui.includeCss("dataquality", "myStyle.css")
 
-ui.includeJavascript("dataquality", "jquery-3.3.1.js")
+/*ui.includeJavascript("dataquality", "jquery-3.3.1.js")
 ui.includeJavascript("dataquality", "jquery.dataTables.min.js")
 ui.includeJavascript("dataquality", "datatables.min.js")
 ui.includeJavascript("dataquality", "buttons.flash.min.js")
@@ -34,7 +35,7 @@ ui.includeJavascript("dataquality", "buttons.html5.min.js")
 ui.includeJavascript("dataquality", "buttons.print.min.js")
 ui.includeCss("dataquality", "buttons.dataTables.min.css")
 ui.includeCss("dataquality", "jquery.dataTables.min.css")
-ui.includeCss("dataquality", "myStyle.css")
+ui.includeCss("dataquality", "myStyle.css")*/
 
 def id = config.id
 def months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"] as String[];
@@ -56,22 +57,37 @@ int year = Calendar.getInstance().get(Calendar.YEAR);
     <h2>OTZ</h2>
      <fieldset>
         <legend>Filters</legend>
+        <div style="text-align: right">
+            <div style="display: inline-block; text-align: left;">
+                    <fieldset>
+                        <legend style="font-weight: bold; font-size: 13pt;"><span style="display: inline-block; width: 400px;">Display by:</span></legend>
+                        <strong><input type="radio" name="agedisplaytype" value="aaeradio" class="aaeradio" />Age at Enrollment</strong>
+                        <strong><input type="radio" name="agedisplaytype" value="caradio" class="caradio" />Current Age</strong>
+                    </fieldset>
+
+            </div>
+        </div>
         
         <div class="row">
+            <div class="col-sm-6 col-md-12">
+                <label class="cohortDesc">Search By Cohort</label><br /><br />
+            </div>    
+        </div>
+        <div class="row">
             <div class="col-sm-6 col-md-3">
-                <label>Search By</label>
-            </div>
-            <div class="col-sm-6 col-md-3">
-                <strong><input type="radio" name="cohortType" value="monthly" class="cohortSelector" />Monthly Cohort</strong>
+                <strong><input type="radio" name="cohortType" value="monthly" class="cohortSelector" />Monthly</strong>
             </div>
             <div class="col-sm-6 col-md-3"> 
-                <strong><input type="radio" name="cohortType" value="quarterly" class="cohortSelector" />Quarterly Cohort</strong>
+                <strong><input type="radio" name="cohortType" value="quarterlycy" class="cohortSelector" />Quarterly (CY)</strong>
+            </div>
+            <div class="col-sm-6 col-md-3"> 
+                <strong><input type="radio" name="cohortType" value="quarterly" class="cohortSelector" />Quarterly (FY)</strong>
             </div>
             <div class="col-sm-6 col-md-3">
-                <strong><input type="radio" name="cohortType"  value="dateRange" class="cohortSelector" />Date Range Cohort</strong>
+                <strong><input type="radio" name="cohortType"  value="dateRange" class="cohortSelector" />Date Range</strong>
             </div>
             
-        </div>
+        </div><br />
         
         <div class="row hidden cohortArea" id="monthly">
             
@@ -97,6 +113,34 @@ int year = Calendar.getInstance().get(Calendar.YEAR);
             
             <div class="col-sm-6 col-md-2">
                 <button class="button" id="filterOTZMonthly">Filter</button>
+            </div>
+        </div>
+        <div class="row hidden cohortArea" id="quarterlycy">
+            
+           <label class="col-sm-6 col-md-2 " ><strong>Quarter</strong></label>
+            <div class="col-sm-6 col-md-3" style="position:relative">
+               <select name="quartercy" id="quartercy" class="form-control">
+                   <option value="">Select Quarter</option>
+                   <option value="1">Quarter 1</option>
+                   <option value="2">Quarter 2</option>
+                   <option value="3">Quarter 3</option>
+                   <option value="4">Quarter 4</option>
+                   
+                </select>
+            </div>
+            
+            <label class="col-sm-6 col-md-2 "><strong>Year</strong></label>
+            <div class="col-sm-6 col-md-3" style="position:relative">
+               <select name="quarterYearcy" id="quarterYearcy" class="form-control">
+              <% for(int k=year; k>=2000; k--){%>
+                 <option value="<%= k %>">CY <%= k %></option>
+                    <% }%>
+                </select>
+            </div>
+            
+            
+            <div class="col-sm-6 col-md-2">
+                <button class="button" id="filterOTZQuarterlycy">Filter</button>
             </div>
         </div>
         <div class="row hidden cohortArea" id="quarterly">
@@ -209,6 +253,7 @@ int year = Calendar.getInstance().get(Calendar.YEAR);
     <script src="/<%= ui.contextPath();%>/ms/uiframework/resource/dataquality/amcharts/amcharts/amstock.js" type="text/javascript"></script>
 
     <script type="text/javascript">
+    var contextPath = "<%= ui.contextPath(); %>";
     
     jq = jQuery;
     
@@ -231,6 +276,7 @@ int year = Calendar.getInstance().get(Calendar.YEAR);
       var totalDead = 0;
       var startDate = "";
       var endDate = "";
+      var ageTyp="enrola";
       var indicatorDescription = {};
       jq(document).ready(function(e){
       
@@ -252,12 +298,58 @@ int year = Calendar.getInstance().get(Calendar.YEAR);
             jq("#otzIndicatorSource").html(source)
             jq("#otzIndicatorCalculation").html(calculation)
         })
+        jq('input[name=agedisplaytype]').change(function(){
+        if(jq(this).val()=='aaeradio'){
+        ageTyp="enrola";
+        }
+        if(jq(this).val()=='caradio'){
+        ageTyp="curra";
+        }
+        
+        });
         jq(".cohortSelector").change(function(){
             var selVal = jq(this).val();
+            
+            //monthly
+            //quarterly
+            //dateRange
+            //if(selVal=='monthly'){
+            //    console.log("Monthly selected");
+            //}
+            
+            
             jq(".cohortArea").addClass("hidden");
             jq("#"+selVal).removeClass("hidden");
+            var cDesc = jq(".cohortDesc").html();
+            if(selVal=='monthly'){jq(".cohortDesc").html("Search by Monthly Cohort");}
+            if(selVal=='quarterlycy'){jq(".cohortDesc").html("Search by Quarterly Cohort - Calendar Year");}
+            if(selVal=='quarterly'){jq(".cohortDesc").html("Search by Quarterly Cohort - Fiscal Year");}
+            if(selVal=='dateRange'){jq(".cohortDesc").html("Search by Cohort - Custom Date Range");}
+            console.log("Selected value"+selVal);
         });
-      
+        
+        jq("#quartercy").change(function(){
+            var selValu = jq(this).val();
+
+            if(selValu==1){jq(".cohortDesc").html("Search by Quarterly Cohort - Calendar Year (Jan - Mar)");}
+            if(selValu==2){jq(".cohortDesc").html("Search by Quarterly Cohort - Calendar Year (Apr - Jun)");}
+            if(selValu==3){jq(".cohortDesc").html("Search by Quarterly Cohort - Calendar Year (Jul - Sept)");}
+            if(selValu==4){jq(".cohortDesc").html("Search by Quarterly Cohort - Calendar Year (Oct - Dec)");}
+            console.log("Selected value"+selValu);
+        });
+        
+        jq("#quarter").change(function(){
+            var selValu = jq(this).val();
+
+            if(selValu==1){jq(".cohortDesc").html("Search by Quarterly Cohort - FY (Oct - Dec)");}
+            if(selValu==2){jq(".cohortDesc").html("Search by Quarterly Cohort - FY (Jan - Mar)");}
+            if(selValu==3){jq(".cohortDesc").html("Search by Quarterly Cohort - FY (Apr - Jun)");}
+            if(selValu==4){jq(".cohortDesc").html("Search by Quarterly Cohort - FY (Jul - Sept)");}
+            console.log("Selected value"+selValu);
+        });
+        
+        
+        
         jq(".date").unbind("datepicker");
         jq('.date').datepicker({
               dateFormat: 'yy-mm-dd',
@@ -271,24 +363,44 @@ int year = Calendar.getInstance().get(Calendar.YEAR);
 
         //ensure that the toggle button is closed
 
-          jq(".otzDetails").click(function(e){
-              startDate = jq("#startDate").val();
-              endDate = jq("#endDate").val();
-              var subSet = jq(this).attr("data-subset");
-              var type = jq(this).attr("data-type");
-              window.open("otzdetails.page?type="+type+"&subset="+subSet+"&startDate="+startDate+"&endDate="+endDate, "_blank");
-          })
           
           
+        jq("#filterOTZQuarterlycy").click(function(){
+            var quartercy = jq("#quartercy").val() ;
+            var yearcy = jq("#quarterYearcy").val();
+           
+            console.log("Quarter: "+quartercy);
+            console.log("Year: "+yearcy);
+            
+            var startDateEndDate = getDateRangeForQuartercy(quartercy, yearcy)
+            
+            startDate = startDateEndDate[0];
+            endDate = startDateEndDate[1];
+            
+            console.log("Start: "+startDate);
+            console.log("End: "+endDate);
+
+            
+            getOTZData();
+           
+        
+        });
+        
+        
         jq("#filterOTZQuarterly").click(function(){
             var quarter = jq("#quarter").val() ;
             var year = jq("#quarterYear").val();
            
+            console.log("Quarter: "+quarter);
+            console.log("Year: "+year);
+            
             var startDateEndDate = getDateRangeForQuarter(quarter, year)
             
             startDate = startDateEndDate[0];
             endDate = startDateEndDate[1];
             
+            console.log("Start: "+startDate);
+            console.log("End: "+endDate);
 
             
             getOTZData();
@@ -303,6 +415,9 @@ int year = Calendar.getInstance().get(Calendar.YEAR);
             var year = jq("#monthYear").val();
             var lastDay = lastDays[month-1];
             
+            console.log("Month: "+month);
+            console.log("Year: "+year);
+            
             if(month == 2 && leapYear(year))
             {
                 lastDay = 29;
@@ -311,6 +426,9 @@ int year = Calendar.getInstance().get(Calendar.YEAR);
             var monthString = (month > 9) ? month : "0"+month;
             startDate = year+"-"+monthString+"-"+"01"
             endDate = year+"-"+monthString+"-"+lastDay;
+            
+            console.log("Start: "+startDate);
+            console.log("End: "+endDate);
             
             getOTZData();
            
@@ -322,10 +440,23 @@ int year = Calendar.getInstance().get(Calendar.YEAR);
             startDate = jq("#startDate").val();
             endDate = jq("#endDate").val();
             
+            console.log("Start: "+startDate);
+            console.log("End: "+endDate);
+            
             getOTZData();
             
             
         });
+        
+        
+         jq(".otzDetails").click(function(e){
+              //startDate = jq("#startDate").val();
+              //endDate = jq("#endDate").val();
+              var subSet = jq(this).attr("data-subset");
+              var type = jq(this).attr("data-type");
+              window.open("otzdetails.page?type="+type+"&subset="+subSet+"&startDate="+startDate+"&endDate="+endDate, "_blank");
+          })
+          
       
         jq(".getInformation").click(function(e){
               var key = jq(this).attr("data-key");//get the key
@@ -367,8 +498,9 @@ int year = Calendar.getInstance().get(Calendar.YEAR);
     function createDatatable()
     {
     
-    
+  
      datatableObj = jq(".dataTable").DataTable({
+     		//fixedHeader: true,
              pageLength: 100,
              "lengthMenu": [[50, 100, 250, 500, -1], [50, 100, 250, 500, "All"]],
              "columnDefs": [
@@ -381,9 +513,9 @@ int year = Calendar.getInstance().get(Calendar.YEAR);
                     {
                         extend: 'csv',
                         title:'<%= title; %>',
-                        exportOptions: {
+                        /*exportOptions: {
                             columns: [0,1,2]
-                        }
+                        }*/
                         //messageTop: '<%= title; %>'
                     },
                     {
@@ -409,7 +541,11 @@ int year = Calendar.getInstance().get(Calendar.YEAR);
        } 
        createDatatable();
        
-       
+   var total0To10 = 0;
+   var total10To14 = 0;
+   var total5To19 = 0;
+   var total20To24 = 0;
+   var totalAbove24 = 0; 
    function getOTZData()
    {
    
@@ -420,26 +556,40 @@ int year = Calendar.getInstance().get(Calendar.YEAR);
             jq(".loadingView").html('<img width="50" src="${ ui.resourceLink("dataquality", "images/loading.gif") }" />');
             
            
-            
-            myAjax({startDate:startDate, endDate:endDate}, '${ ui.actionLink("getAllEnrolledInOTZ") }').then(function(response){
+            console.log("#####################################################"+ageTyp);
+            myAjax({startDate:startDate, endDate:endDate, ageType:ageTyp}, '${ ui.actionLink("getAllEnrolledInOTZ") }').then(function(response){
                 
                 var data = JSON.parse(response);
+                var male0To10 = data["male0To10"];
                 var male1014 = data["male10To14"];
                 var male1519 = data["male15To19"];
-                var male2024 = data["male20To24"];
+                var male2024 = data["male20To24"];var maleabove24 = data["maleabove24"];
+                
+                var female0To10 = data["female0To10"];
                 var female1014 = data["female10To14"];
                 var female1519 = data["female15To19"];
-                var female2024 = data["female20To24"];
+                var female2024 = data["female20To24"]; var femaleabove24 = data["femaleabove24"];
                 
+                
+                jq("#totalEnrolledMBelow10").html(male0To10)
                 jq("#totalEnrolledM10To14").html(male1014)
                 jq("#totalEnrolledM15To19").html(male1519)
                 jq("#totalEnrolledM20To24").html(male2024)
+                jq("#totalEnrolledMabove24").html(maleabove24)
+                
+                jq("#totalEnrolledFBelow10").html(female0To10)
                  jq("#totalEnrolledF10To14").html(female1014)
                 jq("#totalEnrolledF15To19").html(female1519);
                 jq("#totalEnrolledF20To24").html(female2024)
+                jq("#totalEnrolledFabove24").html(femaleabove24)
                 
+               /* total0To10 = new Number(male0To10) + new Number(female0To10)
+                total10To14 = new Number(male1014) + new Number(female1014)
+                total15To19 = new Number(male1519) + new Number(female1519)
+                total20To24 = new Number(male2024) + new Number(female2024)
+                totalAbove24 = new Number(maleabove24) + new Number(femaleabove24)*/
                
-                var total = new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(female1014) + new Number(female1519) + new Number(female2024);
+                var total = new Number(male0To10) + new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(maleabove24) + new Number(female0To10) + new Number(female1014) + new Number(female1519)  + new Number(female2024) + new Number(femaleabove24) ;
                 jq("#totalEnrolledTotal").html(total)
                 
                 
@@ -447,1093 +597,1465 @@ int year = Calendar.getInstance().get(Calendar.YEAR);
                 setCardValues(data);;
                 
                 
-                return  myAjax({startDate:startDate, endDate:endDate}, '${ ui.actionLink("getAllFullDisc") }');
+                return  myAjax({startDate:startDate, endDate:endDate, ageType:ageTyp}, '${ ui.actionLink("getAllFullDisc") }');
             })
             .then(function(response){
                 
                 var data = JSON.parse(response);
+                var male0To10 = data["male0To10"];
                 var male1014 = data["male10To14"];
                 var male1519 = data["male15To19"];
-                var male2024 = data["male20To24"];
+                var male2024 = data["male20To24"];var maleabove24 = data["maleabove24"];
+                
+                var female0To10 = data["female0To10"];
                 var female1014 = data["female10To14"];
                 var female1519 = data["female15To19"];
-                var female2024 = data["female20To24"];
+                var female2024 = data["female20To24"]; var femaleabove24 = data["femaleabove24"];
+               
                 
+                jq("#totalFullDiscMBelow10").html(male0To10)
                 jq("#totalFullDiscM10To14").html(male1014)
                 jq("#totalFullDiscM15To19").html(male1519)
                 jq("#totalFullDiscM20To24").html(male2024)
+                jq("#totalFullDiscMabove24").html(maleabove24)
+                
+                jq("#totalFullDiscFBelow10").html(female0To10)
                  jq("#totalFullDiscF10To14").html(female1014)
                 jq("#totalFullDiscF15To19").html(female1519);
                 jq("#totalFullDiscF20To24").html(female2024)
+                jq("#totalFullDiscFabove24").html(femaleabove24)
                 
                 
-                var total = new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(female1014) + new Number(female1519) + new Number(female2024);
+                var total = new Number(male0To10) + new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(maleabove24) + new Number(female0To10) + new Number(female1014) + new Number(female1519)  + new Number(female2024) + new Number(femaleabove24) ;
+                
                 jq("#totalFullDiscTotal").html(total)
                 console.log("total disclosed", total);
+                
                 renderFullDisclosure(totalEnrolled, total);
                 //lets set some cards
-                setCardValues(data);;
+                //setCardValues(data);;
                 
                 
-                return  myAjax({startDate:startDate, endDate:endDate}, '${ ui.actionLink("getTotalEnrolledWithScheduledPickup6MonthsBefore") }');
+                return  myAjax({startDate:startDate, endDate:endDate, ageType:ageTyp}, '${ ui.actionLink("getTotalEnrolledWithScheduledPickup6MonthsBefore") }');
             })
             .then(function(response){
                 
                 var data = JSON.parse(response);
+                var male0To10 = data["male0To10"];
                 var male1014 = data["male10To14"];
                 var male1519 = data["male15To19"];
-                var male2024 = data["male20To24"];
+                var male2024 = data["male20To24"];var maleabove24 = data["maleabove24"];
+                
+                var female0To10 = data["female0To10"];
                 var female1014 = data["female10To14"];
                 var female1519 = data["female15To19"];
-                var female2024 = data["female20To24"];
+                var female2024 = data["female20To24"]; var femaleabove24 = data["femaleabove24"];
                 
+                jq("#totalEnrolledWithApp6MtPriorMBelow10").html(male0To10)
                 jq("#totalEnrolledWithApp6MtPriorM10To14").html(male1014)
                 jq("#totalEnrolledWithApp6MtPriorM15To19").html(male1519)
                 jq("#totalEnrolledWithApp6MtPriorM20To24").html(male2024)
+                jq("#totalEnrolledWithApp6MtPriorMabove24").html(maleabove24)
+                
+                 jq("#totalEnrolledWithApp6MtPriorFBelow10").html(female0To10)
                  jq("#totalEnrolledWithApp6MtPriorF10To14").html(female1014)
                 jq("#totalEnrolledWithApp6MtPriorF15To19").html(female1519);
                 jq("#totalEnrolledWithApp6MtPriorF20To24").html(female2024)
+                jq("#totalEnrolledWithApp6MtPriorFabove24").html(femaleabove24)
                 
                 
                 
-                var total = new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(female1014) + new Number(female1519) + new Number(female2024);
+                var total = new Number(male0To10) + new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(maleabove24) + new Number(female0To10) + new Number(female1014) + new Number(female1519)  + new Number(female2024) + new Number(femaleabove24) ;
+                
                 jq("#totalEnrolledWithApp6MtPriorTotal").html(total)
-                return  myAjax({startDate:startDate, endDate:endDate}, '${ ui.actionLink("getTotalEnrolledWhoKeptScheduledPickup6MonthsBefore") }');
+                return  myAjax({startDate:startDate, endDate:endDate, ageType:ageTyp}, '${ ui.actionLink("getTotalEnrolledWhoKeptScheduledPickup6MonthsBefore") }');
             })
             .then(function(response){
                 
                 var data = JSON.parse(response);
+                var male0To10 = data["male0To10"];
                 var male1014 = data["male10To14"];
                 var male1519 = data["male15To19"];
-                var male2024 = data["male20To24"];
+                var male2024 = data["male20To24"];var maleabove24 = data["maleabove24"];
+                
+                var female0To10 = data["female0To10"];
                 var female1014 = data["female10To14"];
                 var female1519 = data["female15To19"];
-                var female2024 = data["female20To24"];
+                var female2024 = data["female20To24"]; var femaleabove24 = data["femaleabove24"];
                 
+                jq("#totalEnrolledKeptAppPriorMBelow10").html(male0To10)
                 jq("#totalEnrolledKeptAppPriorM10To14").html(male1014)
                 jq("#totalEnrolledKeptAppPriorM15To19").html(male1519)
                 jq("#totalEnrolledKeptAppPriorM20To24").html(male2024)
+                jq("#totalEnrolledKeptAppPriorMabove24").html(maleabove24)
+                
+                 jq("#totalEnrolledKeptAppPriorFBelow10").html(female0To10)
                  jq("#totalEnrolledKeptAppPriorF10To14").html(female1014)
                 jq("#totalEnrolledKeptAppPriorF15To19").html(female1519);
                 jq("#totalEnrolledKeptAppPriorF20To24").html(female2024);
+                jq("#totalEnrolledKeptAppPriorFabove24").html(femaleabove24);
                 
-                var total = new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(female1014) + new Number(female1519) + new Number(female2024);
+                var total = new Number(male0To10) + new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(maleabove24) + new Number(female0To10) + new Number(female1014) + new Number(female1519)  + new Number(female2024) + new Number(femaleabove24) ;
+                
                 jq("#totalEnrolledKeptAppPriorTotal").html(total)
                 
                 
                 
-                return  myAjax({startDate:startDate, endDate:endDate}, '${ ui.actionLink("getTotalEnrolledWithGoodAdhScore6MonthsBefore") }');
+                return  myAjax({startDate:startDate, endDate:endDate, ageType:ageTyp}, '${ ui.actionLink("getTotalEnrolledWithGoodAdhScore6MonthsBefore") }');
             })
             
             .then(function(response){
                 
                 var data = JSON.parse(response);
+                var male0To10 = data["male0To10"];
                 var male1014 = data["male10To14"];
                 var male1519 = data["male15To19"];
-                var male2024 = data["male20To24"];
+                var male2024 = data["male20To24"];var maleabove24 = data["maleabove24"];
+                
+                var female0To10 = data["female0To10"];
                 var female1014 = data["female10To14"];
                 var female1519 = data["female15To19"];
-                var female2024 = data["female20To24"];
+                var female2024 = data["female20To24"]; var femaleabove24 = data["femaleabove24"];
                 
+                jq("#totalEnrolledGoodAdhPriorMBelow10").html(male0To10)
                 jq("#totalEnrolledGoodAdhPriorM10To14").html(male1014)
                 jq("#totalEnrolledGoodAdhPriorM15To19").html(male1519)
                 jq("#totalEnrolledGoodAdhPriorM20To24").html(male2024)
+                jq("#totalEnrolledGoodAdhPriorMabove24").html(maleabove24)
+                
+                jq("#totalEnrolledGoodAdhPriorFBelow10").html(female0To10)
                  jq("#totalEnrolledGoodAdhPriorF10To14").html(female1014)
                 jq("#totalEnrolledGoodAdhPriorF15To19").html(female1519);
                 jq("#totalEnrolledGoodAdhPriorF20To24").html(female2024)
+                jq("#totalEnrolledGoodAdhPriorFabove24").html(femaleabove24)
                 
                 
-                var total = new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(female1014) + new Number(female1519) + new Number(female2024);
+                var total = new Number(male0To10) + new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(maleabove24) + new Number(female0To10) + new Number(female1014) + new Number(female1519)  + new Number(female2024) + new Number(femaleabove24) ;
+                
                 jq("#totalEnrolledGoodAdhPriorTotal").html(total)
                 
-                return  myAjax({startDate:startDate, endDate:endDate}, '${ ui.actionLink("getTotalEnrolledWithVL12MonthsBefore") }');
+                return  myAjax({startDate:startDate, endDate:endDate, ageType:ageTyp}, '${ ui.actionLink("getTotalEnrolledWithVL12MonthsBefore") }');
             })
             
             .then(function(response){
                 
                 var data = JSON.parse(response);
+                var male0To10 = data["male0To10"];
                 var male1014 = data["male10To14"];
                 var male1519 = data["male15To19"];
-                var male2024 = data["male20To24"];
+                var male2024 = data["male20To24"];var maleabove24 = data["maleabove24"];
+                
+                var female0To10 = data["female0To10"];
                 var female1014 = data["female10To14"];
                 var female1519 = data["female15To19"];
-                var female2024 = data["female20To24"];
+                var female2024 = data["female20To24"]; var femaleabove24 = data["femaleabove24"];
                 
+                jq("#totalEnrolledBaselineResultMBelow10").html(male0To10)
                 jq("#totalEnrolledBaselineResultM10To14").html(male1014)
                 jq("#totalEnrolledBaselineResultM15To19").html(male1519)
                 jq("#totalEnrolledBaselineResultM20To24").html(male2024)
+                jq("#totalEnrolledBaselineResultMabove24").html(maleabove24)
+                
+                jq("#totalEnrolledBaselineResultFBelow10").html(female0To10)
                 jq("#totalEnrolledBaselineResultF10To14").html(female1014)
                 jq("#totalEnrolledBaselineResultF15To19").html(female1519);
                 jq("#totalEnrolledBaselineResultF20To24").html(female2024)
+                jq("#totalEnrolledBaselineResultFabove24").html(femaleabove24)
                 
-                var total = new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(female1014) + new Number(female1519) + new Number(female2024);
+                var total = new Number(male0To10) + new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(maleabove24) + new Number(female0To10) + new Number(female1014) + new Number(female1519)  + new Number(female2024) + new Number(femaleabove24) ;
                 jq("#totalEnrolledBaselineResultTotal").html(total)
                 
                 
                 
-                return  myAjax({startDate:startDate, endDate:endDate}, '${ ui.actionLink("getTotalEnrolledWithVL12MonthsBeforeAndBelow200") }');
+                return  myAjax({startDate:startDate, endDate:endDate, ageType:ageTyp}, '${ ui.actionLink("getTotalEnrolledWithVL12MonthsBeforeAndBelow200") }');
             })
             
             .then(function(response){
                 
                 var data = JSON.parse(response);
+                var male0To10 = data["male0To10"];
                 var male1014 = data["male10To14"];
                 var male1519 = data["male15To19"];
-                var male2024 = data["male20To24"];
+                var male2024 = data["male20To24"];var maleabove24 = data["maleabove24"];
+                
+                var female0To10 = data["female0To10"];
                 var female1014 = data["female10To14"];
                 var female1519 = data["female15To19"];
-                var female2024 = data["female20To24"];
+                var female2024 = data["female20To24"]; var femaleabove24 = data["femaleabove24"];
                 
+                jq("#totalEnrolledBaselineResultBelow200MBelow10").html(male0To10)
                 jq("#totalEnrolledBaselineResultBelow200M10To14").html(male1014)
                 jq("#totalEnrolledBaselineResultBelow200M15To19").html(male1519)
                 jq("#totalEnrolledBaselineResultBelow200M20To24").html(male2024)
+                jq("#totalEnrolledBaselineResultBelow200Mabove24").html(maleabove24)
+                
+                jq("#totalEnrolledBaselineResultBelow200FBelow10").html(female0To10)
                 jq("#totalEnrolledBaselineResultBelow200F10To14").html(female1014)
                 jq("#totalEnrolledBaselineResultBelow200F15To19").html(female1519);
                 jq("#totalEnrolledBaselineResultBelow200F20To24").html(female2024);
+                jq("#totalEnrolledBaselineResultBelow200Fabove24").html(femaleabove24);
                 
-                var total = new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(female1014) + new Number(female1519) + new Number(female2024);
+                var total = new Number(male0To10) + new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(maleabove24) + new Number(female0To10) + new Number(female1014) + new Number(female1519)  + new Number(female2024) + new Number(femaleabove24) ;
                 jq("#totalEnrolledBaselineResultBelow200Total").html(total)
                 
                 
                 
-                return  myAjax({startDate:startDate, endDate:endDate}, '${ ui.actionLink("getTotalEnrolledWithVL12MonthsBeforeAndBtw200AND1000") }');
+                return  myAjax({startDate:startDate, endDate:endDate, ageType:ageTyp}, '${ ui.actionLink("getTotalEnrolledWithVL12MonthsBeforeAndBtw200AND1000") }');
             })
             .then(function(response){
                 
                 var data = JSON.parse(response);
+                var male0To10 = data["male0To10"];
                 var male1014 = data["male10To14"];
                 var male1519 = data["male15To19"];
-                var male2024 = data["male20To24"];
+                var male2024 = data["male20To24"];var maleabove24 = data["maleabove24"];
+                
+                var female0To10 = data["female0To10"];
                 var female1014 = data["female10To14"];
                 var female1519 = data["female15To19"];
-                var female2024 = data["female20To24"];
+                var female2024 = data["female20To24"]; var femaleabove24 = data["femaleabove24"];
                 
+                jq("#totalEnrolledBaselineResult200To1000MBelow10").html(male0To10)
                 jq("#totalEnrolledBaselineResult200To1000M10To14").html(male1014)
                 jq("#totalEnrolledBaselineResult200To1000M15To19").html(male1519)
                 jq("#totalEnrolledBaselineResult200To1000M20To24").html(male2024)
+                jq("#totalEnrolledBaselineResult200To1000Mabove24").html(maleabove24)
+                
+                jq("#totalEnrolledBaselineResult200To1000FBelow10").html(female0To10)
                 jq("#totalEnrolledBaselineResult200To1000F10To14").html(female1014)
                 jq("#totalEnrolledBaselineResult200To1000F15To19").html(female1519);
                 jq("#totalEnrolledBaselineResult200To1000F20To24").html(female2024)
+                jq("#totalEnrolledBaselineResult200To1000Fabove24").html(femaleabove24)
                 
-                var total = new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(female1014) + new Number(female1519) + new Number(female2024);
+                var total = new Number(male0To10) + new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(maleabove24) + new Number(female0To10) + new Number(female1014) + new Number(female1519)  + new Number(female2024) + new Number(femaleabove24) ;
                 jq("#totalEnrolledBaselineResult200To1000Total").html(total)
                 
-                return  myAjax({startDate:startDate, endDate:endDate}, '${ ui.actionLink("getTotalEnrolledWithVL12MonthsBeforeAndAboveOrEqual1000") }');
+                return  myAjax({startDate:startDate, endDate:endDate, ageType:ageTyp}, '${ ui.actionLink("getTotalEnrolledWithVL12MonthsBeforeAndAboveOrEqual1000") }');
             })
             .then(function(response){
                 
                 var data = JSON.parse(response);
+                var male0To10 = data["male0To10"];
                 var male1014 = data["male10To14"];
                 var male1519 = data["male15To19"];
-                var male2024 = data["male20To24"];
+                var male2024 = data["male20To24"];var maleabove24 = data["maleabove24"];
+                
+                var female0To10 = data["female0To10"];
                 var female1014 = data["female10To14"];
                 var female1519 = data["female15To19"];
-                var female2024 = data["female20To24"];
+                var female2024 = data["female20To24"]; var femaleabove24 = data["femaleabove24"];
                 
+                jq("#totalEnrolledBaselineResultAbove1000MBelow10").html(male0To10)
                 jq("#totalEnrolledBaselineResultAbove1000M10To14").html(male1014)
                 jq("#totalEnrolledBaselineResultAbove1000M15To19").html(male1519)
                 jq("#totalEnrolledBaselineResultAbove1000M20To24").html(male2024)
+                jq("#totalEnrolledBaselineResultAbove1000Mabove24").html(maleabove24)
+                
+                jq("#totalEnrolledBaselineResultAbove1000FBelow10").html(female0To10)
                 jq("#totalEnrolledBaselineResultAbove1000F10To14").html(female1014)
                 jq("#totalEnrolledBaselineResultAbove1000F15To19").html(female1519);
                 jq("#totalEnrolledBaselineResultAbove1000F20To24").html(female2024)
+                jq("#totalEnrolledBaselineResultAbove1000Fabove24").html(femaleabove24)
                 
-                var total = new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(female1014) + new Number(female1519) + new Number(female2024);
+                var total = new Number(male0To10) + new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(maleabove24) + new Number(female0To10) + new Number(female1014) + new Number(female1519)  + new Number(female2024) + new Number(femaleabove24) ;
                 jq("#totalEnrolledBaselineResultAbove1000Total").html(total)
                 
                 
                 
-                return  myAjax({startDate:startDate, endDate:endDate}, '${ ui.actionLink("getTotalEnrolledWithVL6MonthsBefore") }');
+                return  myAjax({startDate:startDate, endDate:endDate, ageType:ageTyp}, '${ ui.actionLink("getTotalEnrolledWithVL6MonthsBefore") }');
             })
 
             .then(function(response){
                 
                 var data = JSON.parse(response);
+                var male0To10 = data["male0To10"];
                 var male1014 = data["male10To14"];
                 var male1519 = data["male15To19"];
-                var male2024 = data["male20To24"];
+                var male2024 = data["male20To24"];var maleabove24 = data["maleabove24"];
+                
+                var female0To10 = data["female0To10"];
                 var female1014 = data["female10To14"];
                 var female1519 = data["female15To19"];
-                var female2024 = data["female20To24"];
+                var female2024 = data["female20To24"]; var femaleabove24 = data["femaleabove24"];
                 
+                jq("#totalEnrolledBaselineResult6MtMBelow10").html(male0To10)
                 jq("#totalEnrolledBaselineResult6MtM10To14").html(male1014)
                 jq("#totalEnrolledBaselineResult6MtM15To19").html(male1519)
                 jq("#totalEnrolledBaselineResult6MtM20To24").html(male2024)
+                jq("#totalEnrolledBaselineResult6MtMabove24").html(maleabove24)
+                
+                jq("#totalEnrolledBaselineResult6MtFBelow10").html(female0To10)
                 jq("#totalEnrolledBaselineResult6MtF10To14").html(female1014)
                 jq("#totalEnrolledBaselineResult6MtF15To19").html(female1519);
                 jq("#totalEnrolledBaselineResult6MtF20To24").html(female2024)
+                jq("#totalEnrolledBaselineResult6MtFabove24").html(femaleabove24)
                 
                 
-                var total = new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(female1014) + new Number(female1519) + new Number(female2024);
+                var total = new Number(male0To10) + new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(maleabove24) + new Number(female0To10) + new Number(female1014) + new Number(female1519)  + new Number(female2024) + new Number(femaleabove24) ;
                 jq("#totalEnrolledBaselineResult6MtTotal").html(total)
                 
                 
-                return  myAjax({startDate:startDate, endDate:endDate}, '${ ui.actionLink("getTotalEnrolledWithVL6MonthsBeforeAndBelow200") }');
+                return  myAjax({startDate:startDate, endDate:endDate, ageType:ageTyp}, '${ ui.actionLink("getTotalEnrolledWithVL6MonthsBeforeAndBelow200") }');
             })
             
             .then(function(response){
                 
                 var data = JSON.parse(response);
+                var male0To10 = data["male0To10"];
                 var male1014 = data["male10To14"];
                 var male1519 = data["male15To19"];
-                var male2024 = data["male20To24"];
+                var male2024 = data["male20To24"];var maleabove24 = data["maleabove24"];
+                
+                var female0To10 = data["female0To10"];
                 var female1014 = data["female10To14"];
                 var female1519 = data["female15To19"];
-                var female2024 = data["female20To24"];
+                var female2024 = data["female20To24"]; var femaleabove24 = data["femaleabove24"];
                 
+                jq("#totalEnrolledBaselineResult6MtBelow200MBelow10").html(male0To10)
                 jq("#totalEnrolledBaselineResult6MtBelow200M10To14").html(male1014)
                 jq("#totalEnrolledBaselineResult6MtBelow200M15To19").html(male1519)
                 jq("#totalEnrolledBaselineResult6MtBelow200M20To24").html(male2024)
+                jq("#totalEnrolledBaselineResult6MtBelow200Mabove24").html(maleabove24)
+                
+                jq("#totalEnrolledBaselineResult6MtBelow200FBelow10").html(female0To10)
                 jq("#totalEnrolledBaselineResult6MtBelow200F10To14").html(female1014)
                 jq("#totalEnrolledBaselineResult6MtBelow200F15To19").html(female1519);
                 jq("#totalEnrolledBaselineResult6MtBelow200F20To24").html(female2024)
+                jq("#totalEnrolledBaselineResult6MtBelow200Fabove24").html(femaleabove24)
                 
-                var total = new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(female1014) + new Number(female1519) + new Number(female2024);
+                var total = new Number(male0To10) + new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(maleabove24) + new Number(female0To10) + new Number(female1014) + new Number(female1519)  + new Number(female2024) + new Number(femaleabove24) ;
                 jq("#totalEnrolledBaselineResult6MtBelow200Total").html(total)
                 
                 
-                return  myAjax({startDate:startDate, endDate:endDate}, '${ ui.actionLink("getTotalEnrolledWithVL6MonthsBeforeAndBtw200AND1000") }');
+                return  myAjax({startDate:startDate, endDate:endDate, ageType:ageTyp}, '${ ui.actionLink("getTotalEnrolledWithVL6MonthsBeforeAndBtw200AND1000") }');
             })
             
             .then(function(response){
                 
                 var data = JSON.parse(response);
+                var male0To10 = data["male0To10"];
                 var male1014 = data["male10To14"];
                 var male1519 = data["male15To19"];
-                var male2024 = data["male20To24"];
+                var male2024 = data["male20To24"];var maleabove24 = data["maleabove24"];
+                
+                var female0To10 = data["female0To10"];
                 var female1014 = data["female10To14"];
                 var female1519 = data["female15To19"];
-                var female2024 = data["female20To24"];
+                var female2024 = data["female20To24"]; var femaleabove24 = data["femaleabove24"];
                 
+                jq("#totalEnrolledBaselineResult6MtBt200To1000MBelow10").html(male0To10)
                 jq("#totalEnrolledBaselineResult6MtBt200To1000M10To14").html(male1014)
                 jq("#totalEnrolledBaselineResult6MtBt200To1000M15To19").html(male1519)
                 jq("#totalEnrolledBaselineResult6MtBt200To1000M20To24").html(male2024)
+                jq("#totalEnrolledBaselineResult6MtBt200To1000Mabove24").html(maleabove24)
+                
+                jq("#totalEnrolledBaselineResult6MtBt200To1000FBelow10").html(female0To10)
                 jq("#totalEnrolledBaselineResult6MtBt200To1000F10To14").html(female1014)
                 jq("#totalEnrolledBaselineResult6MtBt200To1000F15To19").html(female1519);
                 jq("#totalEnrolledBaselineResult6MtBt200To1000F20To24").html(female2024)
+                jq("#totalEnrolledBaselineResult6MtBt200To1000Fabove24").html(femaleabove24)
                 
                 
-                var total = new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(female1014) + new Number(female1519) + new Number(female2024);
+                var total = new Number(male0To10) + new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(maleabove24) + new Number(female0To10) + new Number(female1014) + new Number(female1519)  + new Number(female2024) + new Number(femaleabove24) ;
                 jq("#totalEnrolledBaselineResult6MtBt200To1000Total").html(total)
                 
                 
-                return  myAjax({startDate:startDate, endDate:endDate}, '${ ui.actionLink("getTotalEnrolledWithVL6MonthsBeforeAndAboveOrEqual1000") }');
+                return  myAjax({startDate:startDate, endDate:endDate, ageType:ageTyp}, '${ ui.actionLink("getTotalEnrolledWithVL6MonthsBeforeAndAboveOrEqual1000") }');
             })
             
             .then(function(response){
                 
                 var data = JSON.parse(response);
+                var male0To10 = data["male0To10"];
                 var male1014 = data["male10To14"];
                 var male1519 = data["male15To19"];
-                var male2024 = data["male20To24"];
+                var male2024 = data["male20To24"];var maleabove24 = data["maleabove24"];
+                
+                var female0To10 = data["female0To10"];
                 var female1014 = data["female10To14"];
                 var female1519 = data["female15To19"];
-                var female2024 = data["female20To24"];
+                var female2024 = data["female20To24"]; var femaleabove24 = data["femaleabove24"];
                 
+                jq("#totalEnrolledBaselineResult6MtBelow1000Gt1000MBelow10").html(male0To10)
                 jq("#totalEnrolledBaselineResult6MtBelow1000Gt1000M10To14").html(male1014)
                 jq("#totalEnrolledBaselineResult6MtBelow1000Gt1000M15To19").html(male1519)
                 jq("#totalEnrolledBaselineResult6MtBelow1000Gt1000M20To24").html(male2024)
+                jq("#totalEnrolledBaselineResult6MtBelow1000Gt1000Mabove24").html(maleabove24)
+                
+                jq("#totalEnrolledBaselineResult6MtBelow1000Gt1000FBelow10").html(female0To10)
                 jq("#totalEnrolledBaselineResult6MtBelow1000Gt1000F10To14").html(female1014)
                 jq("#totalEnrolledBaselineResult6MtBelow1000Gt1000F15To19").html(female1519);
                 jq("#totalEnrolledBaselineResult6MtBelow1000Gt1000F20To24").html(female2024)
+                jq("#totalEnrolledBaselineResult6MtBelow1000Gt1000Fabove24").html(femaleabove24)
                 
-                var total = new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(female1014) + new Number(female1519) + new Number(female2024);
+                var total = new Number(male0To10) + new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(maleabove24) + new Number(female0To10) + new Number(female1014) + new Number(female1519)  + new Number(female2024) + new Number(femaleabove24) ;
                 jq("#totalEnrolledBaselineResult6MtBelow1000Gt1000Total").html(total)
                 
                 
                 
-                return  myAjax({startDate:startDate, endDate:endDate}, '${ ui.actionLink("getTotalEligibleForMonthZeroVL") }');
+                return  myAjax({startDate:startDate, endDate:endDate, ageType:ageTyp}, '${ ui.actionLink("getTotalEligibleForMonthZeroVL") }');
             })
             .then(function(response){
                 
                 var data = JSON.parse(response);
+                var male0To10 = data["male0To10"];
                 var male1014 = data["male10To14"];
                 var male1519 = data["male15To19"];
-                var male2024 = data["male20To24"];
+                var male2024 = data["male20To24"];var maleabove24 = data["maleabove24"];
+                
+                var female0To10 = data["female0To10"];
                 var female1014 = data["female10To14"];
                 var female1519 = data["female15To19"];
-                var female2024 = data["female20To24"];
+                var female2024 = data["female20To24"]; var femaleabove24 = data["femaleabove24"];
                 
+                jq("#totalEnrolledEligibleMtZMBelow10").html(male0To10)
                 jq("#totalEnrolledEligibleMtZM10To14").html(male1014)
                 jq("#totalEnrolledEligibleMtZM15To19").html(male1519)
                 jq("#totalEnrolledEligibleMtZM20To24").html(male2024)
+                jq("#totalEnrolledEligibleMtZMabove24").html(maleabove24)
+                
+                jq("#totalEnrolledEligibleMtZFBelow10").html(female0To10)
                 jq("#totalEnrolledEligibleMtZF10To14").html(female1014)
                 jq("#totalEnrolledEligibleMtZF15To19").html(female1519);
                 jq("#totalEnrolledEligibleMtZF20To24").html(female2024)
+                jq("#totalEnrolledEligibleMtZFabove24").html(femaleabove24)
                 
-                var total = new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(female1014) + new Number(female1519) + new Number(female2024);
+                var total = new Number(male0To10) + new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(maleabove24) + new Number(female0To10) + new Number(female1014) + new Number(female1519)  + new Number(female2024) + new Number(femaleabove24) ;
                 jq("#totalEnrolledEligibleMtZTotal").html(total)
                 
                 
                 
-                return  myAjax({startDate:startDate, endDate:endDate}, '${ ui.actionLink("getTotalEligibleForMonthZeroVLWithSampleCollectedAtEnrollment") }');
+                return  myAjax({startDate:startDate, endDate:endDate, ageType:ageTyp}, '${ ui.actionLink("getTotalEligibleForMonthZeroVLWithSampleCollectedAtEnrollment") }');
             })
             .then(function(response){
                 
                 var data = JSON.parse(response);
+                var male0To10 = data["male0To10"];
                 var male1014 = data["male10To14"];
                 var male1519 = data["male15To19"];
-                var male2024 = data["male20To24"];
+                var male2024 = data["male20To24"];var maleabove24 = data["maleabove24"];
+                
+                var female0To10 = data["female0To10"];
                 var female1014 = data["female10To14"];
                 var female1519 = data["female15To19"];
-                var female2024 = data["female20To24"];
+                var female2024 = data["female20To24"]; var femaleabove24 = data["femaleabove24"];
                 
+                jq("#totalEnrolledEligibleMtZSampleMBelow10").html(male0To10)
                 jq("#totalEnrolledEligibleMtZSampleM10To14").html(male1014)
                 jq("#totalEnrolledEligibleMtZSampleM15To19").html(male1519)
                 jq("#totalEnrolledEligibleMtZSampleM20To24").html(male2024)
+                jq("#totalEnrolledEligibleMtZSampleMabove24").html(maleabove24)
+                
+                jq("#totalEnrolledEligibleMtZSampleFBelow10").html(female0To10)
                 jq("#totalEnrolledEligibleMtZSampleF10To14").html(female1014)
                 jq("#totalEnrolledEligibleMtZSampleF15To19").html(female1519);
                 jq("#totalEnrolledEligibleMtZSampleF20To24").html(female2024)
+                jq("#totalEnrolledEligibleMtZSampleFabove24").html(femaleabove24)
                 
-                var total = new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(female1014) + new Number(female1519) + new Number(female2024);
+                var total = new Number(male0To10) + new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(maleabove24) + new Number(female0To10) + new Number(female1014) + new Number(female1519)  + new Number(female2024) + new Number(femaleabove24) ;
                 jq("#totalEnrolledEligibleMtZSampleTotal").html(total)
                 
                 
                 
-                return  myAjax({startDate:startDate, endDate:endDate}, '${ ui.actionLink("getTotalWithBaseLineVLBelow1000AndMonthZeroVlBelow200") }');
+                return  myAjax({startDate:startDate, endDate:endDate, ageType:ageTyp}, '${ ui.actionLink("getTotalWithBaseLineVLBelow1000AndMonthZeroVlBelow200") }');
             })
             .then(function(response){
                 
                 var data = JSON.parse(response);
+                var male0To10 = data["male0To10"];
                 var male1014 = data["male10To14"];
                 var male1519 = data["male15To19"];
-                var male2024 = data["male20To24"];
+                var male2024 = data["male20To24"];var maleabove24 = data["maleabove24"];
+                
+                var female0To10 = data["female0To10"];
                 var female1014 = data["female10To14"];
                 var female1519 = data["female15To19"];
-                var female2024 = data["female20To24"];
+                var female2024 = data["female20To24"]; var femaleabove24 = data["femaleabove24"];
                 
+                jq("#totalEnrolledB1000MZ200MBelow10").html(male0To10)
                 jq("#totalEnrolledB1000MZ200M10To14").html(male1014)
                 jq("#totalEnrolledB1000MZ200M15To19").html(male1519)
                 jq("#totalEnrolledB1000MZ200M20To24").html(male2024)
+                jq("#totalEnrolledB1000MZ200Mabove24").html(maleabove24)
+                
+                jq("#totalEnrolledB1000MZ200FBelow10").html(female0To10)
                 jq("#totalEnrolledB1000MZ200F10To14").html(female1014)
                 jq("#totalEnrolledB1000MZ200F15To19").html(female1519);
                 jq("#totalEnrolledB1000MZ200F20To24").html(female2024)
+                jq("#totalEnrolledB1000MZ200Fabove24").html(femaleabove24)
                 
-                var total = new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(female1014) + new Number(female1519) + new Number(female2024);
+                var total = new Number(male0To10) + new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(maleabove24) + new Number(female0To10) + new Number(female1014) + new Number(female1519)  + new Number(female2024) + new Number(femaleabove24) ;
                 jq("#totalEnrolledB1000MZ200Total").html(total)
                 
                 
                 
-                return  myAjax({startDate:startDate, endDate:endDate}, '${ ui.actionLink("getTotalWithBaseLineVLBelow1000AndMonthZeroVlAbove200") }');
+                return  myAjax({startDate:startDate, endDate:endDate, ageType:ageTyp}, '${ ui.actionLink("getTotalWithBaseLineVLBelow1000AndMonthZeroVlAbove200") }');
             })
             .then(function(response){
                 
                 var data = JSON.parse(response);
+                var male0To10 = data["male0To10"];
                 var male1014 = data["male10To14"];
                 var male1519 = data["male15To19"];
-                var male2024 = data["male20To24"];
+                var male2024 = data["male20To24"];var maleabove24 = data["maleabove24"];
+                
+                var female0To10 = data["female0To10"];
                 var female1014 = data["female10To14"];
                 var female1519 = data["female15To19"];
-                var female2024 = data["female20To24"];
+                var female2024 = data["female20To24"]; var femaleabove24 = data["femaleabove24"];
                 
+                jq("#totalEnrolledB1000MZ200To1000MBelow10").html(male0To10)
                 jq("#totalEnrolledB1000MZ200To1000M10To14").html(male1014)
                 jq("#totalEnrolledB1000MZ200To1000M15To19").html(male1519)
                 jq("#totalEnrolledB1000MZ200To1000M20To24").html(male2024)
+                jq("#totalEnrolledB1000MZ200To1000Mabove24").html(maleabove24)
+                
+                jq("#totalEnrolledB1000MZ200To1000FBelow10").html(female0To10)
                 jq("#totalEnrolledB1000MZ200To1000F10To14").html(female1014)
                 jq("#totalEnrolledB1000MZ200To1000F15To19").html(female1519);
                 jq("#totalEnrolledB1000MZ200To1000F20To24").html(female2024)
+                jq("#totalEnrolledB1000MZ200To1000Fabove24").html(femaleabove24)
                 
                 
-                 var total = new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(female1014) + new Number(female1519) + new Number(female2024);
+                var total = new Number(male0To10) + new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(maleabove24) + new Number(female0To10) + new Number(female1014) + new Number(female1519)  + new Number(female2024) + new Number(femaleabove24) ;
                 jq("#totalEnrolledB1000MZ200To1000Total").html(total)
                 
                 
                 
-                return  myAjax({startDate:startDate, endDate:endDate}, '${ ui.actionLink("getTotalWithBaseLineVLBelow1000AndMonthZeroVlAbove1000") }');
+                return  myAjax({startDate:startDate, endDate:endDate, ageType:ageTyp}, '${ ui.actionLink("getTotalWithBaseLineVLBelow1000AndMonthZeroVlAbove1000") }');
             })
 
             .then(function(response){
                 
                 var data = JSON.parse(response);
+                var male0To10 = data["male0To10"];
                 var male1014 = data["male10To14"];
                 var male1519 = data["male15To19"];
-                var male2024 = data["male20To24"];
+                var male2024 = data["male20To24"];var maleabove24 = data["maleabove24"];
+                
+                var female0To10 = data["female0To10"];
                 var female1014 = data["female10To14"];
                 var female1519 = data["female15To19"];
-                var female2024 = data["female20To24"];
+                var female2024 = data["female20To24"]; var femaleabove24 = data["femaleabove24"];
                 
+                jq("#totalEnrolledB1000MZ1000MBelow10").html(male0To10)
                 jq("#totalEnrolledB1000MZ1000M10To14").html(male1014)
                 jq("#totalEnrolledB1000MZ1000M15To19").html(male1519)
                 jq("#totalEnrolledB1000MZ1000M20To24").html(male2024)
+                jq("#totalEnrolledB1000MZ1000Mabove24").html(maleabove24)
+                
+                jq("#totalEnrolledB1000MZ1000FBelow10").html(female0To10)
                 jq("#totalEnrolledB1000MZ1000F10To14").html(female1014)
                 jq("#totalEnrolledB1000MZ1000F15To19").html(female1519);
                 jq("#totalEnrolledB1000MZ1000F20To24").html(female2024)
+                jq("#totalEnrolledB1000MZ1000Fabove24").html(femaleabove24)
                 
-                 var total = new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(female1014) + new Number(female1519) + new Number(female2024);
+                var total = new Number(male0To10) + new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(maleabove24) + new Number(female0To10) + new Number(female1014) + new Number(female1519)  + new Number(female2024) + new Number(femaleabove24) ;
                 jq("#totalEnrolledB1000MZ1000Total").html(total)
 
                 
                 
-                return  myAjax({startDate:startDate, endDate:endDate}, '${ ui.actionLink("getTotalEnrolledWithScheduledPickupAfter") }');
+                return  myAjax({startDate:startDate, endDate:endDate, ageType:ageTyp}, '${ ui.actionLink("getTotalEnrolledWithScheduledPickupAfter") }');
             })
 
 
             .then(function(response){
                 
                 var data = JSON.parse(response);
+                var male0To10 = data["male0To10"];
                 var male1014 = data["male10To14"];
                 var male1519 = data["male15To19"];
-                var male2024 = data["male20To24"];
+                var male2024 = data["male20To24"];var maleabove24 = data["maleabove24"];
+                
+                var female0To10 = data["female0To10"];
                 var female1014 = data["female10To14"];
                 var female1519 = data["female15To19"];
-                var female2024 = data["female20To24"];
+                var female2024 = data["female20To24"]; var femaleabove24 = data["femaleabove24"];
                 
+                jq("#scheduledPickupFUMBelow10").html(male0To10)
                 jq("#scheduledPickupFUM10To14").html(male1014)
                 jq("#scheduledPickupFUM15To19").html(male1519)
                 jq("#scheduledPickupFUM20To24").html(male2024)
+                jq("#scheduledPickupFUMabove24").html(maleabove24)
+                
+                jq("#scheduledPickupFUFBelow10").html(female0To10)
                 jq("#scheduledPickupFUF10To14").html(female1014)
                 jq("#scheduledPickupFUF15To19").html(female1519);
                 jq("#scheduledPickupFUF20To24").html(female2024)
+                jq("#scheduledPickupFUFabove24").html(femaleabove24)
                 
                 
-                var total = new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(female1014) + new Number(female1519) + new Number(female2024);
+                var total = new Number(male0To10) + new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(maleabove24) + new Number(female0To10) + new Number(female1014) + new Number(female1519)  + new Number(female2024) + new Number(femaleabove24) ;
                 jq("#scheduledPickupFUTotal").html(total)
                 
                 
                 
                 
-                return  myAjax({startDate:startDate, endDate:endDate}, '${ ui.actionLink("getTotalEnrolledWhoKeptScheduledPickupAfter") }');
+                return  myAjax({startDate:startDate, endDate:endDate, ageType:ageTyp}, '${ ui.actionLink("getTotalEnrolledWhoKeptScheduledPickupAfter") }');
             })
 
             .then(function(response){
                 
                 var data = JSON.parse(response);
+                var male0To10 = data["male0To10"];
                 var male1014 = data["male10To14"];
                 var male1519 = data["male15To19"];
-                var male2024 = data["male20To24"];
+                var male2024 = data["male20To24"];var maleabove24 = data["maleabove24"];
+                
+                var female0To10 = data["female0To10"];
                 var female1014 = data["female10To14"];
                 var female1519 = data["female15To19"];
-                var female2024 = data["female20To24"];
+                var female2024 = data["female20To24"]; var femaleabove24 = data["femaleabove24"];
                 
+                jq("#scheduledKeptPickupFUMBelow10").html(male0To10)
                 jq("#scheduledKeptPickupFUM10To14").html(male1014)
                 jq("#scheduledKeptPickupFUM15To19").html(male1519)
                 jq("#scheduledKeptPickupFUM20To24").html(male2024)
+                jq("#scheduledKeptPickupFUMabove24").html(maleabove24)
+                
+                jq("#scheduledKeptPickupFUFBelow10").html(female0To10)
                 jq("#scheduledKeptPickupFUF10To14").html(female1014)
                 jq("#scheduledKeptPickupFUF15To19").html(female1519);
                 jq("#scheduledKeptPickupFUF20To24").html(female2024);
+                jq("#scheduledKeptPickupFUFabove24").html(femaleabove24);
                 
-                var total = new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(female1014) + new Number(female1519) + new Number(female2024);
+                var total = new Number(male0To10) + new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(maleabove24) + new Number(female0To10) + new Number(female1014) + new Number(female1519)  + new Number(female2024) + new Number(femaleabove24) ;
                 jq("#scheduledKeptPickupFUTotal").html(total)
                 
                 
-                return  myAjax({startDate:startDate, endDate:endDate}, '${ ui.actionLink("getTotalEnrolledWithGoodAdhScoreAfter") }');
+                return  myAjax({startDate:startDate, endDate:endDate, ageType:ageTyp}, '${ ui.actionLink("getTotalEnrolledWithGoodAdhScoreAfter") }');
             })
             .then(function(response){
                 
                 var data = JSON.parse(response);
+                var male0To10 = data["male0To10"];
                 var male1014 = data["male10To14"];
                 var male1519 = data["male15To19"];
-                var male2024 = data["male20To24"];
+                var male2024 = data["male20To24"];var maleabove24 = data["maleabove24"];
+                
+                var female0To10 = data["female0To10"];
                 var female1014 = data["female10To14"];
                 var female1519 = data["female15To19"];
-                var female2024 = data["female20To24"];
+                var female2024 = data["female20To24"]; var femaleabove24 = data["femaleabove24"];
                 
+                jq("#goodAdhFUMBelow10").html(male0To10)
                 jq("#goodAdhFUM10To14").html(male1014)
                 jq("#goodAdhFUM15To19").html(male1519)
                 jq("#goodAdhFUM20To24").html(male2024)
+                jq("#goodAdhFUMabove24").html(maleabove24)
+                
+                jq("#goodAdhFUFBelow10").html(female0To10)
                 jq("#goodAdhFUF10To14").html(female1014)
                 jq("#goodAdhFUF15To19").html(female1519);
                 jq("#goodAdhFUF20To24").html(female2024)
+                jq("#goodAdhFUFabove24").html(femaleabove24)
                 
-                var total = new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(female1014) + new Number(female1519) + new Number(female2024);
+                var total = new Number(male0To10) + new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(maleabove24) + new Number(female0To10) + new Number(female1014) + new Number(female1519)  + new Number(female2024) + new Number(femaleabove24) ;
                 jq("#goodAdhFUTotal").html(total)
                 
                 
                 
-                return  myAjax({startDate:startDate, endDate:endDate}, '${ ui.actionLink("getTotalEnrolledEligibleForVL") }');
+                return  myAjax({startDate:startDate, endDate:endDate, ageType:ageTyp}, '${ ui.actionLink("getTotalEnrolledEligibleForVL") }');
             })
             
             .then(function(response){
                 
                 var data = JSON.parse(response);
+                var male0To10 = data["male0To10"];
                 var male1014 = data["male10To14"];
                 var male1519 = data["male15To19"];
-                var male2024 = data["male20To24"];
+                var male2024 = data["male20To24"];var maleabove24 = data["maleabove24"];
+                
+                var female0To10 = data["female0To10"];
                 var female1014 = data["female10To14"];
                 var female1519 = data["female15To19"];
-                var female2024 = data["female20To24"];
+                var female2024 = data["female20To24"]; var femaleabove24 = data["femaleabove24"];
                 
+                jq("#eligibleFUMBelow10").html(male0To10)
                 jq("#eligibleFUM10To14").html(male1014)
                 jq("#eligibleFUM15To19").html(male1519)
                 jq("#eligibleFUM20To24").html(male2024)
+                jq("#eligibleFUMabove24").html(maleabove24)
+                
+                jq("#eligibleFUFBelow10").html(female0To10)
                 jq("#eligibleFUF10To14").html(female1014)
                 jq("#eligibleFUF15To19").html(female1519);
                 jq("#eligibleFUF20To24").html(female2024)
+                jq("#eligibleFUFabove24").html(femaleabove24)
                 
-                var total = new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(female1014) + new Number(female1519) + new Number(female2024);
+                var total = new Number(male0To10) + new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(maleabove24) + new Number(female0To10) + new Number(female1014) + new Number(female1519)  + new Number(female2024) + new Number(femaleabove24) ;
                 jq("#eligibleFUTotal").html(total)
                 
                 
                 
-                return  myAjax({startDate:startDate, endDate:endDate}, '${ ui.actionLink("getTotalEnrolledEligibleForVLWithSampleTaken") }');
+                return  myAjax({startDate:startDate, endDate:endDate, ageType:ageTyp}, '${ ui.actionLink("getTotalEnrolledEligibleForVLWithSampleTaken") }');
             })
             .then(function(response){
                 
                 var data = JSON.parse(response);
+                var male0To10 = data["male0To10"];
                 var male1014 = data["male10To14"];
                 var male1519 = data["male15To19"];
-                var male2024 = data["male20To24"];
+                var male2024 = data["male20To24"];var maleabove24 = data["maleabove24"];
+                
+                var female0To10 = data["female0To10"];
                 var female1014 = data["female10To14"];
                 var female1519 = data["female15To19"];
-                var female2024 = data["female20To24"];
+                var female2024 = data["female20To24"]; var femaleabove24 = data["femaleabove24"];
                 
+                jq("#samplesTakenMBelow10").html(male1014)
                 jq("#samplesTakenM10To14").html(male1014)
                 jq("#samplesTakenM15To19").html(male1519)
                 jq("#samplesTakenM20To24").html(male2024)
+                jq("#samplesTakenMabove24").html(maleabove24)
+                
+                jq("#samplesTakenFBelow10").html(female0To10)
                 jq("#samplesTakenF10To14").html(female1014)
                 jq("#samplesTakenF15To19").html(female1519);
                 jq("#samplesTakenF20To24").html(female2024)
+                jq("#samplesTakenFabove24").html(femaleabove24)
                 
-                var total = new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(female1014) + new Number(female1519) + new Number(female2024);
+                var total = new Number(male0To10) + new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(maleabove24) + new Number(female0To10) + new Number(female1014) + new Number(female1519)  + new Number(female2024) + new Number(femaleabove24) ;
                 jq("#samplesTakenTotal").html(total)
                 
                 
                 
-                return  myAjax({startDate:startDate, endDate:endDate}, '${ ui.actionLink("getTotalEnrolledEligibleForVLWithSampleTakenAndResult") }');
+                return  myAjax({startDate:startDate, endDate:endDate, ageType:ageTyp}, '${ ui.actionLink("getTotalEnrolledEligibleForVLWithSampleTakenAndResult") }');
             })
             
             .then(function(response){
                 
                 var data = JSON.parse(response);
+                var male0To10 = data["male0To10"];
                 var male1014 = data["male10To14"];
                 var male1519 = data["male15To19"];
-                var male2024 = data["male20To24"];
+                var male2024 = data["male20To24"];var maleabove24 = data["maleabove24"];
+                
+                var female0To10 = data["female0To10"];
                 var female1014 = data["female10To14"];
                 var female1519 = data["female15To19"];
-                var female2024 = data["female20To24"];
+                var female2024 = data["female20To24"]; var femaleabove24 = data["femaleabove24"];
                 
+                jq("#samplesTakenResultMBelow10").html(male1014)
                 jq("#samplesTakenResultM10To14").html(male1014)
                 jq("#samplesTakenResultM15To19").html(male1519)
                 jq("#samplesTakenResultM20To24").html(male2024)
+                jq("#samplesTakenResultMabove24").html(maleabove24)
+                
+                jq("#samplesTakenResultFBelow10").html(female0To10)
                 jq("#samplesTakenResultF10To14").html(female1014)
                 jq("#samplesTakenResultF15To19").html(female1519);
                 jq("#samplesTakenResultF20To24").html(female2024)
+                jq("#samplesTakenResultFabove24").html(femaleabove24)
                 
-                var total = new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(female1014) + new Number(female1519) + new Number(female2024);
+                
+                var total = new Number(male0To10) + new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(maleabove24) + new Number(female0To10) + new Number(female1014) + new Number(female1519)  + new Number(female2024) + new Number(femaleabove24) ;
                 jq("#samplesTakenResultTotal").html(total)
                 
                 
                 
-                return  myAjax({startDate:startDate, endDate:endDate}, '${ ui.actionLink("getTotalEnrolledEligibleForVLWithSampleTakenAndResultBelow200") }');
+                return  myAjax({startDate:startDate, endDate:endDate, ageType:ageTyp}, '${ ui.actionLink("getTotalEnrolledEligibleForVLWithSampleTakenAndResultBelow200") }');
             })
             .then(function(response){
                 
                 var data = JSON.parse(response);
+                var male0To10 = data["male0To10"];
                 var male1014 = data["male10To14"];
                 var male1519 = data["male15To19"];
-                var male2024 = data["male20To24"];
+                var male2024 = data["male20To24"];var maleabove24 = data["maleabove24"];
+                
+                var female0To10 = data["female0To10"];
                 var female1014 = data["female10To14"];
                 var female1519 = data["female15To19"];
-                var female2024 = data["female20To24"];
+                var female2024 = data["female20To24"]; var femaleabove24 = data["femaleabove24"];
                 
+                jq("#samplesTakenResult200MBelow10").html(male0To10)
                 jq("#samplesTakenResult200M10To14").html(male1014)
                 jq("#samplesTakenResult200M15To19").html(male1519)
                 jq("#samplesTakenResult200M20To24").html(male2024)
+                jq("#samplesTakenResult200Mabove24").html(maleabove24)
+                
+                jq("#samplesTakenResult200FBelow10").html(female0To10)
                 jq("#samplesTakenResult200F10To14").html(female1014)
                 jq("#samplesTakenResult200F15To19").html(female1519);
                 jq("#samplesTakenResult200F20To24").html(female2024)
+                jq("#samplesTakenResult200Fabove24").html(femaleabove24)
                 
-                var total = new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(female1014) + new Number(female1519) + new Number(female2024);
+                var total = new Number(male0To10) + new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(maleabove24) + new Number(female0To10) + new Number(female1014) + new Number(female1519)  + new Number(female2024) + new Number(femaleabove24) ;
                 jq("#samplesTakenResult200Total").html(total)
                 
                 
                 
-                return  myAjax({startDate:startDate, endDate:endDate}, '${ ui.actionLink("getTotalEnrolledEligibleForVLWithSampleTakenAndResultAbove200Below1000") }');
+                return  myAjax({startDate:startDate, endDate:endDate, ageType:ageTyp}, '${ ui.actionLink("getTotalEnrolledEligibleForVLWithSampleTakenAndResultAbove200Below1000") }');
             })
             .then(function(response){
                 
                 var data = JSON.parse(response);
+                var male0To10 = data["male0To10"];
                 var male1014 = data["male10To14"];
                 var male1519 = data["male15To19"];
-                var male2024 = data["male20To24"];
+                var male2024 = data["male20To24"];var maleabove24 = data["maleabove24"];
+                
+                var female0To10 = data["female0To10"];
                 var female1014 = data["female10To14"];
                 var female1519 = data["female15To19"];
-                var female2024 = data["female20To24"];
+                var female2024 = data["female20To24"]; var femaleabove24 = data["femaleabove24"];
                 
+                jq("#samplesTakenResult200To1000MBelow10").html(male0To10)
                 jq("#samplesTakenResult200To1000M10To14").html(male1014)
                 jq("#samplesTakenResult200To1000M15To19").html(male1519)
                 jq("#samplesTakenResult200To1000M20To24").html(male2024)
+                jq("#samplesTakenResult200To1000Mabove24").html(maleabove24)
+                
+                jq("#samplesTakenResult200To1000FBelow10").html(female0To10)
                 jq("#samplesTakenResult200To1000F10To14").html(female1014)
                 jq("#samplesTakenResult200To1000F15To19").html(female1519);
                 jq("#samplesTakenResult200To1000F20To24").html(female2024)
+                jq("#samplesTakenResult200To1000Fabove24").html(femaleabove24)
                 
-                var total = new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(female1014) + new Number(female1519) + new Number(female2024);
+                var total = new Number(male0To10) + new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(maleabove24) + new Number(female0To10) + new Number(female1014) + new Number(female1519)  + new Number(female2024) + new Number(femaleabove24) ;
                 jq("#samplesTakenResult200To1000Total").html(total)
                 
                 
                 
-                return  myAjax({startDate:startDate, endDate:endDate}, '${ ui.actionLink("getTotalEnrolledEligibleForVLWithSampleTakenAndResultAbove1000") }');
+                return  myAjax({startDate:startDate, endDate:endDate, ageType:ageTyp}, '${ ui.actionLink("getTotalEnrolledEligibleForVLWithSampleTakenAndResultAbove1000") }');
             })
             .then(function(response){
                 
                 var data = JSON.parse(response);
+                var male0To10 = data["male0To10"];
                 var male1014 = data["male10To14"];
                 var male1519 = data["male15To19"];
-                var male2024 = data["male20To24"];
+                var male2024 = data["male20To24"];var maleabove24 = data["maleabove24"];
+                
+                var female0To10 = data["female0To10"];
                 var female1014 = data["female10To14"];
                 var female1519 = data["female15To19"];
-                var female2024 = data["female20To24"];
+                var female2024 = data["female20To24"]; var femaleabove24 = data["femaleabove24"];
                 
+                jq("#samplesTakenResult1000MBelow10").html(male0To10)
                 jq("#samplesTakenResult1000M10To14").html(male1014)
                 jq("#samplesTakenResult1000M15To19").html(male1519)
                 jq("#samplesTakenResult1000M20To24").html(male2024)
+                jq("#samplesTakenResult1000Mabove24").html(maleabove24)
+                
+                jq("#samplesTakenResult1000FBelow10").html(female0To10)
                 jq("#samplesTakenResult1000F10To14").html(female1014)
                 jq("#samplesTakenResult1000F15To19").html(female1519);
                 jq("#samplesTakenResult1000F20To24").html(female2024)
+                jq("#samplesTakenResult1000Fabove24").html(femaleabove24)
                 
-                var total = new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(female1014) + new Number(female1519) + new Number(female2024);
+                var total = new Number(male0To10) + new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(maleabove24) + new Number(female0To10) + new Number(female1014) + new Number(female1519)  + new Number(female2024) + new Number(femaleabove24) ;
                 jq("#samplesTakenResult1000Total").html(total)
                 
                 
                 
-                return  myAjax({startDate:startDate, endDate:endDate}, '${ ui.actionLink("getTotalEnrolledWithVLPast12Months") }');
+                return  myAjax({startDate:startDate, endDate:endDate, ageType:ageTyp}, '${ ui.actionLink("getTotalEnrolledWithVLPast12Months") }');
             })
             
             .then(function(response){
                 
                 var data = JSON.parse(response);
+                var male0To10 = data["male0To10"];
                 var male1014 = data["male10To14"];
                 var male1519 = data["male15To19"];
-                var male2024 = data["male20To24"];
+                var male2024 = data["male20To24"];var maleabove24 = data["maleabove24"];
+                
+                var female0To10 = data["female0To10"];
                 var female1014 = data["female10To14"];
                 var female1519 = data["female15To19"];
-                var female2024 = data["female20To24"];
+                var female2024 = data["female20To24"]; var femaleabove24 = data["femaleabove24"];
                 
+                jq("#resultPast12MtMBelow10").html(male0To10)
                 jq("#resultPast12MtM10To14").html(male1014)
                 jq("#resultPast12MtM15To19").html(male1519)
                 jq("#resultPast12MtM20To24").html(male2024)
+                jq("#resultPast12MtMabove24").html(maleabove24)
+                
+                jq("#resultPast12MtFBelow10").html(female0To10)
                 jq("#resultPast12MtF10To14").html(female1014)
                 jq("#resultPast12MtF15To19").html(female1519);
                 jq("#resultPast12MtF20To24").html(female2024)
+                jq("#resultPast12MtFabove24").html(femaleabove24)
                 
-                var total = new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(female1014) + new Number(female1519) + new Number(female2024);
+                var total = new Number(male0To10) + new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(maleabove24) + new Number(female0To10) + new Number(female1014) + new Number(female1519)  + new Number(female2024) + new Number(femaleabove24) ;
                 jq("#resultPast12MtTotal").html(total)
                 
                 
                 
-                return  myAjax({startDate:startDate, endDate:endDate}, '${ ui.actionLink("getTotalEnrolledWithVLPast12MonthsResultBelow200") }');
+                return  myAjax({startDate:startDate, endDate:endDate, ageType:ageTyp}, '${ ui.actionLink("getTotalEnrolledWithVLPast12MonthsResultBelow200") }');
             })
             
             .then(function(response){
                 
                 var data = JSON.parse(response);
+                var male0To10 = data["male0To10"];
                 var male1014 = data["male10To14"];
                 var male1519 = data["male15To19"];
-                var male2024 = data["male20To24"];
+                var male2024 = data["male20To24"];var maleabove24 = data["maleabove24"];
+                
+                var female0To10 = data["female0To10"];
                 var female1014 = data["female10To14"];
                 var female1519 = data["female15To19"];
-                var female2024 = data["female20To24"];
+                var female2024 = data["female20To24"]; var femaleabove24 = data["femaleabove24"];
                 
+                jq("#resultPast12Mt200MBelow10").html(male0To10)
                 jq("#resultPast12Mt200M10To14").html(male1014)
                 jq("#resultPast12Mt200M15To19").html(male1519)
                 jq("#resultPast12Mt200M20To24").html(male2024)
+                jq("#resultPast12Mt200Mabove24").html(maleabove24)
+                
+                jq("#resultPast12Mt200FBelow10").html(female0To10)
                 jq("#resultPast12Mt200F10To14").html(female1014)
                 jq("#resultPast12Mt200F15To19").html(female1519);
                 jq("#resultPast12Mt200F20To24").html(female2024)
+                jq("#resultPast12Mt200Fabove24").html(femaleabove24)
                 
-                var total = new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(female1014) + new Number(female1519) + new Number(female2024);
+                var total = new Number(male0To10) + new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(maleabove24) + new Number(female0To10) + new Number(female1014) + new Number(female1519)  + new Number(female2024) + new Number(femaleabove24) ;
                 jq("#resultPast12Mt200Total").html(total)
                 
                 
                 
-                return  myAjax({startDate:startDate, endDate:endDate}, '${ ui.actionLink("getTotalEnrolledWithVLPast12MonthsResultAbove200Below1000") }');
+                return  myAjax({startDate:startDate, endDate:endDate, ageType:ageTyp}, '${ ui.actionLink("getTotalEnrolledWithVLPast12MonthsResultAbove200Below1000") }');
             })
             
             .then(function(response){
                 
                 var data = JSON.parse(response);
+                var male0To10 = data["male0To10"];
                 var male1014 = data["male10To14"];
                 var male1519 = data["male15To19"];
-                var male2024 = data["male20To24"];
+                var male2024 = data["male20To24"];var maleabove24 = data["maleabove24"];
+                
+                var female0To10 = data["female0To10"];
                 var female1014 = data["female10To14"];
                 var female1519 = data["female15To19"];
-                var female2024 = data["female20To24"];
+                var female2024 = data["female20To24"]; var femaleabove24 = data["femaleabove24"];;
                 
+                jq("#resultPast12Mt200To100MBelow10").html(male0To10)
                 jq("#resultPast12Mt200To100M10To14").html(male1014)
                 jq("#resultPast12Mt200To100M15To19").html(male1519)
                 jq("#resultPast12Mt200To100M20To24").html(male2024)
+                jq("#resultPast12Mt200To100Mabove24").html(maleabove24)
+                
+                jq("#resultPast12Mt200To100FBelow10").html(female0To10)
                 jq("#resultPast12Mt200To100F10To14").html(female1014)
                 jq("#resultPast12Mt200To100F15To19").html(female1519);
                 jq("#resultPast12Mt200To100F20To24").html(female2024)
+                jq("#resultPast12Mt200To100Fabove24").html(femaleabove24)
                 
-                var total = new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(female1014) + new Number(female1519) + new Number(female2024);
+                var total = new Number(male0To10) + new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(maleabove24) + new Number(female0To10) + new Number(female1014) + new Number(female1519)  + new Number(female2024) + new Number(femaleabove24) ;
                 jq("#resultPast12Mt200To100Total").html(total)
                 
                 
                 
-                return  myAjax({startDate:startDate, endDate:endDate}, '${ ui.actionLink("getTotalEnrolledWithVLPast12MonthsResultAbove1000") }');
+                return  myAjax({startDate:startDate, endDate:endDate, ageType:ageTyp}, '${ ui.actionLink("getTotalEnrolledWithVLPast12MonthsResultAbove1000") }');
             })
                 
 
             .then(function(response){
                 
                 var data = JSON.parse(response);
+                var male0To10 = data["male0To10"];
                 var male1014 = data["male10To14"];
                 var male1519 = data["male15To19"];
-                var male2024 = data["male20To24"];
+                var male2024 = data["male20To24"];var maleabove24 = data["maleabove24"];
+                
+                var female0To10 = data["female0To10"];
                 var female1014 = data["female10To14"];
                 var female1519 = data["female15To19"];
-                var female2024 = data["female20To24"];
+                var female2024 = data["female20To24"]; var femaleabove24 = data["femaleabove24"];
                 
+                jq("#resultPast12Mt1000MBelow10").html(male0To10)
                 jq("#resultPast12Mt1000M10To14").html(male1014)
                 jq("#resultPast12Mt1000M15To19").html(male1519)
                 jq("#resultPast12Mt1000M20To24").html(male2024)
+                jq("#resultPast12Mt1000Mabove24").html(maleabove24)
+                
+                jq("#resultPast12Mt1000FBelow10").html(female0To10)
                 jq("#resultPast12Mt1000F10To14").html(female1014)
                 jq("#resultPast12Mt1000F15To19").html(female1519);
                 jq("#resultPast12Mt1000F20To24").html(female2024)
+                jq("#resultPast12Mt1000Fabove24").html(femaleabove24)
                 
-                var total = new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(female1014) + new Number(female1519) + new Number(female2024);
+                var total = new Number(male0To10) + new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(maleabove24) + new Number(female0To10) + new Number(female1014) + new Number(female1519)  + new Number(female2024) + new Number(femaleabove24) ;
                 jq("#resultPast12Mt1000Total").html(total)
                 
                 
                 
-                return  myAjax({startDate:startDate, endDate:endDate}, '${ ui.actionLink("getTotalEnrolledWithVLPast12MonthsResultAbove1000CompletedEAC") }');
+                return  myAjax({startDate:startDate, endDate:endDate, ageType:ageTyp}, '${ ui.actionLink("getTotalEnrolledWithVLPast12MonthsResultAbove1000CompletedEAC") }');
             })
             
             .then(function(response){
                 
                 var data = JSON.parse(response);
+                var male0To10 = data["male0To10"];
                 var male1014 = data["male10To14"];
                 var male1519 = data["male15To19"];
-                var male2024 = data["male20To24"];
+                var male2024 = data["male20To24"];var maleabove24 = data["maleabove24"];
+                
+                var female0To10 = data["female0To10"];
                 var female1014 = data["female10To14"];
                 var female1519 = data["female15To19"];
-                var female2024 = data["female20To24"];
+                var female2024 = data["female20To24"]; var femaleabove24 = data["femaleabove24"];
                 
+                jq("#resultPast12Mt1000EACMBelow10").html(male0To10)
                 jq("#resultPast12Mt1000EACM10To14").html(male1014)
                 jq("#resultPast12Mt1000EACM15To19").html(male1519)
                 jq("#resultPast12Mt1000EACM20To24").html(male2024)
+                jq("#resultPast12Mt1000EACMabove24").html(maleabove24)
+                
+                jq("#resultPast12Mt1000EACFBelow10").html(female0To10)
                 jq("#resultPast12Mt1000EACF10To14").html(female1014)
                 jq("#resultPast12Mt1000EACF15To19").html(female1519);
                 jq("#resultPast12Mt1000EACF20To24").html(female2024)
+                jq("#resultPast12Mt1000EACFabove24").html(femaleabove24)
                 
                 
-                var total = new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(female1014) + new Number(female1519) + new Number(female2024);
+                var total = new Number(male0To10) + new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(maleabove24) + new Number(female0To10) + new Number(female1014) + new Number(female1519)  + new Number(female2024) + new Number(femaleabove24) ;
                 jq("#resultPast12Mt1000EACTotal").html(total)
                 
                 
-                return  myAjax({startDate:startDate, endDate:endDate}, '${ ui.actionLink("getTotalEnrolledWithVLPast12MonthsResultAbove1000WithRepeatVl") }');
+                return  myAjax({startDate:startDate, endDate:endDate, ageType:ageTyp}, '${ ui.actionLink("getTotalEnrolledWithVLPast12MonthsResultAbove1000WithRepeatVl") }');
             })
             
             .then(function(response){
                 
                 var data = JSON.parse(response);
+                var male0To10 = data["male0To10"];
                 var male1014 = data["male10To14"];
                 var male1519 = data["male15To19"];
-                var male2024 = data["male20To24"];
+                var male2024 = data["male20To24"];var maleabove24 = data["maleabove24"];
+                
+                var female0To10 = data["female0To10"];
                 var female1014 = data["female10To14"];
                 var female1519 = data["female15To19"];
-                var female2024 = data["female20To24"];
+                var female2024 = data["female20To24"]; var femaleabove24 = data["femaleabove24"];
                 
+                jq("#resultPast12Mt1000RepeatMBelow10").html(male0To10)
                 jq("#resultPast12Mt1000RepeatM10To14").html(male1014)
                 jq("#resultPast12Mt1000RepeatM15To19").html(male1519)
                 jq("#resultPast12Mt1000RepeatM20To24").html(male2024)
+                jq("#resultPast12Mt1000RepeatMabove24").html(maleabove24)
+                
+                jq("#resultPast12Mt1000RepeatFBelow10").html(female0To10)
                 jq("#resultPast12Mt1000RepeatF10To14").html(female1014)
                 jq("#resultPast12Mt1000RepeatF15To19").html(female1519);
                 jq("#resultPast12Mt1000RepeatF20To24").html(female2024)
+                jq("#resultPast12Mt1000RepeatFabove24").html(femaleabove24)
                 
-                var total = new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(female1014) + new Number(female1519) + new Number(female2024);
+                var total = new Number(male0To10) + new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(maleabove24) + new Number(female0To10) + new Number(female1014) + new Number(female1519)  + new Number(female2024) + new Number(femaleabove24) ;
                 jq("#resultPast12Mt1000RepeatTotal").html(total)
                 
                 
                 
-                return  myAjax({startDate:startDate, endDate:endDate}, '${ ui.actionLink("getTotalEnrolledWithVLPast12MonthsResultAbove1000WithRepeatVlBelow200") }');
+                return  myAjax({startDate:startDate, endDate:endDate, ageType:ageTyp}, '${ ui.actionLink("getTotalEnrolledWithVLPast12MonthsResultAbove1000WithRepeatVlBelow200") }');
             })
             
             .then(function(response){
                 
                 var data = JSON.parse(response);
+                var male0To10 = data["male0To10"];
                 var male1014 = data["male10To14"];
                 var male1519 = data["male15To19"];
-                var male2024 = data["male20To24"];
+                var male2024 = data["male20To24"];var maleabove24 = data["maleabove24"];
+                
+                var female0To10 = data["female0To10"];
                 var female1014 = data["female10To14"];
                 var female1519 = data["female15To19"];
-                var female2024 = data["female20To24"];
+                var female2024 = data["female20To24"]; var femaleabove24 = data["femaleabove24"];
                 
+                jq("#resultPast12Mt1000Repeat200MBelow10").html(male0To10)
                 jq("#resultPast12Mt1000Repeat200M10To14").html(male1014)
                 jq("#resultPast12Mt1000Repeat200M15To19").html(male1519)
                 jq("#resultPast12Mt1000Repeat200M20To24").html(male2024)
+                jq("#resultPast12Mt1000Repeat200Mabove24").html(maleabove24)
+                
+                jq("#resultPast12Mt1000Repeat200FBelow10").html(female0To10)
                 jq("#resultPast12Mt1000Repeat200F10To14").html(female1014)
                 jq("#resultPast12Mt1000Repeat200F15To19").html(female1519);
                 jq("#resultPast12Mt1000Repeat200F20To24").html(female2024)
+                jq("#resultPast12Mt1000Repeat200Fabove24").html(femaleabove24)
                 
                 
-                var total = new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(female1014) + new Number(female1519) + new Number(female2024);
+                var total = new Number(male0To10) + new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(maleabove24) + new Number(female0To10) + new Number(female1014) + new Number(female1519)  + new Number(female2024) + new Number(femaleabove24) ;
                 jq("#resultPast12Mt1000Repeat200Total").html(total)
                 
-                return  myAjax({startDate:startDate, endDate:endDate}, '${ ui.actionLink("getTotalEnrolledWithVLPast12MonthsResultAbove1000WithRepeatVlAbove200Below1000") }');
+                return  myAjax({startDate:startDate, endDate:endDate, ageType:ageTyp}, '${ ui.actionLink("getTotalEnrolledWithVLPast12MonthsResultAbove1000WithRepeatVlAbove200Below1000") }');
             })
             .then(function(response){
                 
                 var data = JSON.parse(response);
+                var male0To10 = data["male0To10"];
                 var male1014 = data["male10To14"];
                 var male1519 = data["male15To19"];
-                var male2024 = data["male20To24"];
+                var male2024 = data["male20To24"];var maleabove24 = data["maleabove24"];
+                
+                var female0To10 = data["female0To10"];
                 var female1014 = data["female10To14"];
                 var female1519 = data["female15To19"];
-                var female2024 = data["female20To24"];
+                var female2024 = data["female20To24"]; var femaleabove24 = data["femaleabove24"];
                 
+                jq("#resultPast12Mt1000Repeat200To1000MBelow10").html(male0To10)
                 jq("#resultPast12Mt1000Repeat200To1000M10To14").html(male1014)
                 jq("#resultPast12Mt1000Repeat200To1000M15To19").html(male1519)
                 jq("#resultPast12Mt1000Repeat200To1000M20To24").html(male2024)
+                jq("#resultPast12Mt1000Repeat200To1000Mabove24").html(maleabove24)
+                
+                jq("#resultPast12Mt1000Repeat200To1000FBelow10").html(female0To10)
                 jq("#resultPast12Mt1000Repeat200To1000F10To14").html(female1014)
                 jq("#resultPast12Mt1000Repeat200To1000F15To19").html(female1519);
                 jq("#resultPast12Mt1000Repeat200To1000F20To24").html(female2024)
+                jq("#resultPast12Mt1000Repeat200To1000Fabove24").html(femaleabove24)
                 
-                var total = new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(female1014) + new Number(female1519) + new Number(female2024);
+                var total = new Number(male0To10) + new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(maleabove24) + new Number(female0To10) + new Number(female1014) + new Number(female1519)  + new Number(female2024) + new Number(femaleabove24) ;
                 jq("#resultPast12Mt1000Repeat200To1000Total").html(total)
                 
-                return  myAjax({startDate:startDate, endDate:endDate}, '${ ui.actionLink("getTotalEnrolledWithVLPast12MonthsResultAbove1000WithRepeatVlAbove1000") }');
+                return  myAjax({startDate:startDate, endDate:endDate, ageType:ageTyp}, '${ ui.actionLink("getTotalEnrolledWithVLPast12MonthsResultAbove1000WithRepeatVlAbove1000") }');
             })
             
             .then(function(response){
                 
                 var data = JSON.parse(response);
+                var male0To10 = data["male0To10"];
                 var male1014 = data["male10To14"];
                 var male1519 = data["male15To19"];
-                var male2024 = data["male20To24"];
+                var male2024 = data["male20To24"];var maleabove24 = data["maleabove24"];
+                
+                var female0To10 = data["female0To10"];
                 var female1014 = data["female10To14"];
                 var female1519 = data["female15To19"];
-                var female2024 = data["female20To24"];
+                var female2024 = data["female20To24"]; var femaleabove24 = data["femaleabove24"];
                 
+                jq("#resultPast12Mt1000Repeat1000MBelow10").html(male0To10)
                 jq("#resultPast12Mt1000Repeat1000M10To14").html(male1014)
                 jq("#resultPast12Mt1000Repeat1000M15To19").html(male1519)
                 jq("#resultPast12Mt1000Repeat1000M20To24").html(male2024)
+                jq("#resultPast12Mt1000Repeat1000Mabove24").html(maleabove24)
+                
+                jq("#resultPast12Mt1000Repeat1000FBelow10").html(female0To10)
                 jq("#resultPast12Mt1000Repeat1000F10To14").html(female1014)
                 jq("#resultPast12Mt1000Repeat1000F15To19").html(female1519);
                 jq("#resultPast12Mt1000Repeat1000F20To24").html(female2024)
+                jq("#resultPast12Mt1000Repeat1000Fabove24").html(femaleabove24)
                 
-                var total = new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(female1014) + new Number(female1519) + new Number(female2024);
+                var total = new Number(male0To10) + new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(maleabove24) + new Number(female0To10) + new Number(female1014) + new Number(female1519)  + new Number(female2024) + new Number(femaleabove24) ;
                 jq("#resultPast12Mt1000Repeat1000Total").html(total)
                 
-                return  myAjax({startDate:startDate, endDate:endDate}, '${ ui.actionLink("getTotalEnrolledWithSwitchTo2ndLine") }');
+                return  myAjax({startDate:startDate, endDate:endDate, ageType:ageTyp}, '${ ui.actionLink("getTotalEnrolledWithSwitchTo2ndLine") }');
             })
             .then(function(response){
                 
                 var data = JSON.parse(response);
+                var male0To10 = data["male0To10"];
                 var male1014 = data["male10To14"];
                 var male1519 = data["male15To19"];
-                var male2024 = data["male20To24"];
+                var male2024 = data["male20To24"];var maleabove24 = data["maleabove24"];
+                
+                var female0To10 = data["female0To10"];
                 var female1014 = data["female10To14"];
                 var female1519 = data["female15To19"];
-                var female2024 = data["female20To24"];
+                var female2024 = data["female20To24"]; var femaleabove24 = data["femaleabove24"];
                 
+                jq("#switchTo2ndMBelow10").html(male0To10)
                 jq("#switchTo2ndM10To14").html(male1014)
                 jq("#switchTo2ndM15To19").html(male1519)
                 jq("#switchTo2ndM20To24").html(male2024)
+                jq("#switchTo2ndMabove24").html(maleabove24)
+                
+                jq("#switchTo2ndFBelow10").html(female0To10)
                 jq("#switchTo2ndF10To14").html(female1014)
                 jq("#switchTo2ndF15To19").html(female1519);
                 jq("#switchTo2ndF20To24").html(female2024)
+                jq("#switchTo2ndFabove24").html(femaleabove24)
                 
-                var total = new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(female1014) + new Number(female1519) + new Number(female2024);
+                var total = new Number(male0To10) + new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(maleabove24) + new Number(female0To10) + new Number(female1014) + new Number(female1519)  + new Number(female2024) + new Number(femaleabove24) ;
                 jq("#switchTo2ndTotal").html(total)
                 
-                return  myAjax({startDate:startDate, endDate:endDate}, '${ ui.actionLink("getTotalEnrolledWithSwitchTo3rdLine") }');
+                return  myAjax({startDate:startDate, endDate:endDate, ageType:ageTyp}, '${ ui.actionLink("getTotalEnrolledWithSwitchTo3rdLine") }');
             })
 
 
              .then(function(response){
                 
                 var data = JSON.parse(response);
+                var male0To10 = data["male0To10"];
                 var male1014 = data["male10To14"];
                 var male1519 = data["male15To19"];
-                var male2024 = data["male20To24"];
+                var male2024 = data["male20To24"];var maleabove24 = data["maleabove24"];
+                
+                var female0To10 = data["female0To10"];
                 var female1014 = data["female10To14"];
                 var female1519 = data["female15To19"];
-                var female2024 = data["female20To24"];
+                var female2024 = data["female20To24"]; var femaleabove24 = data["femaleabove24"];
                 
-                jq("#switchTo3rdM10To14").html(male1014)
+                jq("#switchTo3rdMBelow10").html(male0To10)
+                 jq("#switchTo3rdM10To14").html(male1014)
                 jq("#switchTo3rdM15To19").html(male1519)
                 jq("#switchTo3rdM20To24").html(male2024)
+                jq("#switchTo3rdMabove24").html(maleabove24)
+                
+                jq("#switchTo3rdFBelow10").html(female0To10)
                 jq("#switchTo3rdF10To14").html(female1014)
                 jq("#switchTo3rdF15To19").html(female1519);
                 jq("#switchTo3rdF20To24").html(female2024)
+                jq("#switchTo3rdFabove24").html(femaleabove24)
                 
-                var total = new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(female1014) + new Number(female1519) + new Number(female2024);
+                var total = new Number(male0To10) + new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(maleabove24) + new Number(female0To10) + new Number(female1014) + new Number(female1519)  + new Number(female2024) + new Number(femaleabove24) ;
                 jq("#switchTo3rdTotal").html(total)
                 
-                return  myAjax({startDate:startDate, endDate:endDate}, '${ ui.actionLink("getTotalAYPLHIVEnrolledInOTZWhoComplete7") }');
+                return  myAjax({startDate:startDate, endDate:endDate, ageType:ageTyp}, '${ ui.actionLink("getTotalAYPLHIVEnrolledInOTZWhoComplete7") }');
             }).then(function(response){
                 
                 var data = JSON.parse(response);
+                var male0To10 = data["male0To10"];
                 var male1014 = data["male10To14"];
                 var male1519 = data["male15To19"];
-                var male2024 = data["male20To24"];
+                var male2024 = data["male20To24"];var maleabove24 = data["maleabove24"];
+                
+                var female0To10 = data["female0To10"];
                 var female1014 = data["female10To14"];
                 var female1519 = data["female15To19"];
-                var female2024 = data["female20To24"];
+                var female2024 = data["female20To24"]; var femaleabove24 = data["femaleabove24"];
                 
+                jq("#completed7MBelow10").html(male0To10)
                 jq("#completed7M10To14").html(male1014)
                 jq("#completed7M15To19").html(male1519)
                 jq("#completed7M20To24").html(male2024)
+                jq("#completed7Mabove24").html(maleabove24)
+                
+                jq("#completed7FBelow10").html(female0To10)
                 jq("#completed7F10To14").html(female1014)
                 jq("#completed7F15To19").html(female1519);
                 jq("#completed7F20To24").html(female2024)
+                jq("#completed7Fabove24").html(femaleabove24)
                 
-                var total = new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(female1014) + new Number(female1519) + new Number(female2024);
+                var total = new Number(male0To10) + new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(maleabove24) + new Number(female0To10) + new Number(female1014) + new Number(female1519)  + new Number(female2024) + new Number(femaleabove24) ;
                 jq("#completed7Total").html(total)
                 
-                totalCompleted7 = new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(female1014) + new Number(female1519) + new Number(female2024) ;
+                totalCompleted7 = new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(maleabove24) + new Number(female1014) + new Number(female1519)  + new Number(female2024) + new Number(femaleabove24)  ;
                 console.log("total Completed", totalCompleted7);
                 renderCompletedCharts(totalEnrolled, totalCompleted7);
-                return  myAjax({startDate:startDate, endDate:endDate}, '${ ui.actionLink("getTotalEnrolledAndTransferredOutAfter") }');
+                return  myAjax({startDate:startDate, endDate:endDate, ageType:ageTyp}, '${ ui.actionLink("getTotalEnrolledAndTransferredOutAfter") }');
             })
 
          .then(function(response){
                 
                 var data = JSON.parse(response);
+               var male0To10 = data["male0To10"];
                 var male1014 = data["male10To14"];
                 var male1519 = data["male15To19"];
-                var male2024 = data["male20To24"];
+                var male2024 = data["male20To24"];var maleabove24 = data["maleabove24"];
+                
+                var female0To10 = data["female0To10"];
                 var female1014 = data["female10To14"];
                 var female1519 = data["female15To19"];
-                var female2024 = data["female20To24"];
+                var female2024 = data["female20To24"]; var femaleabove24 = data["femaleabove24"];
                 
+                jq("#transferredOutMBelow10").html(male0To10)
                 jq("#transferredOutM10To14").html(male1014)
                 jq("#transferredOutM15To19").html(male1519)
                 jq("#transferredOutM20To24").html(male2024)
+                jq("#transferredOutMabove24").html(maleabove24)
+                
+                jq("#transferredOutFBelow10").html(female0To10)
                 jq("#transferredOutF10To14").html(female1014)
                 jq("#transferredOutF15To19").html(female1519);
                 jq("#transferredOutF20To24").html(female2024)
+                jq("#transferredOutFabove24").html(femaleabove24)
                 
-                var total = new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(female1014) + new Number(female1519) + new Number(female2024);
+                var total = new Number(male0To10) + new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(maleabove24) + new Number(female0To10) + new Number(female1014) + new Number(female1519)  + new Number(female2024) + new Number(femaleabove24) ;
                 jq("#transferredOutTotal").html(total)
                 
-                totalTransferred =  new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(female1014) + new Number(female1519) + new Number(female2024) ;
+                totalTransferred =  new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(maleabove24) + new Number(female1014) + new Number(female1519)  + new Number(female2024) + new Number(femaleabove24)  ;
                 
-                return  myAjax({startDate:startDate, endDate:endDate}, '${ ui.actionLink("getTotalEnrolledAndLTFUAfter") }');
+                return  myAjax({startDate:startDate, endDate:endDate, ageType:ageTyp}, '${ ui.actionLink("getTotalEnrolledAndLTFUAfter") }');
             })
             
             .then(function(response){
-                
+                console.log("IIT data goes here");
+                console.log(response);
                 var data = JSON.parse(response);
+                var male0To10 = data["male0To10"];
                 var male1014 = data["male10To14"];
                 var male1519 = data["male15To19"];
-                var male2024 = data["male20To24"];
+                var male2024 = data["male20To24"];var maleabove24 = data["maleabove24"];
+                
+                var female0To10 = data["female0To10"];
                 var female1014 = data["female10To14"];
                 var female1519 = data["female15To19"];
-                var female2024 = data["female20To24"];
+                var female2024 = data["female20To24"]; var femaleabove24 = data["femaleabove24"];
                 
+                
+                jq("#ltfuMBelow10").html(male0To10)
                 jq("#ltfuM10To14").html(male1014)
                 jq("#ltfuM15To19").html(male1519)
                 jq("#ltfuM20To24").html(male2024)
-                jq("#ltfuF10To14").html(female1014)
+                jq("#ltfuMabove24").html(maleabove24)
+                
+                jq("#ltfuFBelow10").html(female0To10)
+                 jq("#ltfuF10To14").html(female1014)
                 jq("#ltfuF15To19").html(female1519);
                 jq("#ltfuF20To24").html(female2024)
+                jq("#ltfuFabove24").html(femaleabove24)
                 
-                var total = new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(female1014) + new Number(female1519) + new Number(female2024);
+                var total = new Number(male0To10) + new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(maleabove24) + new Number(female0To10) + new Number(female1014) + new Number(female1519)  + new Number(female2024) + new Number(femaleabove24) ;
                 jq("#ltfuTotal").html(total)
                 
-                var totalLTFU = new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(female1014) + new Number(female1519) + new Number(female2024) ;
-                return  myAjax({startDate:startDate, endDate:endDate}, '${ ui.actionLink("getTotalEnrolledAndDiedAfter") }');
+                totalLTFU = new Number(male0To10) + new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(maleabove24) + new Number(female0To10) + new Number(female1014) + new Number(female1519)  + new Number(female2024) + new Number(femaleabove24) ;
+                
+                return  myAjax({startDate:startDate, endDate:endDate, ageType:ageTyp}, '${ ui.actionLink("getTotalEnrolledAndDiedAfter") }');
             })
             .then(function(response){
                 
                 var data = JSON.parse(response);
+                var male0To10 = data["male0To10"];
                 var male1014 = data["male10To14"];
                 var male1519 = data["male15To19"];
-                var male2024 = data["male20To24"];
+                var male2024 = data["male20To24"];var maleabove24 = data["maleabove24"];
+                
+                var female0To10 = data["female0To10"];
                 var female1014 = data["female10To14"];
                 var female1519 = data["female15To19"];
-                var female2024 = data["female20To24"];
+                var female2024 = data["female20To24"]; var femaleabove24 = data["femaleabove24"];
                 
+                jq("#deadMBelow10").html(male0To10)
                 jq("#deadM10To14").html(male1014)
                 jq("#deadM15To19").html(male1519)
                 jq("#deadM20To24").html(male2024)
+                jq("#deadMabove24").html(maleabove24)
+                
+                jq("#deadFBelow10").html(female0To10)
                 jq("#deadF10To14").html(female1014)
                 jq("#deadF15To19").html(female1519);
                 jq("#deadF20To24").html(female2024)
+                jq("#deadFabove24").html(femaleabove24)
                 
-                var total = new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(female1014) + new Number(female1519) + new Number(female2024);
+                var total = new Number(male0To10) + new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(maleabove24) + new Number(female0To10) + new Number(female1014) + new Number(female1519)  + new Number(female2024) + new Number(femaleabove24) ;
                 jq("#deadTotal").html(total)
                 
-                totalDead = new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(female1014) + new Number(female1519) + new Number(female2024) ;
+                totalDead = new Number(male0To10) + new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(maleabove24) + new Number(female0To10) + new Number(female1014) + new Number(female1519)  + new Number(female2024) + new Number(femaleabove24) ;
                 
                 renderLossesChart(totalDead, totalTransferred, totalLTFU);
                 
                 renderEnrolledVsTransferred(totalEnrolled, totalTransferred);
-                return  myAjax({startDate:startDate, endDate:endDate}, '${ ui.actionLink("getTotalEnrolledAndOptedOutAfter") }');
+                return  myAjax({startDate:startDate, endDate:endDate, ageType:ageTyp}, '${ ui.actionLink("getTotalEnrolledAndOptedOutAfter") }');
             })
             
             .then(function(response){
                 
                 var data = JSON.parse(response);
+                var male0To10 = data["male0To10"];
                 var male1014 = data["male10To14"];
                 var male1519 = data["male15To19"];
-                var male2024 = data["male20To24"];
+                var male2024 = data["male20To24"];var maleabove24 = data["maleabove24"];
+                
+                var female0To10 = data["female0To10"];
                 var female1014 = data["female10To14"];
                 var female1519 = data["female15To19"];
-                var female2024 = data["female20To24"];
+                var female2024 = data["female20To24"]; var femaleabove24 = data["femaleabove24"];
                 
+                jq("#optedOutMBelow10").html(male0To10)
                 jq("#optedOutM10To14").html(male1014)
                 jq("#optedOutM15To19").html(male1519)
                 jq("#optedOutM20To24").html(male2024)
+                jq("#optedOutMabove24").html(maleabove24)
+                
+                jq("#optedOutFBelow10").html(female0To10)
                 jq("#optedOutF10To14").html(female1014)
                 jq("#optedOutF15To19").html(female1519);
                 jq("#optedOutF20To24").html(female2024)
+                jq("#optedOutFabove24").html(femaleabove24)
                 
-                var total = new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(female1014) + new Number(female1519) + new Number(female2024);
+                var total = new Number(male0To10) + new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(maleabove24) + new Number(female0To10) + new Number(female1014) + new Number(female1519)  + new Number(female2024) + new Number(femaleabove24) ;
                 jq("#optedOutTotal").html(total)
                 
-                totalOptedOut = new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(female1014) + new Number(female1519) + new Number(female2024) ;
+                totalOptedOut = new Number(male0To10) + new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(maleabove24) + new Number(female0To10) + new Number(female1014) + new Number(female1519)  + new Number(female2024) + new Number(femaleabove24) ;
                 
-                return  myAjax({startDate:startDate, endDate:endDate}, '${ ui.actionLink("getTotalEnrolledAndTransitionedAfter") }');
+                return  myAjax({startDate:startDate, endDate:endDate, ageType:ageTyp}, '${ ui.actionLink("getTotalEnrolledAndTransitionedAfter") }');
             })
             
             .then(function(response){
-                
+                console.log("1510" +response);
                 var data = JSON.parse(response);
+                 
+                var male0To10 = data["male0To10"];
                 var male1014 = data["male10To14"];
                 var male1519 = data["male15To19"];
-                var male2024 = data["male20To24"];
+                var male2024 = data["male20To24"];var maleabove24 = data["maleabove24"];
+
+				var female0To10 = data["female0To10"];
                 var female1014 = data["female10To14"];
                 var female1519 = data["female15To19"];
-                var female2024 = data["female20To24"];
+                var female2024 = data["female20To24"]; var femaleabove24 = data["femaleabove24"];
+           
                 
+                jq("#transitionedMBelow10").html(male0To10)
                 jq("#transitionedM10To14").html(male1014)
                 jq("#transitionedM15To19").html(male1519)
                 jq("#transitionedM20To24").html(male2024)
+                jq("#transitionedMabove24").html(maleabove24)
+                
+                jq("#transitionedFBelow10").html(female0To10)
                 jq("#transitionedF10To14").html(female1014)
                 jq("#transitionedF15To19").html(female1519);
                 jq("#transitionedF20To24").html(female2024)
+                jq("#transitionedFabove24").html(femaleabove24)
                 
-                var total = new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(female1014) + new Number(female1519) + new Number(female2024);
+                var total = new Number(male0To10) + new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(maleabove24) + new Number(female0To10) + new Number(female1014) + new Number(female1519)  + new Number(female2024) + new Number(femaleabove24) ;
                 jq("#transitionedTotal").html(total)
                 
-                totalTransitioned = new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(female1014) + new Number(female1519) + new Number(female2024) ;;
-                return  myAjax({startDate:startDate, endDate:endDate}, '${ ui.actionLink("getTotalEnrolledAndExitedAfter") }');
+                totalTransitioned = new Number(male0To10) + new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(maleabove24) + new Number(female0To10) + new Number(female1014) + new Number(female1519)  + new Number(female2024) + new Number(femaleabove24) ;
+                
+                return  myAjax({startDate:startDate, endDate:endDate, ageType:ageTyp}, '${ ui.actionLink("getTotalEnrolledAndExitedAfter") }');
             })
 
             .then(function(response){
                 
                 var data = JSON.parse(response);
+                var male0To10 = data["male0To10"];
                 var male1014 = data["male10To14"];
                 var male1519 = data["male15To19"];
-                var male2024 = data["male20To24"];
+                var male2024 = data["male20To24"];var maleabove24 = data["maleabove24"];
+                
+                var female0To10 = data["female0To10"];
                 var female1014 = data["female10To14"];
                 var female1519 = data["female15To19"];
-                var female2024 = data["female20To24"];
+                var female2024 = data["female20To24"]; var femaleabove24 = data["femaleabove24"];
                 
+                jq("#exitedMBelow10").html(male0To10)
                 jq("#exitedM10To14").html(male1014)
                 jq("#exitedM15To19").html(male1519)
                 jq("#exitedM20To24").html(male2024)
+                jq("#exitedMabove24").html(maleabove24)
+                
+                jq("#exitedFBelow10").html(female0To10)
                 jq("#exitedF10To14").html(female1014)
                 jq("#exitedF15To19").html(female1519);
                 jq("#exitedF20To24").html(female2024)
+                jq("#exitedFabove24").html(femaleabove24)
                 
-                var total = new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(female1014) + new Number(female1519) + new Number(female2024);
+                var total = new Number(male0To10) + new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(maleabove24) + new Number(female0To10) + new Number(female1014) + new Number(female1519)  + new Number(female2024) + new Number(femaleabove24) ;
                 jq("#exitedTotal").html(total)
                 
-                totalExited = new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(female1014) + new Number(female1519) + new Number(female2024) ;
+                totalExited = new Number(male0To10) + new Number(male1014) + new Number(male1519) + new Number(male2024) + new Number(maleabove24) + new Number(female0To10) + new Number(female1014) + new Number(female1519)  + new Number(female2024) + new Number(femaleabove24) ;
                 renderExitChart(totalExited, totalTransitioned, totalOptedOut);
                 
                 renderEnrolledVsExits(totalEnrolled, totalExited);
+                
+                //MOD Here
+                renderEnrolledVsIIT(totalEnrolled, totalLTFU);
+                //MOD Here2
+                renderEnrolledVsTTAC(totalEnrolled, totalTransitioned);
+                //MOD Here3
+                renderAllOUTCOMES(totalDead, totalTransferred, totalExited, totalOptedOut);
                 
                 console.log("completed", datatableObj);
                 //datatableObj.destroy();
                 //datatableObj.draw();
                 datatableObj.rows().invalidate().draw()
                
-                //return  myAjax({startDate:startDate, endDate:endDate}, '${ ui.actionLink("getTotalEligibleForMonthZeroVL") }');
+                //return  myAjax({startDate:startDate, endDate:endDate, ageType:ageTyp}, '${ ui.actionLink("getTotalEligibleForMonthZeroVL") }');
             })
    }
 </script>

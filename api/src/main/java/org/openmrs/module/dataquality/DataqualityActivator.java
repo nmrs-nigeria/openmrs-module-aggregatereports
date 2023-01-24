@@ -53,6 +53,7 @@ public class DataqualityActivator extends BaseModuleActivator {
         private List<Map<String, String>> allPharmacyEncounters = new ArrayList<>();
         private List<Map<String, String>> allClientIntakeEncounters = new ArrayList<>();
         private List<Map<String, String>> allIPTEncounters = new ArrayList<>();
+        private List<Map<String, String>> allTxCurrInitL = new ArrayList<>();
         
         
 	PatientDao dao = new PatientDao();
@@ -61,6 +62,8 @@ public class DataqualityActivator extends BaseModuleActivator {
         PharmacyDao pharmacyDao = new PharmacyDao();
         HTSDao htsDao = new HTSDao();
 	private String lastAnalysisDate = "";
+        private String txCurrGrab = "";
+        private String txCurrGrabs = "";
 	
 	/**
 	 * @see #started()
@@ -101,6 +104,7 @@ public class DataqualityActivator extends BaseModuleActivator {
 	}
 	
 	private void startAnalyticsTask() {
+        txCurrGrab = dao.getCurrs("dqr_last_txcurr");
 		Timer t = new Timer();
 		TimerTask tt = new TimerTask() {
 			
@@ -118,13 +122,29 @@ public class DataqualityActivator extends BaseModuleActivator {
                             }*/
                             //get the last date that the analysis was done. The very first analysis will take some time, but subsequent onces should not take long
                             lastAnalysisDate = dao.getGlobalProperty("dqr_last_analysis_date");//Context.getAdministrationService().getGlobalProperty("dqr_last_analysis_date");
+                            txCurrGrabs = dao.getGlobalProperty("dqr_last_txcurr");
+                            
+                            
+                            
                             System.out.println("Last analysis Date" + lastAnalysisDate);
+                            //System.out.println("txcurrgrabzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz " + txCurrGrabs);
                             if(lastAnalysisDate == null || lastAnalysisDate.equalsIgnoreCase(""))
                             {
                                 lastAnalysisDate = "1990-01-01";
                                 UUID uuid = UUID.randomUUID();
                                 String uuidAsString = uuid.toString();
                                 patientDao.saveGlobalProperty("dqr_last_analysis_date", lastAnalysisDate, "Last time DQR Analysis was run", uuidAsString);
+                                
+                            }
+                            if(txCurrGrabs == null || txCurrGrabs.equalsIgnoreCase(""))
+                            {
+                                System.out.println("Here for txcurrgrabzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz" + txCurrGrabs);
+                                //allTxCurrInitL.addAll(dao.getAllCurrs());
+                                //dao.saveAllCurrs(allTxCurrInitL);
+                                txCurrGrabs = "1990-01-01";
+                                UUID uuidtxc = UUID.randomUUID();
+                                String uuidAsStringtxc = uuidtxc.toString();
+                                patientDao.saveGlobalProperty("dqr_last_txcurr", txCurrGrabs, "Last time TxCurr Analysis was run", uuidAsStringtxc);
                                 
                             }
                            // lastAnalysisDate = "1990-01-01";
@@ -158,6 +178,8 @@ public class DataqualityActivator extends BaseModuleActivator {
                                         allPharmacyEncounters.addAll(pharmacyDao.getPharmacyEncounters(patientId));
                                         allClientIntakeEncounters.addAll(htsDao.getClientIntakeEncounters(patientId));
                                         allIPTEncounters.addAll(labDao.getIPTEncounters(patientId));
+                                        //allTxCurrInitL.addAll(dao.getAllCurrs(patientId));
+                                        
                                     }
                                     //save the encounters, clear the data structures and start again
                                     dao.savePatientMeta(allPatientMetas);
@@ -166,6 +188,8 @@ public class DataqualityActivator extends BaseModuleActivator {
                                     pharmacyDao.savePharmacyEncounters(allPharmacyEncounters);
                                     htsDao.saveClientEncounters(allClientIntakeEncounters);
                                     labDao.saveIPTEncounters(allIPTEncounters);
+                                    //dao.saveAllCurrs(allTxCurrInitL);
+                                    
 
                                     //clear all datastructures
                                     allPatientMetas.clear();
@@ -174,6 +198,7 @@ public class DataqualityActivator extends BaseModuleActivator {
                                     allPharmacyEncounters.clear();
                                     allClientIntakeEncounters.clear();
                                     allIPTEncounters.clear();
+                                    //allTxCurrInitL.clear();
                                     //System.out.println("completed cycle " + i + "out of" + (totalPages - 1));
                             }
                             

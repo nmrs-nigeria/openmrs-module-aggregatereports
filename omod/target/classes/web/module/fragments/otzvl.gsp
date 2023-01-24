@@ -86,6 +86,8 @@ var jq = jQuery;
     var allPatientsKeptObj = {};
     var allPatientsGoodScoreObj = {};
     var completed7Modules = new Array();
+    var alPatientsIIT = new Array();
+    var alPatientsTO = new Array();
 
 function getVlData()
 {
@@ -121,6 +123,9 @@ function getVlData()
         console.log("data",data);
         
         completed7Modules = data["complete7Modules"];
+        alPatientsIIT = data["alPatientsIIT"];
+        alPatientsTO = data["alPatientsTO"];
+        
         console.log(completed7Modules);
         
          for(var i=0; i<monthDifference; i += 6){
@@ -288,7 +293,7 @@ function getVlData()
        
             var graphArray2 = [
                {field: "noEligible", type:"column",  color:"#589BD4", valueAxis:1, description:"title", title:"# of AYPLHIV enrolled in OTZ who were eligible for 6 monthly VL test", isOptimum:"eligible6mts", chartType:"vlotz"},
-               {field: "noWithResult", type:"column",  color:"#A1a1a1", valueAxis:1, description:"title", title:"# of AYPLHIV enrolled in OTZ with VL result in the past 6 months", isOptimum:"withResult", chartType:"vlotz"},
+               {field: "noWithResult", type:"column",  color:"#A1a1a1", valueAxis:1, description:"title", title:"No. of AYPLHIV enrolled in OTZ with VL result for samples taken for 6-monthly vl test", isOptimum:"withResult", chartType:"vlotz"},
                {field: "percentage", type:"line", valueAxis:2,  color:"#bf6c19", description:"title", title:"Viral Load Coverage", isOptimum:"totalInOtz", chartType:"otz"},
               ]
                //create chart
@@ -306,7 +311,7 @@ function getVlData()
                     {color:"#bf6c19", title:"% virally suppressed(6 month VL)"}     
              ]
             graphArray2 = [
-               {field: "noEligible", type:"column", valueAxis:1, color:"#589BD4", description:"title", title:"# of AYPLHIV enrolled in OTZ with result in the past 6 months", isOptimum:"withResult", chartType:"vlotz"},
+               {field: "noEligible", type:"column", valueAxis:1, color:"#589BD4", description:"title", title:"# of AYPLHIV enrolled in OTZ with result in the past 6 month", isOptimum:"withResult", chartType:"vlotz"},
                {field: "noWithResult", type:"column", valueAxis:1, newStack:true,  color:"#08A58E", description:"title", title:"# of AYPLHIV enrolled in OTZ with VL suppressed VL in the past 6 months", isOptimum:"undetectable6Months", chartType:"vlotz"},
                {field: "noLLV", type:"column", valueAxis:1,  color:"#148240", description:"title", title:"# of AYPLHIV enrolled in OTZ with low level viraemia in the past 6 months", isOptimum:"llv6Months", chartType:"vlotz"},
                {field: "percentage", type:"line", valueAxis:2,  color:"#bf6c19", description:"title", title:"% virally suppressed(6 month VL)", isOptimum:"totalInOtz", chartType:"otz"},
@@ -322,7 +327,7 @@ function getVlData()
                     {color:"#bf6c19", title:"% virally suppressed(12 month VL)"}     
              ]
             graphArray2 = [
-               {field: "noEligible", type:"column", valueAxis:1, color:"#589BD4", description:"title", title:"# of AYPLHIV enrolled in OTZ with result in the past 6 months", isOptimum:"withResult12Months", chartType:"vlotz"},
+               {field: "noEligible", type:"column", valueAxis:1, color:"#589BD4", description:"title", title:"# of AYPLHIV enrolled in OTZ with result in the past 6 month", isOptimum:"withResult12Months", chartType:"vlotz"},
                {field: "noWithResult", type:"column", valueAxis:1, color:"#08A58E", newStack:true, description:"title", title:"# of AYPLHIV enrolled in OTZ with VL suppressed VL in the past 6 months", isOptimum:"undetectable12Months", chartType:"vlotz"},
                {field: "noLLV", type:"column", valueAxis:1,  color:"#148240", description:"title", title:"# of AYPLHIV enrolled in OTZ with low level viraemia in the past 12 months", isOptimum:"llv12Months", chartType:"vlotz"},
                {field: "percentage", type:"line", valueAxis:2,  color:"#bf6c19", description:"title", title:"% virally suppressed(12 month VL)", isOptimum:"totalInOtz", chartType:"otz"},
@@ -340,9 +345,9 @@ function getVlData()
                     {color:"#406dd6", title:"# of AYPLHIV in OTZ with VL within the last 12 months result greater than or equal to 1000 c/m with repeat VL"}, 
              ]
              graphArray2 = [
-               {field: "noWithResultAbove1000", color:"#589BD4", description:"title", title:"# of AYPLHIV in OTZ with VL within the last 12 months result greater than or equal to 1000 c/m", isOptimum:"totalInOtz", chartType:"otz"},
-               {field: "noWithResultAbove1000EAC", color:"#A1a1a1", description:"title", title:"# of AYPLHIV in OTZ with VL within the last 12 months result greater than or equal to 1000 c/m and completed EAC", isOptimum:"totalInOtz", chartType:"otz"},
-               {field: "noWithResultAbove1000WithRepeat", color:"#406dd6", description:"title", title:"# of AYPLHIV in OTZ with VL within the last 12 months result greater than or equal to 1000 c/m with repeat VL", isOptimum:"totalInOtz", chartType:"otz"}
+               {field: "noWithResultAbove1000", color:"#589BD4", description:"title", title:"# of AYPLHIV in OTZ with VL within the last 12 months result greater than or equal to 1000 c/m", isOptimum:"withResultAbove1000", chartType:"vlotz"},
+               {field: "noWithResultAbove1000EAC", color:"#A1a1a1", description:"title", title:"# of AYPLHIV in OTZ with VL within the last 12 months result greater than or equal to 1000 c/m and completed EAC", isOptimum:"above1000CompletedEAC", chartType:"vlotz"},
+               {field: "noWithResultAbove1000WithRepeat", color:"#406dd6", description:"title", title:"# of AYPLHIV in OTZ with VL within the last 12 months result greater than or equal to 1000 c/m with repeat VL", isOptimum:"withRepeatVl", chartType:"vlotz"}
               ]
                //create chart
           buildBarCharts("Total Patients", vlCascaceData, graphArray2, "title", "chartUnsuppresses", "", "none", legendData, true, false);

@@ -6,6 +6,7 @@ def startDate = config.startDate;
 def endDate = config.endDate;
 def title = config.title;
 def Misc = config.Misc;
+def getFactorial = { num -> (num <= 1) ? 1 : num * call(num - 1) }
 %>
 <fieldset>
         <legend>Filters</legend>
@@ -33,8 +34,10 @@ def Misc = config.Misc;
                 <th>S/N</th>
                 <th>Pepfar ID</th>
                 <th>Gender</th>
-                <th>Age</th>
-                 <th>Date Enrolled</th>
+                <th>Age at OTZ Enrollment</th>
+                <th>Current Age</th>
+                <th>Date Enrolled in OTZ</th>
+                <th>ART Start Date</th>
                 <!--<th>Age Range</th>-->
                 
         </thead>
@@ -43,20 +46,38 @@ def Misc = config.Misc;
                  int sn = 1;
                 for(int i=0; i<patients.size(); i++)
                 {
-                    if(patients.get(i).getAge() >= 11 && patients.get(i).getAge() <= 24)
-                    {
                 %>
+                    
                     <tr>
                         <td><%= sn++ %></td>
                         <td><%= patients.get(i).getPepfarId()%></td>
                         <td><%= patients.get(i).getGender()%></td>
-                        <td><%= patients.get(i).getAge()%></td>
+                        <% 
+                        if(patients.get(i).getAge() >= 10 && patients.get(i).getAge() <= 24)
+                        {
+                        %>
+                            <td><%= patients.get(i).getAge()%></td>
+                            <td><%= patients.get(i).getCage()%></td>
+        
+
+                        <%
+                            }else{
+                        %>
+                        <td bgcolor="yellow"><%= patients.get(i).getAge()%></td>
+                        <td bgcolor="yellow"><%= patients.get(i).getCage()%></td>
+                        <%
+                            }
+                        %>
                         <td><%= patients.get(i).getEnrollmentDate()%></td>
+                        <td><%= patients.get(i).getArtStartDate()%></td>
                         
                     </tr>
-                <%}
-              }   
+        
+                <%
+                }   
                 %>
+                
+            
             </tbody>
         </table>
         

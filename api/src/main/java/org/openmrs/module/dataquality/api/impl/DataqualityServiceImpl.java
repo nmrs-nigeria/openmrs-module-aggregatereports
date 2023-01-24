@@ -10,6 +10,8 @@
 package org.openmrs.module.dataquality.api.impl;
 
 import java.util.List;
+
+import org.openmrs.Patient;
 import org.openmrs.api.APIException;
 import org.openmrs.api.UserService;
 import org.openmrs.api.impl.BaseOpenmrsService;

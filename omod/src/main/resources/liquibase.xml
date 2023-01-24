@@ -252,4 +252,108 @@
             <column name="quantity" />
         </createIndex>
     </changeSet>
+    <changeSet id="org.openmrs.module.dataquality-v1.0-3" author="lordmaul">
+        <createTable tableName="dqr_curr">
+            <column name="dqr_curr_id" autoIncrement="true" type="int">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+
+            <column name="patient_id" type="int" defaultValue="0" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="encounter_id" type="int" defaultValue="0" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="gender" type="varchar(20)" defaultValue="" >
+                <constraints nullable="true"/>
+            </column>
+            <column name="art_start_date" type="DATETIME">
+                <constraints nullable="true"/>
+            </column>
+            <column name="dob" type="DATETIME">
+                <constraints nullable="true"/>
+            </column>
+            <column name="otz_enrollment_date" type="DATETIME">
+                <constraints nullable="true"/>
+            </column>
+            <column name="given_name" type="varchar(200)" defaultValue="0" >
+                <constraints nullable="true"/>
+            </column>
+            <column name="family_name" type="varchar(200)" defaultValue="0" >
+                <constraints nullable="true"/>
+            </column>
+            <column name="identifier" type="varchar(200)" defaultValue="0" >
+                <constraints nullable="true"/>
+            </column>
+            <column name="art_status" type="varchar(200)" defaultValue="0" >
+                <constraints nullable="true"/>
+            </column>
+        </createTable> 
+        
+        <createIndex indexName="patient_id" tableName="dqr_curr" unique="true">
+            <column name="patient_id"/>
+        </createIndex>
+        <createIndex indexName="art_start_date" tableName="dqr_curr" unique="false">
+            <column name="art_start_date" />
+            <column name="dob" />
+        </createIndex>       
+    </changeSet>
+    <changeSet id="org.openmrs.module.dataquality-v1.0-4" author="lordmaul">
+        <createTable tableName="dqr_pharmacy2">
+            <column name="dqr_pharmacy_curr_id" autoIncrement="true" type="int">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="patient_id" type="int" defaultValue="0" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="encounter_id" type="int" defaultValue="0" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="pickupdate" type="DATETIME">
+                <constraints nullable="true"/>
+            </column>
+            <column name="quantity" type="int" defaultValue="0" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="days_refill" type="int" defaultValue="0" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="birthdate" type="DATETIME">
+                <constraints nullable="true"/>
+            </column>
+            <column name="gender" type="varchar(20)" defaultValue="" >
+                <constraints nullable="true"/>
+            </column>
+            <column name="artstartdate" type="DATETIME">
+                <constraints nullable="true"/>
+            </column>
+            <column name="otz_enrollment_date" type="DATETIME">
+                <constraints nullable="true"/>
+            </column>
+            <column name="given_name" type="varchar(200)" defaultValue="0" >
+                <constraints nullable="true"/>
+            </column>
+            <column name="family_name" type="varchar(200)" defaultValue="0" >
+                <constraints nullable="true"/>
+            </column>
+            <column name="identifier" type="varchar(200)" defaultValue="0" >
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+        <createIndex indexName="patient_id" tableName="dqr_pharmacy2" unique="true">
+            <column name="patient_id"/>
+        </createIndex>
+        <createIndex indexName="pickupdate_i" tableName="dqr_pharmacy2" unique="false">
+            <column name="pickupdate" />
+        </createIndex>       
+    </changeSet>
+    
+    <!-- <changeSet id="org.openmrs.module.dataquality-v1.0-5" author="Williams" runOnChange="true">
+         <sqlFile path="changesets/add_extra_column.sql"
+                 stripComments="true"
+                 splitStatements="true"
+                 encoding="UTF-8"
+                 endDelimiter=";"/>                   
+    </changeSet>-->
+    
 </databaseChangeLog>

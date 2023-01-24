@@ -1,3 +1,0 @@
-
-${ ui.includeFragment("dataquality", "tb") }
-

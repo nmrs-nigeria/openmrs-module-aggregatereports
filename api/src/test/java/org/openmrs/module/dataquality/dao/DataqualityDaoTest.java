@@ -7,7 +7,7 @@
  * Copyright (C) OpenMRS Inc. OpenMRS is a registered trademark and the OpenMRS
  * graphic logo is a trademark of OpenMRS Inc.
  */
-package org.openmrs.module.dataquality.api.dao;
+package org.openmrs.module.dataquality.dao;
 
 import java.util.Iterator;
 import org.codehaus.jettison.json.JSONObject;
@@ -22,6 +22,7 @@ import static org.hamcrest.Matchers.*;
 import org.joda.time.DateTime;
 import static org.junit.Assert.*;
 import org.openmrs.module.dataquality.Misc;
+import org.openmrs.module.dataquality.api.dao.DataqualityDao;
 
 /**
  * It is an integration test (extends BaseModuleContextSensitiveTest), which verifies DAO methods

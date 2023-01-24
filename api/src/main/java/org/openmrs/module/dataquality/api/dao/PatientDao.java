@@ -9,6 +9,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -274,6 +275,171 @@ public class PatientDao {
 			Database.handleException(ex);
 			return "";
 			
+		}
+		finally {
+			Database.cleanUp(rs, stmt, con);
+		}
+	}
+	
+	public String getCurrs(String property) {
+		PreparedStatement stmtp = null;
+		ResultSet rs = null;
+		Connection con = null;
+		
+		try {
+			//con = Database.connectionPool.getConnection();
+			
+			con = Database.connectionPool.getConnection();
+			String queryDrop = "DROP FUNCTION IF EXISTS getoutcome2";
+			String queryCreate = "CREATE FUNCTION getoutcome2(lastpickupdate DATE,daysofarvrefill NUMERIC,ltfudays NUMERIC, enddate DATE) RETURNS text CHARSET utf8 ";
+			queryCreate += "BEGIN ";
+			queryCreate += "DECLARE  ltfudate DATE; ";
+			queryCreate += "DECLARE  ltfunumber NUMERIC; ";
+			queryCreate += "DECLARE  daysdiff NUMERIC; ";
+			queryCreate += "DECLARE  outcome TEXT; ";
+			queryCreate += "SET ltfunumber=daysofarvrefill+ltfudays; ";
+			queryCreate += "SELECT DATE_ADD(lastpickupdate, INTERVAL ltfunumber DAY) INTO ltfudate; ";
+			queryCreate += "SELECT DATEDIFF(ltfudate,enddate) INTO daysdiff; ";
+			queryCreate += "SELECT IF(lastpickupdate IS NULL,\"\",IF(daysdiff >=0,\"Active\",\"InActive\")) INTO outcome; ";
+			queryCreate += "RETURN outcome; ";
+			queryCreate += "END";
+			Statement stmt = con.createStatement();
+			stmt.execute(queryDrop);
+			stmt.execute(queryCreate);
+			stmt.close();
+			
+			//stmt = Database.conn.createStatement(java.sql.ResultSet.TYPE_FORWARD_ONLY, java.sql.ResultSet.CONCUR_READ_ONLY);
+			
+			//stmt = Database.conn.createStatement(java.sql.ResultSet.TYPE_FORWARD_ONLY, java.sql.ResultSet.CONCUR_READ_ONLY);
+			
+			//String query = "SELECT global_property.property_value FROM global_property WHERE property=?";
+			
+			/*int i = 1;
+			stmt = con.prepareStatement(query);
+			stmt.setString(i++, property);
+			rs = stmt.executeQuery();
+			rs.next();
+			*/
+			return property;
+			
+		}
+		catch (SQLException ex) {
+			Database.handleException(ex);
+			return "";
+			
+		}
+		finally {
+			Database.cleanUp(rs, stmtp, con);
+		}
+	}
+	
+	public List<Map<String, String>> getAllCurrs(int patientId) {
+            System.out.println("show herezzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz ");
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		Connection con = null;
+		List<Map<String, String>> allPatients = new ArrayList<>();
+		
+		try {
+			con = Database.connectionPool.getConnection();
+			
+			
+			String query = "select IFNULL(hivE.encounter_id, 0) AS encounter_id, person.gender, patient_program.date_enrolled AS otz_enrollment_date, "+
+                        "DATE_FORMAT(getdatevalueobsid(getmaxconceptobsid(patient.patient_id,159599,CURDATE())),'%d-%b-%Y') as art_start_date, patient.patient_id, DATE_FORMAT(person.birthdate,'%d-%b-%Y') as dob, person_name.given_name, person_name.family_name, patient_identifier.identifier, " +
+                        "getoutcome2( " +
+                        "getobsdatetime(getmaxconceptobsidwithformid(patient.patient_id,162240,27,CURDATE())), " +
+                        "getconceptval(getmaxconceptobsidwithformid(patient.patient_id,162240,27,CURDATE()),159368,patient.patient_id) , " +
+                        "28, " +
+                        "IF(CURDATE() IS NULL or CURDATE() = '', CURDATE(),CURDATE()) " +
+                        ")  as art_status " +
+                        "from patient " +
+                        "INNER JOIN person on(person.person_id=patient.patient_id and patient.voided=0) " +
+                        " LEFT JOIN encounter hivE ON hivE.patient_id=patient.patient_id AND hivE.form_id=23  " +
+                        "  JOIN person_name ON person_name.person_id=patient.patient_id  " +
+                        "LEFT  JOIN patient_program ON patient_program.patient_id = patient.patient_id AND patient_program.program_id = 5  " +
+                        " LEFT JOIN patient_identifier ON patient_identifier.patient_id=patient.patient_id AND patient_identifier.identifier_type=4  " +
+                        "WHERE patient.voided=0 " +
+                        "GROUP BY patient.patient_id ";
+                        System.out.println("show herezzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz2 ");
+			int i = 1;
+			//DateTime now = new DateTime(new Date());
+			//String nowString = now.toString("yyyy'-'MM'-'dd' 'HH':'mm");
+			stmt = con.prepareStatement(query);
+               System.out.println("show herezzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz3 ");
+			//stmt.setFetchSize(200);
+			rs = stmt.executeQuery();
+			while (rs.next()) {
+                            Map<String,String> tempMap = new HashMap<>();
+                            tempMap.put("encounter_id", rs.getString("encounter_id"));
+                            tempMap.put("gender", rs.getString("gender"));
+                            tempMap.put("otz_enrollment_date", rs.getString("otz_enrollment_date"));
+                            tempMap.put("art_start_date", rs.getString("art_start_date"));
+                            tempMap.put("patient_id", rs.getString("patient_id"));
+                            tempMap.put("dob", rs.getString("dob"));
+                            tempMap.put("given_name", rs.getString("given_name"));
+                            tempMap.put("family_name", rs.getString("family_name"));
+                            tempMap.put("identifier", rs.getString("identifier"));
+                            tempMap.put("art_status", rs.getString("art_status"));
+                            
+                            allPatients.add(tempMap);
+			}
+			return allPatients;
+			
+		}
+		catch (SQLException ex) {
+			Database.handleException(ex);
+			return null;
+		}
+		finally {
+			Database.cleanUp(rs, stmt, con);
+		}
+    }
+	
+	public int saveAllCurrs(List<Map<String, String>> allPatientCurrsI) {
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		Connection con = null;
+		
+		try {
+			con = Database.connectionPool.getConnection();
+			//stmt = Database.conn.createStatement(java.sql.ResultSet.TYPE_FORWARD_ONLY, java.sql.ResultSet.CONCUR_READ_ONLY);
+			
+			//stmt = Database.conn.createStatement(java.sql.ResultSet.TYPE_FORWARD_ONLY, java.sql.ResultSet.CONCUR_READ_ONLY);
+			
+			String query = "INSERT INTO dqr_curr (patient_id, encounter_id, gender, art_start_date, dob, otz_enrollment_date, given_name, family_name, identifier, art_status)VALUES";
+			for (int i = 0; i < allPatientCurrsI.size(); i++) {
+				query += "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?),";
+			}
+			
+			query = query.substring(0, query.length() - 1);
+			query += " ON DUPLICATE KEY UPDATE art_start_date=VALUES(art_start_date), dob=VALUES(dob), otz_enrollment_date=VALUES(otz_enrollment_date), ";
+			query += " given_name=VALUES(given_name), family_name=VALUES(family_name), identifier=VALUES(identifier), art_status=VALUES(art_status) ";
+			
+			int i = 1;
+			stmt = con.prepareStatement(query);
+			for (int j = 0; j < allPatientCurrsI.size(); j++) {
+				stmt.setString(i++, allPatientCurrsI.get(j).get("patient_id"));
+				stmt.setInt(i++, Integer.parseInt(allPatientCurrsI.get(j).get("encounter_id")));
+				stmt.setString(i++, allPatientCurrsI.get(j).get("gender"));
+				stmt.setString(i++, allPatientCurrsI.get(j).get("art_start_date"));
+				stmt.setString(i++, allPatientCurrsI.get(j).get("dob"));
+				stmt.setString(i++, allPatientCurrsI.get(j).get("otz_enrollment_date"));
+				stmt.setString(i++, allPatientCurrsI.get(j).get("given_name"));
+				stmt.setString(i++, allPatientCurrsI.get(j).get("family_name"));
+				stmt.setString(i++, allPatientCurrsI.get(j).get("identifier"));
+				stmt.setString(i++, allPatientCurrsI.get(j).get("art_status"));
+				
+			}
+			//stmt.setFetchSize(200);
+			if (allPatientCurrsI.size() > 0)
+				stmt.executeUpdate();
+			
+			return 1;
+			
+		}
+		catch (SQLException ex) {
+			Database.handleException(ex);
+			return 0;
 		}
 		finally {
 			Database.cleanUp(rs, stmt, con);

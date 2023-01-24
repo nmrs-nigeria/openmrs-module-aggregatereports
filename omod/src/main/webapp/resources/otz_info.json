@@ -2,7 +2,7 @@
 
   "total_enrolled":
   {
-    "title": "# of AYPLHIV enrolled in OTZ in the cohort month",
+    "title": "# of AYPLHIV enrolled in OTZ in the cohort month,",
     "description": "Number of AYPLHIV enrolled in OTZ in the cohort month for the reporting facility",
     "source": "OTZ Register",
     "calculation": "From the OTZ Register, count the number of AYPLHIV enrolled in OTZ for that particular month. Disaggregate as required"

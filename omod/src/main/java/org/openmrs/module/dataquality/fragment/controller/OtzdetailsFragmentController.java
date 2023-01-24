@@ -40,9 +40,10 @@ public class OtzdetailsFragmentController {
 		}
 		
 		DateTime sixMonthsAgo = endDateTime.minusMonths(6);
+		DateTime sixMonthsAgoB = startDateTime.minusMonths(6);
 		//Database.initConnection();
 		
-		String sixMonths = sixMonthsAgo.toString("yyyy'-'MM'-'dd");
+		String sixMonths = sixMonthsAgoB.toString("yyyy'-'MM'-'dd");
 		
 		String startDate = startDateTime.toString("yyyy'-'MM'-'dd");
 		String endDate = endDateTime.toString("yyyy'-'MM'-'dd");
@@ -50,10 +51,12 @@ public class OtzdetailsFragmentController {
 		OTZDao otzDao = new OTZDao();
 		
 		model.addAttribute("subset", subSet);
+		model.addAttribute("type", type);
 		
 		if (subSet == 1) {//Percentage of new adult PLHIV offered index testing
 			//lets get the data
 			List<OTZPatient> allPatients = otzDao.getTotalAYPLHIVEnrolledInOTZ(startDate, endDate);
+			//System.out.println("TotalSize "+allPatients.size());
 			model.addAttribute("title", "# of AYPLHIV enrolled in OTZ in the cohort month ( " + startDate + " and "
 			        + endDate + ")");
 			if (type == 2) {
@@ -84,8 +87,8 @@ public class OtzdetailsFragmentController {
 		}
 		if (subSet == 3) {//Percentage of new adult PLHIV offered index testing
 			//lets get the data
-			List<OTZPatient> allPatients = otzDao.getTotalEnrolledWhoKeptScheduledPickupMonthN(startDate, endDate,
-			    sixMonths, startDate);
+			List<OTZPatient> allPatients = otzDao.getTotalEnrolledWhoKeptScheduledPickup6MonthsBefore(startDate, endDate,
+			    sixMonths);
 			model.addAttribute("title",
 			    "# of OTZ members who kept their drug pick-up appointment in the last six months prior to enrolment on OTZ ( "
 			            + startDate + " and " + endDate + ")");
@@ -263,7 +266,7 @@ public class OtzdetailsFragmentController {
 		}
 		if (subSet == 13) {//Percentage of new adult PLHIV offered index testing
 			//lets get the data
-			List<OTZPatient> allPatients = otzDao.getTotalEligibleForMonthZeroVL(startDate, endDate, sixMonths);
+			List<OTZPatient> allPatients = otzDao.getTotalEligibleForMonthZeroVL2(startDate, endDate, 0);
 			model.addAttribute(
 			    "title",
 			    "# of AYPLHIV in OTZ without baseline VL results or with baseline VL result less than 1000 c/ml and eligible for month zero VL sample collection  ( "
@@ -619,7 +622,8 @@ public class OtzdetailsFragmentController {
 		}
 		if (subSet == 33) {//Percentage of new adult PLHIV offered index testing
 			//lets get the data
-			List<OTZPatient> allPatients = otzDao.getTotalAYPLHIVEnrolledInOTZ(startDate, endDate);
+			List<OTZPatient> allPatients = otzDao.getTotalEnrolledWithVLPast12MonthsResultAbove1000WithRepeatVl22(startDate,
+			    endDate, sixMonths);
 			model.addAttribute("title", "# of AYPLHIV enrolled in OTZ in the cohort month ( " + startDate + " and "
 			        + endDate + ")");
 			if (type == 2) {
@@ -633,7 +637,8 @@ public class OtzdetailsFragmentController {
 		}
 		if (subSet == 34) {//Percentage of new adult PLHIV offered index testing
 			//lets get the data
-			List<OTZPatient> allPatients = otzDao.getTotalAYPLHIVEnrolledInOTZ(startDate, endDate);
+			List<OTZPatient> allPatients = otzDao.getTotalEnrolledWithVLPast12MonthsResultAbove1000WithRepeatVl2234(
+			    startDate, endDate, sixMonths);
 			model.addAttribute("title", "# of AYPLHIV enrolled in OTZ in the cohort month ( " + startDate + " and "
 			        + endDate + ")");
 			if (type == 2) {
@@ -647,7 +652,8 @@ public class OtzdetailsFragmentController {
 		}
 		if (subSet == 35) {//Percentage of new adult PLHIV offered index testing
 			//lets get the data
-			List<OTZPatient> allPatients = otzDao.getTotalAYPLHIVEnrolledInOTZ(startDate, endDate);
+			List<OTZPatient> allPatients = otzDao.getTotalEnrolledWithVLPast12MonthsResultAbove1000WithRepeatVl2235(
+			    startDate, endDate, sixMonths);
 			model.addAttribute("title", "# of AYPLHIV enrolled in OTZ in the cohort month ( " + startDate + " and "
 			        + endDate + ")");
 			if (type == 2) {
@@ -687,9 +693,9 @@ public class OtzdetailsFragmentController {
 			model.addAttribute("endDate", endDate);
 			model.addAttribute("Misc", Misc.class);
 		}
-		if (subSet == 37) {//Percentage of new adult PLHIV offered index testing
+		if (subSet == 38) {//Percentage of new adult PLHIV offered index testing
 			//lets get the data
-			List<OTZPatient> allPatients = otzDao.getTotalAYPLHIVEnrolledInOTZ(startDate, endDate);
+			List<OTZPatient> allPatients = otzDao.getTotalAYPLHIVEnrolledInOTZWhoComplete7(startDate, endDate);
 			model.addAttribute("title", "# of AYPLHIV enrolled in OTZ in the cohort month ( " + startDate + " and "
 			        + endDate + ")");
 			if (type == 2) {
@@ -703,7 +709,7 @@ public class OtzdetailsFragmentController {
 		}
 		if (subSet == 39) {//Percentage of new adult PLHIV offered index testing
 			//lets get the data
-			List<OTZPatient> allPatients = otzDao.getTotalAYPLHIVEnrolledInOTZ(startDate, endDate);
+			List<OTZPatient> allPatients = otzDao.getTotalEnrolledAndTransferredOutAfter(startDate, endDate);
 			model.addAttribute("title", "# of AYPLHIV enrolled in OTZ in the cohort month ( " + startDate + " and "
 			        + endDate + ")");
 			if (type == 2) {
@@ -717,7 +723,7 @@ public class OtzdetailsFragmentController {
 		}
 		if (subSet == 40) {//Percentage of new adult PLHIV offered index testing
 			//lets get the data
-			List<OTZPatient> allPatients = otzDao.getTotalAYPLHIVEnrolledInOTZ(startDate, endDate);
+			List<OTZPatient> allPatients = otzDao.getTotalEnrolledAndLTFUAfter(startDate, endDate);
 			model.addAttribute("title", "# of AYPLHIV enrolled in OTZ in the cohort month ( " + startDate + " and "
 			        + endDate + ")");
 			if (type == 2) {
@@ -731,7 +737,7 @@ public class OtzdetailsFragmentController {
 		}
 		if (subSet == 41) {//Percentage of new adult PLHIV offered index testing
 			//lets get the data
-			List<OTZPatient> allPatients = otzDao.getTotalAYPLHIVEnrolledInOTZ(startDate, endDate);
+			List<OTZPatient> allPatients = otzDao.getTotalEnrolledAndDiedAfter(startDate, endDate);
 			model.addAttribute("title", "# of AYPLHIV enrolled in OTZ in the cohort month ( " + startDate + " and "
 			        + endDate + ")");
 			if (type == 2) {
@@ -745,7 +751,7 @@ public class OtzdetailsFragmentController {
 		}
 		if (subSet == 42) {//Percentage of new adult PLHIV offered index testing
 			//lets get the data
-			List<OTZPatient> allPatients = otzDao.getTotalAYPLHIVEnrolledInOTZ(startDate, endDate);
+			List<OTZPatient> allPatients = otzDao.getTotalEnrolledAndOptedOutAfter(startDate, endDate);
 			model.addAttribute("title", "# of AYPLHIV enrolled in OTZ in the cohort month ( " + startDate + " and "
 			        + endDate + ")");
 			if (type == 2) {
@@ -759,7 +765,7 @@ public class OtzdetailsFragmentController {
 		}
 		if (subSet == 43) {//Percentage of new adult PLHIV offered index testing
 			//lets get the data
-			List<OTZPatient> allPatients = otzDao.getTotalAYPLHIVEnrolledInOTZ(startDate, endDate);
+			List<OTZPatient> allPatients = otzDao.getTotalEnrolledAndTransitionedAfter(startDate, endDate);
 			model.addAttribute("title", "# of AYPLHIV enrolled in OTZ in the cohort month ( " + startDate + " and "
 			        + endDate + ")");
 			if (type == 2) {
@@ -773,7 +779,7 @@ public class OtzdetailsFragmentController {
 		}
 		if (subSet == 44) {//Percentage of new adult PLHIV offered index testing
 			//lets get the data
-			List<OTZPatient> allPatients = otzDao.getTotalAYPLHIVEnrolledInOTZ(startDate, endDate);
+			List<OTZPatient> allPatients = otzDao.getTotalEnrolledAndExitedAfter(startDate, endDate);
 			model.addAttribute("title", "# of AYPLHIV enrolled in OTZ in the cohort month ( " + startDate + " and "
 			        + endDate + ")");
 			if (type == 2) {

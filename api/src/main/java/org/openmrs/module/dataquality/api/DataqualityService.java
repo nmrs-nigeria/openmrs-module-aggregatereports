@@ -10,6 +10,8 @@
 package org.openmrs.module.dataquality.api;
 
 import java.util.List;
+
+import org.openmrs.Patient;
 import org.openmrs.annotation.Authorized;
 import org.openmrs.api.APIException;
 import org.openmrs.api.OpenmrsService;

@@ -5,7 +5,7 @@
 	<!-- Base Module Properties -->
 	<id>dataquality</id>
 	<name>Dataquality</name>
-	<version>1.0.2-SNAPSHOT</version>
+	<version>1.0.3</version>
 	<package>org.openmrs.module.dataquality</package>
 	<author>Lordmaul</author>
 	<description>
