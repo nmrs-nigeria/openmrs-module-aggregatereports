@@ -5532,9 +5532,9 @@ public class OtzreportsummaryFragmentController {
                     
                     
                      //we could get adherence data here too
-                    List<OTZPatient> allPatientsScheduled = otzDao.getTotalEnrolledWithScheduledPickupMonthN(startDate, endDate,  sixMonthsAgo, futureEndDate);
+                    List<OTZPatient> allPatientsScheduled = otzDao.getTotalEnrolledWithScheduledPickupMonthN(startDate, endDate,  sixMonthsAgo, futureEndDate, j);
                     //List<OTZPatient> allPatientsScheduled = otzDao.getTotalEnrolledWithScheduledPickup6MonthsBeforeAndAfter(startDate, endDate, j,  sixMonthsAgo, futureEndDate2);
-                    List<OTZPatient> allPatientsKept = otzDao.getTotalEnrolledWhoKeptScheduledPickupMonthN(startDate, endDate,  sixMonthsAgo, futureEndDate);
+                    List<OTZPatient> allPatientsKept = otzDao.getTotalEnrolledWhoKeptScheduledPickupMonthN(startDate, endDate,  sixMonthsAgo, futureEndDate, j);
                     //List<OTZPatient> allPatientsKept = otzDao.getTotalEnrolledWhoKeptScheduledPickup6MonthsBeforeAndAfter(startDate, endDate,  j,  sixMonthsAgo, futureEndDate2);
                     List<OTZPatient> allPatientsGoodScore = otzDao.getTotalEnrolledWithGoodAdhScoreMonthN(startDate, endDate,  sixMonthsAgo, futureEndDate);
                     //List<OTZPatient> allPatientsGoodScore = otzDao.getTotalEnrolledWithGoodAdhScore6MonthsBeforeAndAfter(startDate, endDate,  j,  sixMonthsAgo, futureEndDate2);
