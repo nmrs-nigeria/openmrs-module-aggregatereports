@@ -29,6 +29,7 @@ ui.includeJavascript("dataquality", "buttons.print.min.js")
 ui.includeJavascript("dataquality", "table2excel.js")
 ui.includeJavascript("dataquality", "table2csv.min.js")
 ui.includeJavascript("dataquality", "xlsx.core.min.js")
+												   
 ui.includeCss("dataquality", "buttons.dataTables.min.css")
 ui.includeCss("dataquality", "jquery.dataTables.min.css")
 ui.includeCss("dataquality", "myStyle.css")
@@ -2006,6 +2007,8 @@ int year = Calendar.getInstance().get(Calendar.YEAR);
  
             // Call this function to download csv file 
             downloadCSVFile(csv_data);
+            jq(".loadingViewButton").html('<i class="icon-play"></i>&nbsp; Run');
+            jq(".loadingViewButton").attr("disabled", false);
  
         }
  
