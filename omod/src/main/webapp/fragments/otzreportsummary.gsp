@@ -28,7 +28,7 @@ ui.includeJavascript("dataquality", "buttons.html5.min.js")
 ui.includeJavascript("dataquality", "buttons.print.min.js")
 ui.includeJavascript("dataquality", "table2excel.js")
 ui.includeJavascript("dataquality", "table2csv.min.js")
-ui.includeJavascript("dataquality", "xlsx.core.min.js")
+//ui.includeJavascript("dataquality", "xlsx.core.min.js")
 												   
 ui.includeCss("dataquality", "buttons.dataTables.min.css")
 ui.includeCss("dataquality", "jquery.dataTables.min.css")
@@ -443,6 +443,7 @@ int year = Calendar.getInstance().get(Calendar.YEAR);
                 return
             }
             jq("#filterOTZ").addClass('hidden');
+            console.log("77777777777777777777777777777777777777777777777777777777777777777");
             console.log("Start: "+startDate);
             console.log("End: "+endDate);
             
