@@ -1,0 +1,4 @@
+
+
+${ ui.includeFragment("dataquality", "otzreportsummary") }
+

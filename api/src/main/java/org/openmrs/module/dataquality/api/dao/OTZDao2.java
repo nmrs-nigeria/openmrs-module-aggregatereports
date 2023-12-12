@@ -1366,8 +1366,8 @@ public class OTZDao2 {
                             tempPatient.setEnrollmentDate(rs.getString("date_enrolled"));
                             allPatients.add(tempPatient);
                             
-                            System.out.println(rs.getString("identifier"));
-                        System.out.println("out aboveeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
+                            //System.out.println(rs.getString("identifier"));
+                        //System.out.println("out aboveeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
                         }
                         
 			return allPatients;
@@ -3993,8 +3993,8 @@ public class OTZDao2 {
                             tempPatient.setEnrollmentDate(rs.getString("date_enrolled"));
                             allPatients.add(tempPatient);
                             
-                            System.out.println(rs.getString("identifier"));
-                        System.out.println("out aboveeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
+                            //System.out.println(rs.getString("identifier"));
+                        //System.out.println("out aboveeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
                         }
                         
 			return allPatients;

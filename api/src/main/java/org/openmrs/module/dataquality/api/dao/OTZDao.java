@@ -12,6 +12,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import org.openmrs.module.dataquality.OTZPatient;
+import org.openmrs.module.dataquality.OTZKeyValue;
 
 /**
  * @author lordmaul
@@ -1366,8 +1367,8 @@ public class OTZDao {
                             tempPatient.setEnrollmentDate(rs.getString("date_enrolled"));
                             allPatients.add(tempPatient);
                             
-                            System.out.println(rs.getString("identifier"));
-                        System.out.println("out aboveeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
+                            //System.out.println(rs.getString("identifier"));
+                        //System.out.println("out aboveeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
                         }
                         
 			return allPatients;
@@ -3993,8 +3994,8 @@ public class OTZDao {
                             tempPatient.setEnrollmentDate(rs.getString("date_enrolled"));
                             allPatients.add(tempPatient);
                             
-                            System.out.println(rs.getString("identifier"));
-                        System.out.println("out aboveeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
+                            //System.out.println(rs.getString("identifier"));
+                        //System.out.println("out aboveeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
                         }
                         
 			return allPatients;
@@ -4588,4 +4589,95 @@ public class OTZDao {
 			Database.cleanUp(rs, stmt, con);
 		}
 	}
-}
+	
+	public List<OTZKeyValue> dnt() {
+		
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		Connection con = null;
+                List<OTZKeyValue> OTZKeyValues = new ArrayList<>();
+		try {
+			con = Database.connectionPool.getConnection();
+			//stmt = Database.conn.createStatement(java.sql.ResultSet.TYPE_FORWARD_ONLY, java.sql.ResultSet.CONCUR_READ_ONLY);
+			
+			//stmt = Database.conn.createStatement(java.sql.ResultSet.TYPE_FORWARD_ONLY, java.sql.ResultSet.CONCUR_READ_ONLY);
+			StringBuilder queryString = new StringBuilder(
+			        "SELECT property_value FROM global_property WHERE property = 'Facility_Name'");
+                        
+                        StringBuilder queryString2 = new StringBuilder(
+			        "SELECT address_hierarchy_entry.name FROM global_property\n" +
+                                " join address_hierarchy_entry on (address_hierarchy_entry.user_generated_id=global_property.property_value)\n" +
+                                " WHERE property = 'partner_reporting_lga_code'");
+                        
+                        StringBuilder queryString3 = new StringBuilder(
+			        "SELECT address_hierarchy_entry.name FROM global_property\n" +
+                                " join address_hierarchy_entry on (address_hierarchy_entry.user_generated_id=global_property.property_value)\n" +
+                                " WHERE property IN ('partner_reporting_state') and level_id=2");
+                        
+                        StringBuilder queryString4 = new StringBuilder(
+			        "SELECT property_value FROM global_property WHERE property = 'partner_short_name'");
+			int i = 1;
+			//DateTime now = new DateTime(new Date());
+			//String nowString = now.toString("yyyy'-'MM'-'dd' 'HH':'mm");
+			stmt = con.prepareStatement(queryString.toString());
+			
+			rs = stmt.executeQuery();
+			while(rs.next())
+                        {
+                            
+                            OTZKeyValue tempKVP = new OTZKeyValue();
+                            tempKVP.setKeyString("Facility_Name");
+                            tempKVP.setValueString(rs.getString("property_value"));
+                            
+                            OTZKeyValues.add(tempKVP);
+                        }
+                        
+                        
+                        stmt = con.prepareStatement(queryString2.toString());
+			
+			rs = stmt.executeQuery();
+			while(rs.next())
+                        {
+                            
+                            OTZKeyValue tempKVP = new OTZKeyValue();
+                            tempKVP.setKeyString("Facility_LGA");
+                            tempKVP.setValueString(rs.getString("address_hierarchy_entry.name"));
+                            
+                            OTZKeyValues.add(tempKVP);
+                        }
+                        
+                        stmt = con.prepareStatement(queryString3.toString());
+			
+			rs = stmt.executeQuery();
+			while(rs.next())
+                        {
+                            
+                            OTZKeyValue tempKVP = new OTZKeyValue();
+                            tempKVP.setKeyString("Facility_State");
+                            tempKVP.setValueString(rs.getString("address_hierarchy_entry.name"));
+                            
+                            OTZKeyValues.add(tempKVP);
+                        }
+                        
+                        stmt = con.prepareStatement(queryString4.toString());
+			
+			rs = stmt.executeQuery();
+			while(rs.next())
+                        {
+                            
+                            OTZKeyValue tempKVP = new OTZKeyValue();
+                            tempKVP.setKeyString("Parner_Name");
+                            tempKVP.setValueString(rs.getString("property_value"));
+                            
+                            OTZKeyValues.add(tempKVP);
+                        }
+			return OTZKeyValues;
+		}
+		catch (SQLException ex) {
+			Database.handleException(ex);
+			return new ArrayList<>();
+		}
+		finally {
+			Database.cleanUp(rs, stmt, con);
+		}
+	}}
