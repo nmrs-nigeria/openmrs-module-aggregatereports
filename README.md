@@ -1,4 +1,10 @@
 [![Build Status](https://travis-ci.org/nmrs-nigeria/dataquality.svg?branch=master)](https://travis-ci.org/github/nmrs-nigeria/dataquality)
-The dataquality module provides a list of custom indicators organised into datasets.
-The first dataset - the DQR data set allows users to easily fix data quality issues of concern.
-The other datasets (CQI and TB) provides a report showing performance for their respective custom indicators.
+The NMRS Aggregate Reporting module contains facility level indicator dashboards and analytics for program areas such as 
+DQR (Data Quality Review) dashboards
+OTZ (Operation Triple Zero) dashboards
+CQI (Continous Quality Improvement) dashboards
+TB/HIV Dashboards
+
+The module allows you to view aggregate level indicator dashboards of the thematic areas above and allows you to drill down into
+patient level line list associated with each indicator.
+
