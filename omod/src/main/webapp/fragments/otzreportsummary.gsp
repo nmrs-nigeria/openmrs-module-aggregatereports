@@ -525,7 +525,7 @@ int year = Calendar.getInstance().get(Calendar.YEAR);
             let currentMonth = startMonth.getMonth();
             let currentYear = startMonth.getFullYear();
 
-            while (currentMonth <= endMonth.getMonth() || currentYear < endMonth.getFullYear()) {
+            while (currentYear < endMonth.getFullYear() || (currentYear === endMonth.getFullYear() && currentMonth <= endMonth.getMonth())) {
                 const startDate = new Date(currentYear, currentMonth, 1);
                 const endDate = new Date(currentYear, currentMonth + 1, 0);
                 
@@ -549,7 +549,7 @@ int year = Calendar.getInstance().get(Calendar.YEAR);
 
             const monthsData = getStartAndEndDates(beginDate, finishDate);
             //console.log("monthsData", monthsData);
-
+            
 
             // Iterate over the array using a for loop
             // for (let i = 0; i < monthsData.length; i++) {
@@ -3192,7 +3192,7 @@ newContent3 = `
                 //useful here
                 return  myAjax({startDate:startDate, endDate:endDate, ageType:ageTyp}, '${ ui.actionLink("dnt") }');
             }).then(function(response){
-            var data = JSON.parse(response);
+            var data = response;//JSON.parse(response);
             const monthsName = ["January","February","March","April","May","June","July","August","September","October","November","December"];
             var newDateFromStart = new Date(startDate);
             
@@ -3210,41 +3210,45 @@ newContent3 = `
             jq("#monthYearrF15To19_"+currMonth).html(monthYearStringg)
             jq("#monthYearrF20To24_"+currMonth).html(monthYearStringg)
             
-            jq(`[id^="facilityName"]`).html(data["Facility_Name"])
+            var facName  = data["Facility_Name"].replace(",", " ");//fix csv comma problem. Just replace , with space
+            jq(`[id^="facilityName"]`).html(facName)
 
-            jq("#facilityNameM10To14_"+currMonth).html(data["Facility_Name"])
-            jq("#facilityNameM15To19_"+currMonth).html(data["Facility_Name"])
-            jq("#facilityNameM20To24_"+currMonth).html(data["Facility_Name"])
-            jq("#facilityNameF10To14_"+currMonth).html(data["Facility_Name"])
-            jq("#facilityNameF15To19_"+currMonth).html(data["Facility_Name"])
-            jq("#facilityNameF20To24_"+currMonth).html(data["Facility_Name"])
+            jq("#facilityNameM10To14_"+currMonth).html(facName)
+            jq("#facilityNameM15To19_"+currMonth).html(facName)
+            jq("#facilityNameM20To24_"+currMonth).html(facName)
+            jq("#facilityNameF10To14_"+currMonth).html(facName)
+            jq("#facilityNameF15To19_"+currMonth).html(facName)
+            jq("#facilityNameF20To24_"+currMonth).html(facName)
+
+            var lgaName   =  data["Facility_LGA"].replace(",", " ");         
+            jq(`[id^="facilityLGA"]`).html(lgaName)
+
+            jq("#facilityLGAM10To14_"+currMonth).html(lgaName)
+            jq("#facilityLGAM15To19_"+currMonth).html(lgaName)
+            jq("#facilityLGAM20To24_"+currMonth).html(lgaName)
+            jq("#facilityLGAF10To14_"+currMonth).html(lgaName)
+            jq("#facilityLGAF15To19_"+currMonth).html(lgaName)
+            jq("#facilityLGAF20To24_"+currMonth).html(lgaName)
             
-            jq(`[id^="facilityLGA"]`).html(data["Facility_LGA"])
+            var stateName = data["Facility_State"].replace(",", " ");
+            jq(`[id^="facilityState"]`).html(stateName)
 
-            jq("#facilityLGAM10To14_"+currMonth).html(data["Facility_LGA"])
-            jq("#facilityLGAM15To19_"+currMonth).html(data["Facility_LGA"])
-            jq("#facilityLGAM20To24_"+currMonth).html(data["Facility_LGA"])
-            jq("#facilityLGAF10To14_"+currMonth).html(data["Facility_LGA"])
-            jq("#facilityLGAF15To19_"+currMonth).html(data["Facility_LGA"])
-            jq("#facilityLGAF20To24_"+currMonth).html(data["Facility_LGA"])
-            
-            jq(`[id^="facilityState"]`).html(data["Facility_State"])
+            jq("#facilityStateM10To14_"+currMonth).html(stateName)
+            jq("#facilityStateM15To19_"+currMonth).html(stateName)
+            jq("#facilityStateM20To24_"+currMonth).html(stateName)
+            jq("#facilityStateF10To14_"+currMonth).html(stateName)
+            jq("#facilityStateF15To19_"+currMonth).html(stateName)
+            jq("#facilityStateF20To24_"+currMonth).html(stateName)
 
-            jq("#facilityStateM10To14_"+currMonth).html(data["Facility_State"])
-            jq("#facilityStateM15To19_"+currMonth).html(data["Facility_State"])
-            jq("#facilityStateM20To24_"+currMonth).html(data["Facility_State"])
-            jq("#facilityStateF10To14_"+currMonth).html(data["Facility_State"])
-            jq("#facilityStateF15To19_"+currMonth).html(data["Facility_State"])
-            jq("#facilityStateF20To24_"+currMonth).html(data["Facility_State"])
+            var parterName = data["Parner_Name"].replace(",", " ");
+            jq(`[id^="parner_Name"]`).html(parterName)
 
-            jq(`[id^="parner_Name"]`).html(data["Parner_Name"])
-
-            jq("#parner_NameM10To14_"+currMonth).html(data["Parner_Name"])
-            jq("#parner_NameM15To19_"+currMonth).html(data["Parner_Name"])
-            jq("#parner_NameM20To24_"+currMonth).html(data["Parner_Name"])
-            jq("#parner_NameF10To14_"+currMonth).html(data["Parner_Name"])
-            jq("#parner_NameF15To19_"+currMonth).html(data["Parner_Name"])
-            jq("#parner_NameF20To24_"+currMonth).html(data["Parner_Name"])
+            jq("#parner_NameM10To14_"+currMonth).html(parterName)
+            jq("#parner_NameM15To19_"+currMonth).html(parterName)
+            jq("#parner_NameM20To24_"+currMonth).html(parterName)
+            jq("#parner_NameF10To14_"+currMonth).html(parterName)
+            jq("#parner_NameF15To19_"+currMonth).html(parterName)
+            jq("#parner_NameF20To24_"+currMonth).html(parterName)
             
             //console.log(data);
            
@@ -3253,7 +3257,7 @@ newContent3 = `
                 //Export();
                 //console.log("which loop is last?")
                 if(currMonth==formattedMonthLength){
-                setTimeout(tableToCSV, 120000);    
+                setTimeout(tableToCSV, 180000);    
                 }
                 //tableToCSV();
                 return  myAjax({startDate:startDate, endDate:endDate, ageType:ageTyp}, '${ ui.actionLink("getTotalEligibleForMonthZeroVL") }');
